@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common :: meta_header('エラー',~{::link},~{::script})">
+</head>
+<body>
+    <div class="contents">
+        <div class="container">
+            <p>システムに問題が発生しました。</p>
+            <button type="button" class="btn btnBack" th:onclick="location.href='/'">ログイン</button>
+        </div>
+    </div>
+</body>
+</html>

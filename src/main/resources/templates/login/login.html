@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="common :: meta_header('Login',~{::link},~{::script})">
+<link rel="stylesheet" th:href="@{/css/login/login.css}" />
+<script th:src="@{/js/common.js}"></script>
+</head>
+<body>
+    <div class="contents">
+        <div class="container">
+            <div class="title text-center mt-5 p-3">ログイン</div>
+            <div class="formArea mx-auto mb-5">
+                <div class="invalid-feedback ms-5" th:if="${session['SPRING_SECURITY_LAST_EXCEPTION']} != null">
+                    ログインに失敗しました。ユーザが存在しないか、入力内容が間違っています。
+                </div>
+                <form method="POST" th:action="@{/login}">
+                    <div class="row my-3">
+                        <div class="offset-2 col-10 justify-content-md-center">
+                            <label for="userNumber" class="col-form-label"><span class="spacing">社員番号</span>：</label>
+                            <input type="text" id="userNumber" name="userNumber" class="w-50" />
+                        </div>
+                    </div>
+                    <div class="row mb-5">
+                        <div class="offset-2 col-10 justify-content-md-center passForm">
+                            <label for="password" class="col-form-label">パスワード：</label>
+                            <input type="password" id="password" name="password" class="w-50" />
+                            <i class="togglePass fa-regular fa-eye"></i>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="offset-3 col-9 justify-content-md-center">
+                            <button type="submit" class="btn btnMain" formaction="login">ログイン</button>
+                            <button type="submit" class="btn btnLight mx-3" formaction="testLogin">テストログイン</button>
+                            <a href="/test/create"><i class="fa-solid fa-person-through-window"></i></a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

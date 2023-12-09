@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common :: meta_header('社員詳細',~{::link},~{::script})">
+<link rel="stylesheet" th:href="@{/css/user/detail.css}" />
+<script th:src="@{/js/user.js}"></script>
+</head>
+<body>
+    <div th:replace="common :: header"></div>
+
+    <div class="contents">
+        <div class="container">
+            <div class="userInfoArea mt-5">
+                <div th:object="${userInfo}">
+                    <table class="table table-bordered">
+                        <tr>
+                            <th>社員番号</th>
+                            <td th:text="*{userNumber}"></td>
+                        </tr>
+                        <tr>
+                            <th>氏名（漢字）</th>
+                            <td th:text="*{userName}"></td>
+                        </tr>
+                        <tr>
+                            <th>氏名（カタカナ）</th>
+                            <td th:text="*{userNameKana}"></td>
+                        </tr>
+                        <tr>
+                            <th>入社年月</th>
+                            <td th:text="*{#strings.replace(hireDate, '-', '/')}"></td>
+                        </tr>
+                        <tr>
+                            <th>所属</th>
+                            <td th:text="*{affiliation.affiliationName}"></td>
+                        </tr>
+                        <tr>
+                            <th>権限区分</th>
+                            <td th:text="${roleClass}"></td>
+                        </tr>
+                        <tr>
+                            <th>生年月日</th>
+                            <td th:text="*{#strings.replace(birthDate, '-', '/')}"></td>
+                        </tr>
+                        <tr>
+                            <th>郵便番号</th>
+                            <td th:text="'〒' + *{postCode}"></td>
+                        </tr>
+                        <tr>
+                            <th>住所</th>
+                            <td th:text="*{address}"></td>
+                        </tr>
+                        <tr>
+                            <th>電話番号</th>
+                            <td th:text="*{phoneNumber}"></td>
+                        </tr>
+                        <tr>
+                            <th>メールアドレス</th>
+                            <td th:text="*{emailAddress}"></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="btn-toolbar justify-content-between mt-4 mb-5" role="toolbar">
+                <div>
+                    <button type="button" class="btn btnMain m-1" th:onclick="|edit('${userInfo.userId}')|">編集する</button>
+                    <button type="button" class="btn btnAccent m-1">報告を見る</button>
+                </div>
+                <div>
+                    <button type="button" class="btn btnBack m-1" th:onclick="location.href='/user/list'">戻る</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <form method="post" th:action="@{/user/edit}" id="editForm">
+    </form>
+
+    <div th:replace="common :: footer"></div>
+</body>
+</html>

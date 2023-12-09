@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common :: meta_header('Create',~{::link},~{::script})">
+<link rel="stylesheet" th:href="@{/css/user/create.css}" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script th:src="@{/js/common.js}"></script>
+<script th:src="@{/js/create.js}"></script>
+</head>
+<body>
+    <div class="contents">
+        <div class="container">
+            <div class="title text-center mt-5 p-3">社員登録</div>
+            <div class="formArea mx-auto mb-5">
+
+                <form method="POST" th:action="@{/test/create}" th:object="${usersForm}">
+                    <div class="row mb-3">
+                        <div class="col-12 col-md-3 text-md-end">
+                            <label for="userName" class="col-form-label">氏名(漢字)
+                                <span class="badge bg-secondary ms-1">必須</span>
+                            </label>
+                        </div>
+                        <div class="col-12 col-md-8 d-flex justify-content-md-center">
+                            <div class="input-group has-validation">
+                                <input type="text" class="form-control" placeholder="姓" th:errorclass="is-invalid" th:field="*{userLastName}" />
+                                <span class="invalid-feedback" th:if="${#fields.hasErrors('userLastName')}" th:errors="*{userLastName}"></span>
+                            </div>
+                            <div class="input-group has-validation">
+                                <input type="text" class="form-control ms-2" placeholder="名" th:errorclass="is-invalid" th:field="*{userFirstName}" />
+                                <span class="invalid-feedback" th:if="${#fields.hasErrors('userFirstName')}" th:errors="*{userFirstName}"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-12 col-md-3 text-md-end">
+                            <label for="userNameKana" class="col-form-label">氏名(カタカナ)
+                                <span class="badge bg-secondary ms-1">必須</span>
+                            </label>
+                        </div>
+                        <div class="col-12 col-md-8 d-flex justify-content-md-center">
+                            <div class="input-group has-validation">
+                                <input type="text" class="form-control" placeholder="セイ" th:errorclass="is-invalid" th:field="*{userLastKana}" />
+                                <span class="invalid-feedback" th:if="${#fields.hasErrors('userLastKana')}" th:errors="*{userLastKana}"></span>
+                            </div>
+                            <div class="input-group has-validation">
+                                <input type="text" class="form-control ms-2" placeholder="メイ" th:errorclass="is-invalid" th:field="*{userFirstKana}" />
+                                <span class="invalid-feedback" th:if="${#fields.hasErrors('userFirstKana')}" th:errors="*{userFirstKana}"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-12 col-md-3 text-md-end">
+                            <label for="hireDate" class="col-form-label">入社年月
+                                <span class="badge bg-secondary ms-1">必須</span>
+                            </label>
+                        </div>
+                        <div class="col-12 col-md-8 d-flex align-content-center">
+                            <select class="form-select w30" name="hireYear" id="hireYearList"></select>
+                            <span class="p-2">年</span>
+
+                            <select class="form-select w20 monthList" name="hireMonth"></select>
+                            <span class="p-2">月</span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-12 col-md-3 text-md-end">
+                            <label for="affiliationId" class="col-form-label">所属
+                                <span class="badge bg-secondary ms-1">必須</span>
+                            </label>
+                        </div>
+                        <div class="col-12 col-md-8">
+                            <select class="form-select w60" th:errorclass="is-invalid" name="affiliationId">
+                                <option th:each="affiliation : ${affiliationList}"
+                                        th:value="${affiliation.affiliationId}"
+                                        th:text="${affiliation.affiliationName}"
+                                        th:selected="${affiliation.affiliation_id.equals(notAffiliation)}">
+                                </option>
+                            </select>
+                            <span class="invalid-feedback" th:if="${#fields.hasErrors('affiliationId')}" th:errors="*{affiliationId}"></span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-12 col-md-3 text-md-end">
+                            <label for="roleClass" class="col-form-label ms-1">権限区分
+                                <span class="badge bg-secondary">必須</span>
+                            </label>
+                        </div>
+                        <div class="col-12 col-md-8 d-flex align-items-center">
+                            <select class="form-select w60" th:errorclass="is-invalid" name="roleClass">
+                                <option th:each="roleClass : ${roleClassList}"
+                                        th:value="${roleClass.code}"
+                                        th:text="${roleClass.viewName}">
+                                </option>
+                            </select>
+                            <span class="invalid-feedback" th:if="${#fields.hasErrors('roleClass')}" th:errors="*{roleClass}"></span>
+                            <div class="form-check ms-4">
+                                <input type="checkbox" class="form-check-input" th:field="*{salesFlg}" id="salesFlg" th:value="1" />
+                                <input type="hidden" name="!salesFlg" value="0" />
+                                <label for="salesFlg" class="form-check-label">営業担当</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-12 col-md-3 text-md-end">
+                            <label for="birthDay" class="col-form-label">生年月日
+                                <span class="badge bg-secondary ms-1">必須</span>
+                            </label>
+                        </div>
+
+                        <div class="col-12 col-md-8 d-flex align-items-center">
+                            <select class="form-select" th:errorclass="is-invalid" name="birthYear" id="yearList"></select>
+                            <span class="p-2">年</span>
+
+                            <div class="input-group has-validation">
+                                <select class="form-select w20 monthList" th:errorclass="is-invalid" name="birthMonth" id="monthList"></select>
+                                <span class="invalid-feedback" th:if="${#fields.hasErrors('birthMonth')}" th:errors="*{birthMonth}"></span>
+                            </div>
+                            <span class="p-2">月</span>
+
+                            <div class="input-group has-validation">
+                                <select class="form-select w20" th:errorclass="is-invalid" name="birthDay" id="dayList"></select>
+                                <span class="invalid-feedback" th:if="${#fields.hasErrors('birthDay')}" th:errors="*{birthDay}"></span>
+                            </div>
+                            <span class="p-2">日</span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-12 col-md-3 text-md-end">
+                            <label for="postCode" class="col-form-label">郵便番号
+                                <span class="badge bg-secondary ms-1">必須</span>
+                            </label>
+                        </div>
+
+                        <div class="col-12 col-md-8 d-flex align-items-center">
+                            <div class="input-group has-validation">
+                                <input type="text" class="form-control w20" placeholder="123" th:errorclass="is-invalid" th:field="*{postCode1}" />
+                                <span class="invalid-feedback" th:if="${#fields.hasErrors('postCode1')}" th:errors="*{postCode1}"></span>
+                            </div>
+                            <span class="px-3">-</span>
+                            <div class="input-group has-validation">
+                                <input type="text" class="form-control w30" placeholder="4567" th:errorclass="is-invalid" th:field="*{postCode2}" />
+                                <span class="invalid-feedback" th:if="${#fields.hasErrors('postCode2')}" th:errors="*{postCode2}"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-12 col-md-3 text-md-end">
+                            <label for="address" class="col-form-label">住所
+                                <span class="badge bg-secondary ms-1">必須</span>
+                            </label>
+                        </div>
+                        <div class="col-12 col-md-8">
+                            <div class="input-group has-validation">
+                                <textarea class="form-control" placeholder="東京都XX区YY1丁目23番地ZZマンション456号室" th:errorclass="is-invalid" th:field="*{address}"></textarea>
+                                <span class="invalid-feedback" th:if="${#fields.hasErrors('address')}" th:errors="*{address}"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-12 col-md-3 text-md-end">
+                            <label for="phoneNumber" class="col-form-label">電話番号
+                                <span class="badge bg-secondary ms-1">必須</span>
+                            </label>
+                        </div>
+                        <div class="col-12 col-md-8 d-flex align-items-center">
+                            <div class="input-group has-validation">
+                                <input type="text" class="form-control w30" th:errorclass="is-invalid" th:field="*{phoneNumber1}" />
+                                <span class="invalid-feedback" th:if="${#fields.hasErrors('phoneNumber1')}" th:errors="*{phoneNumber1}"></span>
+                            </div>
+                            <span class="px-3">-</span>
+                            <div class="input-group has-validation">
+                                <input type="text" class="form-control w30" th:errorclass="is-invalid" th:field="*{phoneNumber2}" />
+                                <span class="invalid-feedback" th:if="${#fields.hasErrors('phoneNumber2')}" th:errors="*{phoneNumber2}"></span>
+                            </div>
+                            <span class="px-3">-</span>
+                            <div class="input-group has-validation">
+                                <input type="text" class="form-control w30" th:errorclass="is-invalid" th:field="*{phoneNumber3}" />
+                                <span class="invalid-feedback" th:if="${#fields.hasErrors('phoneNumber3')}" th:errors="*{phoneNumber3}"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-12 col-md-3 text-md-end">
+                            <label for="emailAddress" class="col-form-label">メールアドレス
+                                <span class="badge bg-secondary ms-1">必須</span>
+                            </label>
+                        </div>
+                        <div class="col-12 col-md-8">
+                            <div class="input-group has-validation">
+                                <input type="text" class="form-control" placeholder="test@mailnaxx.com" th:errorclass="is-invalid" th:field="*{emailAddress}" />
+                                <span class="invalid-feedback" th:if="${#fields.hasErrors('emailAddress')}" th:errors="*{emailAddress}"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-12 col-md-3 text-md-end">
+                            <label for="password" class="col-form-label">パスワード
+                                <span class="badge bg-secondary ms-1">必須</span>
+                            </label>
+                        </div>
+                        <div class="col-12 col-md-8 passForm">
+                            <input type="password" class="form-control" placeholder="8文字以上の半角英数字" th:errorclass="is-invalid" th:field="*{password}" />
+                            <i class="togglePass fa-regular fa-eye"></i>
+                            <span class="invalid-feedback" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
+                        </div>
+                    </div>
+
+                    <div class="text-center m-5">
+                        <button type="submit" class="btn btnMain">登録</button>
+                    </div>
+                </form>
+            </div>
+            <div class="row mb-5">
+                <div class="col-auto">
+                    <button type="button" class="btn btnBack" onclick="location.href='/user/list'">戻る</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

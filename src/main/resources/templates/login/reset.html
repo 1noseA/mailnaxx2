@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<!-- 認証済みか否か、権限があるか否かでHTML要素の表示/非表示を切り替えられる。ユーザー情報を画面に表示できる -->
+<html xmlns:th="http://www.thymeleaf.org"
+xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="common :: meta_header('Password Reset',~{::link},~{::script})">
+<link rel="stylesheet" th:href="@{/css/login/reset.css}" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script th:src="@{/js/common.js}"></script>
+</head>
+<body>
+<div th:replace="common :: header"></div>
+
+<div class="contents">
+        <div class="container my-5 p-4">
+            <form method="POST" th:action="@{/pass-reset}">
+                <div class="row mb-3">
+                    <div class="col-lg-4">
+                        <label for="newPassword" class="col-form-label">新しいパスワード</label>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="passForm">
+                            <input type="password" class="form-control w-100" id="newPassword" name="newPassword" />
+                            <i class="togglePass fa-regular fa-eye"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col-lg-4">
+                        <label for="newPassword" class="col-form-label">新しいパスワード（確認用）</label>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="passForm">
+                            <input type="password" class="form-control w-100" id="newPasswordConfirm" name="newPasswordConfirm" />
+                            <i class="togglePass fa-regular fa-eye"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btnMain">パスワード再設定</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div th:replace="common :: footer"></div>
+</body>
+</html>

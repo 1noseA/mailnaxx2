@@ -1,0 +1,185 @@
+@charset "UTF-8";
+
+* {
+    color: #333; /* テキストカラー */
+    font-family: "Helvetica Neue", "Helvetica", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Arial", "Yu Gothic", "Meiryo", sans-serif;
+}
+
+header {
+    z-index: 1000;
+    /* 常に上になるようにする */
+    position: fixed; /* ヘッダーを固定する */
+    top: 0; /* 上部から配置の基準位置を決める */
+    left: 0; /* 左から配置の基準位置を決める */
+    width: 100%; /* ヘッダーの横幅を指定する */
+    height: 110px; /* ヘッダーの高さを指定する */
+    padding: 10px; /* ヘッダー内側の余白を指定する(上下左右) */
+    background-color: #03A9F4; /* メインカラー(LightBlue500) */
+    box-shadow: 0 10px 20px rgba(0,0,0,0.12), 0 6px 6px rgba(0,0,0,0.16);
+}
+
+a {
+    text-decoration: none;
+}
+a,a:hover,a:visited{
+    color: inherit;
+}
+
+/* ロゴ */
+.logo {
+    font-weight: bold;
+    color: #FFF;
+    font-size: 40px;
+}
+.motto {
+    color: #B3E5FC; /* メインライトカラー(LightBlue100) */
+}
+
+header i {
+    color: #FFF;
+    font-size: 24px;
+}
+
+/* ボタンデザイン無効化 */
+header button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    outline: none;
+    padding: 0;
+    appearance: none;
+}
+
+.fs-14 {
+    font-size: 14px
+}
+
+body {
+    background-color: #CFD8DC; /* 背景カラー(BlueGray100) */
+}
+
+.contents {
+    width: 100%; /* コンテンツの横幅を指定する */
+    overflow: auto; /* コンテンツの表示を自動に設定（スクロール） */
+    padding-top: 120px;
+    padding-bottom: 80px;
+}
+
+/* ボタンデザイン */
+.btnMain {
+    padding: 8px 32px;
+    box-sizing: border-box;
+    background-color: #0288D1; /* メインダークカラー(LightBlue700) */
+    color: #FFF;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+}
+.btnMain:hover {
+    background-color: #039BE5;
+    color: #FFF;
+    box-shadow: none;
+}
+
+.btnSub {
+    padding: 20px;
+    box-sizing: border-box;
+    background-color: #00ACC1; /* サブカラー(Cyan600) */
+    color: #FFF;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+}
+.btnSub:hover {
+    background-color: #00BCD4;
+    color: #FFF;
+    box-shadow: none;
+}
+
+.btnLight {
+    padding: 8px 32px;
+    box-sizing: border-box;
+    background-color: #4FC3F7; /* メインライトカラー(LightBlue300) */
+    color: #FFF;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+}
+.btnLight:hover {
+    background-color: #81D4FA;
+    color: #FFF;
+    box-shadow: none;
+}
+
+.btnAccent {
+    padding: 8px 32px;
+    box-sizing: border-box;
+    background-color: #FFA000; /* アクセントカラー(Amber700) */
+    color: #FFF;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+}
+.btnAccent:hover {
+    background-color: #FFB300;
+    color: #FFF;
+    box-shadow: none;
+}
+
+.btnDark {
+    padding: 8px 32px;
+    box-sizing: border-box;
+    background-color: #455A64; /* グレーカラー(BlueGray700) */
+    color: #FFF;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+}
+.btnDark:hover {
+    background-color: #607D8B;
+    color: #FFF;
+    box-shadow: none;
+}
+
+.btnBack {
+    padding: 8px 32px;
+    box-sizing: border-box;
+    background-color: #78909C; /* グレーカラー(BlueGray400) */
+    color: #FFF;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+}
+.btnBack:hover{
+    background-color: #90A4AE;
+    color: #FFF;
+    box-shadow: none;
+}
+
+/* パスワード表示非表示 */
+.passForm {
+    position: relative;
+}
+
+.togglePass {
+    position:absolute;
+    top:50%;
+    right: 35%;
+    transform: translateY(-50%);
+}
+
+footer {
+    z-index: 9999; /* 常に上になるようにする */
+    position: fixed; /* フッターを固定する */
+    bottom: 0; /* 上部から配置の基準位置を決める */
+    left: 0; /* 左から配置の基準位置を決める */
+    width: 100%; /* フッターの横幅を指定する */
+    height: 80px; /* フッターの高さを指定する */
+    padding:10px; /* フッター内側の余白を指定する(上下左右) */
+    background-color: #03A9F4; /* メインカラー(LightBlue500) */
+    color: #FFF; /* フッターのフォントの色を指定する */
+    text-align: center;
+}
+
+/* レスポンシブ */
+@media screen and (max-width: 992px) {
+}
+@media screen and (max-width: 768px) {
+    .motto, .lastLoginDate {
+        display: none;
+    }
+}

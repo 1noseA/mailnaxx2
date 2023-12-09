@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common :: meta_header('TOP',~{::link},~{::script})">
+<link rel="stylesheet" th:href="@{/css/top/top.css}" />
+<script th:src="@{/js/top.js}"></script>
+</head>
+<body>
+    <div th:replace="common :: header"></div>
+
+    <div class="contents">
+        <div class="container my-5">
+            <div class="noticeArea">
+                <h5 class="ps-3">お知らせ</h5>
+                <div class="overflow-auto">
+                    <table class="table table-bordered table-hover border border-dark">
+                        <tr th:each="notice : ${noticeList}">
+                            <td th:text="${#temporals.format(notice.start_date, 'yyyy/MM/dd')}" class="w-25" />
+                            <td th:text="${notice.notice_message}" />
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="menuArea">
+                <div class="row">
+                    <div class="col-12 col-md-4 p-1">
+                        <button type="button" onclick="location.href='/user/list'" class="btn btnSub w-100" value="btnUserList"
+                         data-bs-toggle="tooltip" data-bs-placement="top" title="実装中だよ">
+                            社員一覧
+                        </button>
+                    </div>
+                    <div class="col-12 col-md-4 p-1">
+                        <button type="button" class="btn btnSub w-100" value="btnDailyReport"
+                        data-bs-toggle="tooltip" data-bs-placement="top" title="ただの飾りだよ">日次報告</button>
+                    </div>
+                    <div class="col-12 col-md-4 p-1">
+                        <button type="button" onclick="location.href='/weekly-report/list'" class="btn btnSub w-100" value="btnWeeklyReport"
+                        data-bs-toggle="tooltip" data-bs-placement="top" title="実装中だよ">週次報告</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-md-4 p-1">
+                        <button type="button" class="col btn btnSub w-100" value="btnAttendanceReport"
+                        data-bs-toggle="tooltip" data-bs-placement="top" title="ただの飾りだよ">勤怠連絡</button>
+                    </div>
+                    <div class="col-12 col-md-4 p-1">
+                        <button type="button" class="col btn btnSub w-100" value="btnRoster"
+                        data-bs-toggle="tooltip" data-bs-placement="top" title="ただの飾りだよ">勤務表</button>
+                    </div>
+                    <div class="col-12 col-md-4 p-1">
+                        <button type="button" class="col btn btnSub w-100" value="btnAccountingReport"
+                        data-bs-toggle="tooltip" data-bs-placement="top" title="ただの飾りだよ">会計報告</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-md-4 p-1">
+                        <button type="button" class="col btn btnSub w-100" value="btnQuestionnaire"
+                        data-bs-toggle="tooltip" data-bs-placement="top" title="ただの飾りだよ">アンケート</button>
+                    </div>
+                    <div class="col-12 col-md-4 p-1">
+                        <button type="button" class="col btn btnSub w-100" value="btnVariousApplications"
+                        data-bs-toggle="tooltip" data-bs-placement="top" title="ただの飾りだよ">各種申請</button>
+                    </div>
+                    <div class="col-12 col-md-4 p-1">
+                        <button type="button" class="col btn btnSub w-100" value="btnVariousDownloads"
+                        data-bs-toggle="tooltip" data-bs-placement="top" title="ただの飾りだよ">各種ダウンロード</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-md-4 p-1 text-start">
+                        <button type="button" class="col btn btnSub w-100" value="btnMasterAdmin"
+                        data-bs-toggle="tooltip" data-bs-placement="top" title="今後実装するかも">マスタ管理</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="common :: footer"></div>
+</body>
+</html>

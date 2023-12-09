@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common :: meta_header('社員一覧',~{::link},~{::script})">
+<link rel="stylesheet" th:href="@{/css/user/list.css}" />
+<script th:src="@{/js/user.js}"></script>
+</head>
+<body>
+    <div th:replace="common :: header"></div>
+
+    <div class="contents">
+        <div class="container">
+            <div class="searchArea mx-auto my-5">
+                <form method="post" th:action="@{/user/search}" th:object="${searchUsersForm}">
+                    <div class="row mb-3 align-items-center">
+                        <th:block th:if="${message != null}">
+                            <div class="col-md-12 ms-3">
+                                <p class="text-danger" th:text="${message}"></p>
+                            </div>
+                        </th:block>
+
+
+                        <div class="col-md-2 text-md-end">
+                            <label for="userName" class="col-form-label fw-bold">氏名</label>
+                        </div>
+
+                        <div class="col-md-6">
+                            <input type="text" class="form-control" placeholder="" name="userName" id="userName" th:value="*{userName}" th:field="*{userName}" />
+                        </div>
+                        <div class="col-md-4 d-flex justify-content-start align-items-start flex-md-column flex-lg-row">
+                            <div class="form-check ms-3">
+                                <input class="form-check-input" type="radio" name="searchCondition" id="prefixMatch" th:value="0" th:field="*{searchCondition}">
+                                <label class="form-check-label" for="prefixMatch">
+                                    前方一致
+                                </label>
+                            </div>
+                            <div class="form-check ms-3">
+                                <input class="form-check-input" type="radio" name="searchCondition" id="partialMatch" th:value="1" th:field="*{searchCondition}">
+                                <label class="form-check-label" for="partialMatch">
+                                    部分一致
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-2 text-md-end">
+                            <label for="roleClass" class="col-form-label fw-bold ms-1">権限区分</label>
+                        </div>
+                        <div class="col-md-6 d-flex align-items-md-center">
+                            <select class="form-select" name="roleClass" id="roleClass">
+                                <option value="">全て</option>
+                                <option th:each="roleClass : ${roleClassList}"
+                                        th:value="${roleClass.code}"
+                                        th:text="${roleClass.viewName}"
+                                        th:field="*{roleClass}">
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn btnMain">検索</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="listArea mx-auto">
+                <form method="post" th:action="@{/user/delete}" th:object="${selectUsersForm}">
+                    <div class="btn-toolbar justify-content-between" role="toolbar">
+                        <div class="mb-4">
+                            <button type="button" class="btn btnLight" onclick="location.href='/user/create'">新規登録</button>
+                        </div>
+                        <div class="mb-4" role="group">
+                            <button type="button" class="btn btnAccent me-3" onclick="location.href='/weekly-report/list'">報告を見る</button>
+                            <th:block th:if="${isAdmin}">
+                                <input type="submit" class="btn btnDark" value="削除">
+                            </th:block>
+                            <th:block th:unless="${isAdmin}">
+                                <input type="submit" class="btn btnDark" value="削除" disabled>
+                            </th:block>
+                        </div>
+                    </div>
+
+                    <th:block th:if="${userList.size() > 0}">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead>
+                                    <tr class="border-bottom border-dark">
+                                        <th scope="col" class="text-canter">選択</th>
+                                        <th scope="col">社員番号</th>
+                                        <th scope="col">氏名</th>
+                                        <th scope="col">入社年月</th>
+                                        <th scope="col">所属</th>
+                                        <th scope="col">権限区分</th>
+                                        <th scope="col"><!-- 営業 --></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <th:block th:each="userList : ${userList}">
+                                        <tr>
+                                            <td>
+                                                <div class="form-check d-flex justify-content-center align-items-center">
+                                                    <input class="form-check-input" type="checkbox" name="selectUser" th:value="${userList.userId}">
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <a href="javascript:void(0);" th:onclick="|showDetail('${userList.userId}')|">
+                                                    <span th:text="${userList.userNumber}"></span>
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <a href="javascript:void(0);" th:onclick="|showDetail('${userList.userId}')|">
+                                                    <span th:text="${userList.userName}"></span>
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <a href="javascript:void(0);" th:onclick="|showDetail('${userList.userId}')|">
+                                                    <span th:text="${#strings.replace(userList.hireDate, '-', '/')}"></span>
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <a href="javascript:void(0);" th:onclick="|showDetail('${userList.userId}')|">
+                                                    <span th:text="${userList.affiliation.affiliationName}"></span>
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <a href="javascript:void(0);" th:onclick="|showDetail('${userList.userId}')|">
+                                                    <th:block th:each="roleClass : ${roleClassList}">
+                                                        <th:block th:if="${userList.roleClass == roleClass.code}">
+                                                            <span th:text="${roleClass.viewName}"></span>
+                                                        </th:block>
+                                                    </th:block>
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <a href="javascript:void(0);" th:onclick="|showDetail('${userList.userId}')|">
+                                                    <span th:text="${userList.salesFlg == '1'} ? '営業' : ' '"></span>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </th:block>
+                                </tbody>
+                            </table>
+                        </div>
+                    </th:block>
+                    <th:block th:if="${userList.size() == 0}">
+                        検索結果0件です
+                    </th:block>
+                </form>
+                <div class="my-5">
+                    <button type="button" class="btn btnBack" th:onclick="location.href='/top'">戻る</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <form method="post" th:action="@{/user/detail}" id="detailForm">
+    </form>
+
+    <div th:replace="common :: footer"></div>
+</body>
+</html>

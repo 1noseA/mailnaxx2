@@ -1,0 +1,14 @@
+.container {
+    width: 60%;
+    margin: 0 auto;
+    background-color: #F5F5F5;
+}
+
+/* レスポンシブ */
+@media screen and (max-width: 992px) {
+    .container {
+        width: 80%;
+    }
+}
+@media screen and (max-width: 576px) {
+}
