@@ -1,0 +1,21 @@
+.container {
+    width: 60%;
+    padding: 0;
+}
+
+.formArea {
+    padding: 40px 40px 8px 40px;
+    background-color: #F5F5F5;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+}
+
+.title {
+    font-size: 24px;
+    background-color: #00ACC1; /* サブカラー(Cyan600) */
+    color: #FFF;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+}
+
+.col-form-label {
+    color: #000;
+}

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common :: meta_header('週報一覧',~{::link},~{::script})">
+<link rel="stylesheet" th:href="@{/css/user/list.css}" />
+<script th:src="@{/js/weekly-report.js}"></script>
+</head>
+<body>
+    <div th:replace="common :: header"></div>
+
+    <div class="contents">
+        <div class="container">
+            <div class="searchArea mx-auto my-5">
+                <form method="post" th:action="@{/weekly-report/search}" th:object="${searchWeeklyReportForm}">
+                    <div class="row mb-3 align-items-center">
+                        <th:block th:if="${message != null}">
+                            <div class="col-md-12 ms-3">
+                                <p class="text-danger" th:text="${message}"></p>
+                            </div>
+                        </th:block>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-3 text-md-end">
+                            <label for="affiliationId" class="col-form-label fw-bold">所属</label>
+                        </div>
+                        <div class="col-md-8">
+                            <select class="form-select w80" th:errorclass="is-invalid" name="affiliationId">
+                                <option value=0>全て</option>
+                                <option th:each="affiliation : ${affiliationList}"
+                                        th:value="${affiliation.affiliationId}"
+                                        th:text="${affiliation.affiliationName}"
+                                        th:selected="${affiliation.affiliationId == searchWeeklyReportForm.affiliationId}">
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-3 text-md-end">
+                            <label for="salesUserId" class="col-form-label fw-bold">担当営業</label>
+                        </div>
+                        <div class="col-md-8">
+                            <select class="form-select w80" th:errorclass="is-invalid" name="salesUserId">
+                                <option value=0>全て</option>
+                                <option th:each="sales : ${salesList}"
+                                        th:value="${sales.userId}"
+                                        th:text="${sales.userName}"
+                                        th:selected="${sales.userId == searchWeeklyReportForm.salesUserId}">
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-3 text-md-end">
+                            <label for="userName" class="col-form-label fw-bold">氏名</label>
+                        </div>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control w80" placeholder="" name="userName" id="userName" th:value="*{userName}" th:field="*{userName}" />
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-3 text-md-end">
+                            <label for="reportDate" class="col-form-label fw-bold">報告対象週</label>
+                        </div>
+                        <div class="col-md-3 pe-0">
+                            <select class="form-select" th:errorclass="is-invalid" name="fromReportDate">
+                                <option value="">全て</option>
+                                <option th:each="reportDate : ${reportDateList}"
+                                        th:value="${reportDate}"
+                                        th:text="${#temporals.format(reportDate, 'yyyy/MM/dd')}"
+                                        th:selected="${(reportDate.toString()).equals(searchWeeklyReportForm.fromReportDate)}">
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-md-1 p-0 text-center align-self-center">
+                            〜
+                        </div>
+                        <div class="col-md-3 ps-0">
+                            <select class="form-select" th:errorclass="is-invalid" name="toReportDate">
+                                <option value="">全て</option>
+                                <option th:each="reportDate : ${reportDateList}"
+                                        th:value="${reportDate}"
+                                        th:text="${#temporals.format(reportDate, 'yyyy/MM/dd')}"
+                                        th:selected="${(reportDate.toString()).equals(searchWeeklyReportForm.toReportDate)}">
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row my-4">
+                        <div class="col-md-3 text-md-end">
+                        </div>
+                        <div class="col-md-8">
+                            <input type="checkbox" class="form-check-input" th:field="*{confirmedFlg}" id="confirmedFlg" th:value="1" />
+                            <input type="hidden" name="!confirmedFlg" value="0" />
+                            <label for="confirmedFlg" class="form-check-label">確認済みを表示</label>
+                        </div>
+                    </div>
+
+                    <div class="text-center">
+                        <button type="submit" class="btn btnMain">検索</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="listArea mx-auto">
+                <form method="post" th:action="@{/weekly-report/bulkConfirm}" th:object="${selectForm}">
+                    <div class="btn-toolbar justify-content-between" role="toolbar">
+                        <div class="mb-4">
+                            <button type="button" class="btn btnLight" onclick="location.href='/weekly-report/create'">週報作成</button>
+                        </div>
+                        <div class="mb-4" role="group">
+                            <th:block th:if="${isConfirmer}">
+                                <input type="submit" class="btn btnDark" value="確認">
+                            </th:block>
+                            <th:block th:unless="${isConfirmer}">
+                                <input type="submit" class="btn btnDark" value="確認" disabled>
+                            </th:block>
+                        </div>
+                    </div>
+
+                    <th:block th:if="${weeklyReportList.size() > 0}">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead>
+                                    <tr class="border-bottom border-dark">
+                                        <th scope="col" class="text-canter">選択</th>
+                                        <th scope="col">報告対象週</th>
+                                        <th scope="col">社員番号</th>
+                                        <th scope="col">氏名</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <th:block th:each="weeklyReportList : ${weeklyReportList}">
+                                        <tr th:classappend="${weeklyReportList.confirmedFlg == '1'} ? 'bg-secondary' : ''">
+                                            <td>
+                                                <div class="form-check d-flex justify-content-center align-items-center">
+                                                    <th:block th:if="${weeklyReportList.confirmedFlg == '0'}">
+                                                        <input class="form-check-input" type="checkbox" name="selectTarget" th:value="${weeklyReportList.weeklyReportId}">
+                                                    </th:block>
+                                                    <th:block th:unless="${weeklyReportList.confirmedFlg == '0'}">
+                                                        <input class="form-check-input" type="checkbox" name="selectTarget" th:value="${weeklyReportList.weeklyReportId}" disabled>
+                                                    </th:block>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <a href="javascript:void(0);" th:onclick="|showDetail('${weeklyReportList.weeklyReportId}')|">
+                                                    <span th:text="${#strings.replace(weeklyReportList.reportDate, '-', '/')}"></span>
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <a href="javascript:void(0);" th:onclick="|showDetail('${weeklyReportList.weeklyReportId}')|">
+                                                    <span th:text="${weeklyReportList.user.userNumber}"></span>
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <a href="javascript:void(0);" th:onclick="|showDetail('${weeklyReportList.weeklyReportId}')|">
+                                                    <span th:text="${weeklyReportList.user.userName}"></span>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </th:block>
+                                </tbody>
+                            </table>
+                        </div>
+                    </th:block>
+                    <th:block th:if="${weeklyReportList.size() == 0}">
+                        検索結果0件です
+                    </th:block>
+                </form>
+                <div class="my-5">
+                    <button type="button" class="btn btnBack" th:onclick="location.href='/top'">戻る</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <form method="post" th:action="@{/weekly-report/detail}" id="detailForm">
+    </form>
+
+    <div th:replace="common :: footer"></div>
+</body>
+</html>

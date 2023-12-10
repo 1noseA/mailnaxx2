@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common :: meta_header('週報フォーム',~{::link},~{::script})">
+<link rel="stylesheet" th:href="@{/css/weekly-report/create.css}" />
+<script th:src="@{/js/common.js}"></script>
+</head>
+<body>
+    <div th:replace="common :: header"></div>
+
+    <div class="contents">
+        <div class="container">
+            <div class="title text-center mt-5 p-3">週次報告書</div>
+            <div class="formArea mx-auto mb-5">
+                <form method="POST" th:action="@{/weekly-report/create}" th:object="${weeklyReportForm}">
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <label for="salesName" class="col-form-label">担当営業
+                                <span class="badge bg-secondary ms-1">必須</span>
+                            </label>
+                            <select class="form-select" name="salesUserId" id="salesUserId">
+                                <option>選択してください</option>
+                                <option th:each="sales : ${salesList}"
+                                        th:value="${sales.user_name}"
+                                        th:text="${sales.user_name}">
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-6">
+                            <label for="projectId" class="col-form-label">現場
+                                <span class="badge bg-secondary ms-1">必須</span>
+                            </label>
+                            <select class="form-select" name="projectId" id="projectId">
+                                <option>選択してください</option>
+                                <option th:each="project : ${projectList}"
+                                        th:value="${project.project_id}"
+                                        th:text="${project.project_name}">
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <label for="reportDate" class="col-form-label">報告対象週</label>
+                            <input type="text" class="form-control" name="reportDate" id="reportDate" th:value="${reportDate}" readonly />
+                        </div>
+                        <div class="col-6">
+                            <label for="aveOvertimeHours" class="col-form-label">平均残業時間
+                                <span class="badge bg-secondary ms-1">必須</span>
+                            </label>
+                            <input type="text" class="form-control" placeholder="X時間" name="aveOvertimeHours" id="aveOvertimeHours" />
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <label for="progress" class="col-form-label">進捗状況</label>
+                        </div>
+                        <div class="col-12">
+                            <div th:each="item : ${radioProgress}" class="form-check-inline">
+                                <!-- nameを指定することで1つのみ選択になる -->
+                                <input type="radio" class="form-check-input" name="progress" th:text="${item.value}" th:value="${item.key}" th:checked="${item.key == '3'}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <label for="condition" class="col-form-label">体調</label>
+                        </div>
+                        <div class="col-12">
+                            <div th:each="item : ${radioCondition}" class="form-check-inline">
+                                <input type="radio" class="form-check-input" name="condition" th:text="${item.value}" th:value="${item.key}" th:checked="${item.key == '3'}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <label for="relationship" class="col-form-label">人間関係</label>
+                        </div>
+                        <div class="col-12">
+                            <div th:each="item : ${radioRelationship}" class="form-check-inline">
+                                <input type="radio" class="form-check-input" name="relationship" th:text="${item.value}" th:value="${item.key}" th:checked="${item.key == '3'}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <label for="plan" class="col-form-label">今週の計画
+                                <span class="badge bg-secondary ms-1">必須</span>
+                            </label>
+                            <textarea class="form-control" placeholder="" name="plan" id="plan"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <label for="workContent" class="col-form-label">作業内容
+                                <span class="badge bg-secondary ms-1">必須</span>
+                            </label>
+                            <textarea class="form-control" placeholder="" name="workContent" id="workContent"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <label for="difficulty" class="col-form-label">難易度
+                                <span class="badge bg-secondary ms-1">必須</span>
+                            </label>
+                            <input type="text" class="form-control" placeholder="基準：100" name="difficulty" id="difficulty" />
+                        </div>
+                        <div class="col-6">
+                            <label for="schedule" class="col-form-label">スケジュール感
+                                <span class="badge bg-secondary ms-1">必須</span>
+                            </label>
+                            <input type="text" class="form-control" placeholder="基準：100" name="schedule" id="schedule" />
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <label for="result" class="col-form-label">結果
+                                <span class="badge bg-secondary ms-1">必須</span>
+                            </label>
+                            <textarea class="form-control" placeholder="" name="result" id="result"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <label for="impression" class="col-form-label">所感
+                                <span class="badge bg-secondary ms-1">必須</span>
+                            </label>
+                            <textarea class="form-control" placeholder="" name="impression" id="impression"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <label for="improvements" class="col-form-label">改善点</label>
+                            <textarea class="form-control" placeholder="" name="improvements" id="improvements"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <label for="nextPlan" class="col-form-label">次週の計画
+                                <span class="badge bg-secondary ms-1">必須</span>
+                            </label>
+                            <textarea class="form-control" placeholder="" name="nextPlan" id="nextPlan"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <label for="remarks" class="col-form-label">特記事項</label>
+                            <textarea class="form-control" placeholder="営業に関する情報、困っていることなど" name="remarks" id="remarks"></textarea>
+                        </div>
+                    </div>
+
+                    <div>
+                        <button type="button" class="btn btnSub my-3 w-100" data-bs-toggle="modal" data-bs-target="#colleagueModal">現場社員の状況を記載する</button>
+                    </div>
+                    <!-- モーダルここから -->
+                    <div class="modal fade" id="colleagueModal" tabindex="-1" aria-labelledby="ecolleagueModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">現場社員の状況</h5>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="container-fluid">
+                                        <div class="row mb-3">
+                                            <div class="col-12">
+                                                <label for="colleagueName" class="col-form-label">社員名
+                                                    <span class="badge bg-secondary ms-1">必須</span>
+                                                </label>
+                                                <input type="text" class="form-control" name="colleagueName" id="colleagueName" />
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-3">
+                                            <div class="col-6">
+                                                <label for="colleagueDifficulty" class="col-form-label">難易度
+                                                    <span class="badge bg-secondary ms-1">必須</span>
+                                                </label>
+                                                <input type="text" class="form-control" placeholder="基準：100" name="colleagueDifficulty" id="colleagueDifficulty" />
+                                            </div>
+                                            <div class="col-6">
+                                                <label for="colleagueSchedule" class="col-form-label">スケジュール感
+                                                    <span class="badge bg-secondary ms-1">必須</span>
+                                                </label>
+                                                <input type="text" class="form-control" placeholder="基準：100" name="colleagueSchedule" id="colleagueSchedule" />
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-3">
+                                            <div class="col-12">
+                                                <label for="colleagueImpression" class="col-form-label">状況
+                                                    <span class="badge bg-secondary ms-1">必須</span>
+                                                </label>
+                                                <textarea class="form-control" placeholder="" name="colleagueImpression" id="colleagueImpression"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
+                                    <button type="button" class="btn btn-primary">変更を保存</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- モーダルここまで -->
+
+                    <div class="text-center m-5">
+                        <button type="submit" class="btn btnLight">一時保存</button>
+                        <button type="submit" class="btn btnMain ms-3">提出</button>
+                    </div>
+                </form>
+            </div>
+            <div class="row mb-5">
+                <div class="col-auto">
+                    <button type="button" class="btn btnBack" onclick="location.href='/user/list'">戻る</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="common :: footer"></div>
+</body>
+</html>
