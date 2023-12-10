@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mailnaxx2.mapper.WeeklyReportsMapper">
+
+    <!-- 全件取得 -->
+    <select id="findAll" resultMap="weeklyReportMap">
+        SELECT
+            w.weekly_report_id,
+            w.report_date,
+            w.confirmed_flg,
+            u.user_id AS my_user_id,
+            u.user_number AS my_user_number,
+            u.user_name AS my_user_name
+        FROM weekly_reports w
+        INNER JOIN users u
+            ON w.user_id = u.user_id
+        INNER JOIN projects p
+            ON w.project_id = p.project_id
+        WHERE
+            w.confirmed_flg = '0'
+        AND p.deleted_flg = '0'
+        ORDER BY u.user_number, w.weekly_report_id
+    </select>
+
+    <!-- 検索 -->
+    <select id="findBySearchForm" resultMap="weeklyReportMap">
+        SELECT
+            w.weekly_report_id,
+            w.report_date,
+            w.confirmed_flg,
+            u1.user_id AS my_user_id,
+            u1.user_number AS my_user_number,
+            u1.user_name AS my_user_name
+        FROM weekly_reports w
+        INNER JOIN users u1
+            ON w.user_id = u1.user_id
+        INNER JOIN projects p
+            ON w.project_id = p.project_id
+        INNER JOIN users u2
+            ON p.sales_user_id = u2.user_id
+        WHERE
+            p.deleted_flg = '0'
+        <if test='affiliationId != 0'>
+            AND u1.affiliation_id = #{affiliationId}
+        </if>
+        <if test='salesUserId != 0'>
+            AND u2.user_id = #{salesUserId}
+        </if>
+        <if test='userName != ""'>
+            AND u1.user_name LIKE '%' || #{userName} || '%'
+        </if>
+        <if test='fromReportDate != ""'>
+            AND w.report_date &gt;= CAST(#{fromReportDate} AS DATE)
+        </if>
+        <if test='toReportDate != ""'>
+            AND w.report_date &lt;= CAST(#{toReportDate} AS DATE)
+        </if>
+        <if test='confirmedFlg == "0"'>
+            AND w.confirmed_flg = '0'
+        </if>
+        ORDER BY u1.user_number, w.weekly_report_id
+    </select>
+
+    <!-- 1件取得 -->
+    <select id="findById" resultMap="weeklyReportMap">
+        SELECT
+            w.weekly_report_id,
+            u1.user_number AS my_user_number,
+            u1.user_name AS my_user_name,
+            u2.user_name AS sales_user_name,
+            p.project_name,
+            w.report_date,
+            w.ave_overtime_hours,
+            w.progress,
+            w.condition,
+            w.relationship,
+            w.plan,
+            w.work_content,
+            w.difficulty,
+            w.schedule,
+            w.result,
+            w.impression,
+            w.improvements,
+            w.next_plan,
+            w.remarks,
+            w.confirmed_flg,
+            w.comment,
+            w.shared_flg
+        FROM weekly_reports w
+        INNER JOIN users u1
+            ON w.user_id = u1.user_id
+        INNER JOIN projects p
+            ON w.project_id = p.project_id
+        INNER JOIN users u2
+            ON p.sales_user_id = u2.user_id
+        WHERE
+            w.weekly_report_id = #{weeklyReportId}
+        AND p.deleted_flg = '0'
+    </select>
+
+    <!-- 1件排他ロック -->
+    <select id="forLockById" resultMap="weeklyReportMap">
+        SELECT
+            w.weekly_report_id,
+            u1.user_number AS my_user_number,
+            u1.user_name AS my_user_name,
+            u2.user_name AS sales_user_name,
+            p.project_name,
+            w.report_date,
+            w.ave_overtime_hours,
+            w.progress,
+            w.condition,
+            w.relationship,
+            w.plan,
+            w.work_content,
+            w.difficulty,
+            w.schedule,
+            w.result,
+            w.impression,
+            w.improvements,
+            w.next_plan,
+            w.remarks,
+            w.confirmed_flg,
+            w.comment,
+            w.shared_flg
+        FROM weekly_reports w
+        INNER JOIN users u1
+            ON w.user_id = u1.user_id
+        INNER JOIN projects p
+            ON w.project_id = p.project_id
+        INNER JOIN users u2
+            ON p.sales_user_id = u2.user_id
+        WHERE
+           w.weekly_report_id = #{weeklyReportId}
+        AND p.deleted_flg = '0'
+        FOR UPDATE
+    </select>
+
+    <!-- 複数件排他ロック -->
+    <select id="forLockByIdList" resultMap="weeklyReportMap">
+        SELECT
+            w.weekly_report_id,
+            u1.user_number AS my_user_number,
+            u1.user_name AS my_user_name,
+            u2.user_name AS sales_user_name,
+            p.project_name,
+            w.report_date,
+            w.ave_overtime_hours,
+            w.progress,
+            w.condition,
+            w.relationship,
+            w.plan,
+            w.work_content,
+            w.difficulty,
+            w.schedule,
+            w.result,
+            w.impression,
+            w.improvements,
+            w.next_plan,
+            w.remarks,
+            w.confirmed_flg,
+            w.comment,
+            w.shared_flg
+        FROM weekly_reports w
+        INNER JOIN users u1
+            ON w.user_id = u1.user_id
+        INNER JOIN projects p
+            ON w.project_id = p.project_id
+        INNER JOIN users u2
+            ON p.sales_user_id = u2.user_id
+        WHERE
+           p.deleted_flg = '0'
+        AND w.weekly_report_id IN
+            <foreach item="item" index="index" collection="idList"
+                open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        FOR UPDATE
+    </select>
+
+    <!-- マッピング -->
+    <resultMap id="weeklyReportMap" type="com.mailnaxx2.entity.WeeklyReports">
+        <result property="weeklyReportId" column="weekly_report_id" />
+        <result property="reportDate" column="report_date" />
+        <result property="aveOvertimeHours" column="ave_overtime_hours" />
+        <result property="progress" column="progress" />
+        <result property="condition" column="condition" />
+        <result property="relationship" column="relationship" />
+        <result property="plan" column="plan" />
+        <result property="workContent" column="work_content" />
+        <result property="difficulty" column="difficulty" />
+        <result property="schedule" column="schedule" />
+        <result property="result" column="result" />
+        <result property="impression" column="impression" />
+        <result property="improvements" column="improvements" />
+        <result property="nextPlan" column="next_plan" />
+        <result property="remarks" column="remarks" />
+        <result property="confirmedFlg" column="confirmed_flg" />
+        <result property="comment" column="comment" />
+        <result property="sharedFlg" column="shared_flg" />
+        <result property="createdBy" column="created_by" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedBy" column="updated_by" />
+        <result property="updatedAt" column="updated_at" />
+        <association property="project" resultMap="projectResult"/>
+        <collection property="user" resultMap="userResult" columnPrefix="my_" />
+    </resultMap>
+
+    <resultMap id="projectResult" type="com.mailnaxx2.entity.Projects">
+        <result property="projectId" column="project_id" />
+        <result property="projectName" column="project_name" />
+        <collection property="salesUser" resultMap="salesUserResult" columnPrefix="sales_" />
+    </resultMap>
+
+    <resultMap id="userResult" type="com.mailnaxx2.entity.Users">
+        <result property="userId" column="user_id" />
+        <result property="userNumber" column="user_number" />
+        <result property="userName" column="user_name" />
+    </resultMap>
+
+    <resultMap id="salesUserResult" type="com.mailnaxx2.entity.Users">
+        <result property="userId" column="user_id" />
+        <result property="userNumber" column="user_number" />
+        <result property="userName" column="user_name" />
+    </resultMap>
+
+	<!-- 確認 -->
+    <update id="confirm">
+        UPDATE weekly_reports SET
+            confirmed_flg = '1',
+            updated_by = #{updatedBy},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE
+            weekly_report_id = #{weeklyReportId}
+    </update>
+
+	<!-- 一括確認 -->
+    <update id="bulkConfirm">
+        <foreach collection="weeklyReportList" item="w" separator=";">
+            UPDATE weekly_reports SET
+                confirmed_flg = '1',
+                updated_by = #{w.updatedBy},
+                updated_at = CURRENT_TIMESTAMP
+            WHERE
+                weekly_report_id = #{w.weeklyReportId}
+        </foreach>
+    </update>
+
+</mapper>

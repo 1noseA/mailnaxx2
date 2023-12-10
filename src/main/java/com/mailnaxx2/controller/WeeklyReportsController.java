@@ -165,12 +165,11 @@ public class WeeklyReportsController {
         // 権限チェック
         if (loginUser.getLoginUser().getSalesFlg().equals("1")) {
             weeklyReportsService.confirm(weeklyReportId, loginUser);
-            return "redirect:/weekly-report/detail";
         } else {
             // エラーメッセージを表示
             model.addAttribute("message", "権限がありません。");
-            return detail(weeklyReportId, model, loginUser);
         }
+        return detail(weeklyReportId, model, loginUser);
     }
 
     // 登録画面初期表示

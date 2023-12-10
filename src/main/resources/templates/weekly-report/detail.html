@@ -93,7 +93,7 @@
             <div class="btn-toolbar justify-content-between mt-4 mb-5" role="toolbar">
                 <div>
                     <button type="button" class="btn btnMain m-1" th:onclick="|edit('${weeklyReportInfo.weeklyReportId}')|">編集する</button>
-                    <button type="button" class="btn btnAccent m-1">確認する</button>
+                    <button type="button" class="btn btnAccent m-1" th:onclick="|confirm('${weeklyReportInfo.weeklyReportId}')|">確認する</button>
                     <button type="button" class="btn btnAccent m-1">共有する</button>
                 </div>
                 <div>
@@ -102,8 +102,10 @@
             </div>
         </div>
     </div>
-    <!-- <form method="post" th:action="@{/user/edit}" id="editForm">
-    </form> -->
+    <form method="post" th:action="@{/weekly-report/edit}" id="editForm">
+    </form>
+    <form method="post" th:action="@{/weekly-report/confirm}" id="confirmForm">
+    </form>
 
     <div th:replace="common :: footer"></div>
 </body>

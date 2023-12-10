@@ -24,3 +24,16 @@ function edit(id) {
     form.submit();
 }
 
+/**
+ * 確認処理
+ */
+function confirm(id) {
+    let form = $('#confirmForm');
+    $('<input>').attr({
+        type: 'hidden',
+        name: 'weeklyReportId',
+        value: id
+    }).appendTo(form);
+    form.submit();
+}
+

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mailnaxx2.mapper.ProjectsMapper">
+    <select id="findAll" resultMap="projectMap">
+        SELECT
+            p.project_id,
+            p.company_name,
+            p.project_name,
+            u.user_id,
+            u.user_name
+        FROM projects p
+        INNER JOIN users u
+            ON p.sales_user_id = u.user_id
+        WHERE
+            p.deleted_flg = '0'
+        ORDER BY p.project_id
+    </select>
+
+    <resultMap id="projectMap" type="com.mailnaxx2.entity.Projects">
+        <result property="projectId" column="project_id" />
+        <result property="companyName" column="company_name" />
+        <result property="projectName" column="project_name" />
+        <result property="deletedFlg" column="deleted_flg" />
+        <result property="createdBy" column="created_by" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedBy" column="updated_by" />
+        <result property="updatedAt" column="updated_at" />
+        <association property="salesUser" resultMap="salesUserResult"/>
+    </resultMap>
+
+    <resultMap id="salesUserResult" type="com.mailnaxx2.entity.Users">
+        <result property="userId" column="user_id" />
+        <result property="userNumber" column="user_number" />
+        <result property="userName" column="user_name" />
+    </resultMap>
+</mapper>
