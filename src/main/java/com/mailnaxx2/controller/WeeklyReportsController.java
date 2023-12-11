@@ -155,6 +155,10 @@ public class WeeklyReportsController {
     public String detail(int weeklyReportId, Model model, @AuthenticationPrincipal LoginUserDetails loginUser) {
         WeeklyReports weeklyReportInfo = weeklyReportsService.findById(weeklyReportId);
         model.addAttribute("weeklyReportInfo", weeklyReportInfo);
+
+        // 権限
+        boolean isConfirmer = (boolean) session.getAttribute("session_isConfirmer");
+        model.addAttribute("isConfirmer", isConfirmer);
         model.addAttribute("loginUserInfo", loginUser.getLoginUser());
         return "weekly-report/detail";
     }
