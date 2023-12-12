@@ -84,10 +84,9 @@ public class WeeklyReportsController {
         }
         model.addAttribute("reportDateList", reportDateList);
 
-        // 権限（リーダーか営業のみ）
+        // 権限（営業のみ）
         boolean isConfirmer = false;
-        if (loginUser.getLoginUser().getRoleClass().equals(RoleClass.LEADER.getCode()) ||
-            loginUser.getLoginUser().getSalesFlg().equals("1")) {
+        if (loginUser.getLoginUser().getSalesFlg().equals("1")) {
             isConfirmer = true;
         }
         session.setAttribute("session_isConfirmer", isConfirmer);
@@ -122,14 +121,14 @@ public class WeeklyReportsController {
         }
         model.addAttribute("reportDateList", reportDateList);
 
-        // 権限
+        // 権限（営業のみ）
         boolean isConfirmer = (boolean) session.getAttribute("session_isConfirmer");
         model.addAttribute("isConfirmer", isConfirmer);
         model.addAttribute("loginUserInfo", loginUser.getLoginUser());
         return "weekly-report/list";
     }
 
-    // 一括確認処理
+    // 一括確認処理（営業のみ）
     @PostMapping("/weekly-report/bulkConfirm")
     public String bulkConfirm(@ModelAttribute SelectForm selectForm, SearchWeeklyReportForm searchWeeklyReportForm, Model model, @AuthenticationPrincipal LoginUserDetails loginUser) {
         // 入力チェック
@@ -163,7 +162,7 @@ public class WeeklyReportsController {
         return "weekly-report/detail";
     }
 
-    // 確認処理
+    // 確認処理（営業のみ）
     @PostMapping("/weekly-report/confirm")
     public String confirm(int weeklyReportId, Model model, @AuthenticationPrincipal LoginUserDetails loginUser) {
         // 権限チェック
