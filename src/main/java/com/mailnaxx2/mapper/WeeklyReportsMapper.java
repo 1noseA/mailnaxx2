@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import com.mailnaxx2.entity.Affiliations;
 import com.mailnaxx2.entity.WeeklyReports;
 import com.mailnaxx2.form.SearchWeeklyReportForm;
 
@@ -12,6 +13,12 @@ public interface WeeklyReportsMapper {
 
     // 全件取得
     public List<WeeklyReports> findAll();
+
+    // 所属メンバーの週報取得
+    public List<WeeklyReports> findMyAffiliation(int affiliationId);
+
+    // 自分の週報取得
+    public List<WeeklyReports> findMine(int userId);
 
     // 検索
     public List<WeeklyReports> findBySearchForm(SearchWeeklyReportForm searchWeeklyReportForm);

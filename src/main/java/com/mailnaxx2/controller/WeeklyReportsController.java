@@ -61,10 +61,27 @@ public class WeeklyReportsController {
     // 一覧画面初期表示
     @RequestMapping("/weekly-report/list")
     public String index(SearchWeeklyReportForm searchWeeklyReportForm, Model model, @AuthenticationPrincipal LoginUserDetails loginUser) {
-        // 週報を全件取得
-        List<WeeklyReports> weeklyReportList = weeklyReportsService.findAll();
+    	// 権限（営業のみ）
+        boolean isConfirmer = false;
+        if (loginUser.getLoginUser().getSalesFlg().equals("1")) {
+            isConfirmer = true;
+        }
+        session.setAttribute("session_isConfirmer", isConfirmer);
+
+    	List<WeeklyReports> weeklyReportList = null;
+        // 営業の場合、週報を全件取得
+    	if (isConfirmer) {
+    		weeklyReportList = weeklyReportsService.findAll();
+    	} else if (loginUser.getLoginUser().getRoleClass().equals(RoleClass.LEADER.getCode())) {
+    		// 所属長の場合、所属メンバーの週報を取得
+    		weeklyReportList = weeklyReportsService.findMyAffiliation(loginUser.getLoginUser().getAffiliation().getAffiliationId());
+    	} else {
+    		// その他の場合、自分の週報を取得
+    		weeklyReportList = weeklyReportsService.findMine(loginUser.getLoginUser().getUserId());
+    	}
         model.addAttribute("weeklyReportList", weeklyReportList);
 
+        // 営業以外は自分の所属をデフォルト表示
         // 所属プルダウン
         List<Affiliations> affiliationList = affiliationsService.findAll();
         model.addAttribute("affiliationList", affiliationList);
@@ -84,12 +101,7 @@ public class WeeklyReportsController {
         }
         model.addAttribute("reportDateList", reportDateList);
 
-        // 権限（営業のみ）
-        boolean isConfirmer = false;
-        if (loginUser.getLoginUser().getSalesFlg().equals("1")) {
-            isConfirmer = true;
-        }
-        session.setAttribute("session_isConfirmer", isConfirmer);
+
         model.addAttribute("isConfirmer", isConfirmer);
         model.addAttribute("loginUserInfo", loginUser.getLoginUser());
         return "weekly-report/list";
@@ -101,7 +113,7 @@ public class WeeklyReportsController {
         List<WeeklyReports> weeklyReportList = weeklyReportsService.findBySearchForm(searchWeeklyReportForm);
         model.addAttribute("weeklyReportList", weeklyReportList);
 
-        // 所属プルダウン
+        // 所属プルダウン★
         List<Affiliations> affiliationList = affiliationsService.findAll();
         model.addAttribute("affiliationList", affiliationList);
 

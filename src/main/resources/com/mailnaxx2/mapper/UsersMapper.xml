@@ -7,15 +7,18 @@
     <!-- ログイン -->
     <select id="findLoginUser" resultMap="userMap">
         SELECT
-            user_id,
-            user_number,
-            user_name,
-            role_class,
-            sales_flg,
-            password,
-            last_login_date
+            u.user_id,
+            u.user_number,
+            u.user_name,
+			a.affiliation_id,
+            u.role_class,
+            u.sales_flg,
+            u.password,
+            u.last_login_date
         FROM
-            users
+            users u
+		INNER JOIN affiliations a
+            ON u.affiliation_id = a.affiliation_id
         WHERE
             user_number = #{userNumber}
     </select>

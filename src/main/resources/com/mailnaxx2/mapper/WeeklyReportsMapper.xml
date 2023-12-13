@@ -21,7 +21,51 @@
         WHERE
             w.confirmed_flg = '0'
         AND p.deleted_flg = '0'
-        ORDER BY u.user_number, w.weekly_report_id
+        ORDER BY u.user_number, w.weekly_report_id, w.report_date DESC
+    </select>
+
+	<!-- 所属メンバーの週報取得 -->
+    <select id="findMyAffiliation" resultMap="weeklyReportMap">
+        SELECT
+            w.weekly_report_id,
+            w.report_date,
+            w.confirmed_flg,
+            u.user_id AS my_user_id,
+            u.user_number AS my_user_number,
+            u.user_name AS my_user_name
+        FROM weekly_reports w
+        INNER JOIN users u
+            ON w.user_id = u.user_id
+		INNER JOIN affiliations a
+            ON u.affiliation_id = a.affiliation_id
+        INNER JOIN projects p
+            ON w.project_id = p.project_id
+        WHERE
+            w.confirmed_flg = '0'
+        AND p.deleted_flg = '0'
+		AND u.affiliation_id = #{affiliationId}
+        ORDER BY u.user_number, w.weekly_report_id, w.report_date DESC
+    </select>
+
+	<!-- 自分の週報取得 -->
+    <select id="findMine" resultMap="weeklyReportMap">
+        SELECT
+            w.weekly_report_id,
+            w.report_date,
+            w.confirmed_flg,
+            u.user_id AS my_user_id,
+            u.user_number AS my_user_number,
+            u.user_name AS my_user_name
+        FROM weekly_reports w
+        INNER JOIN users u
+            ON w.user_id = u.user_id
+        INNER JOIN projects p
+            ON w.project_id = p.project_id
+        WHERE
+            w.confirmed_flg = '0'
+        AND p.deleted_flg = '0'
+		AND w.user_id = #{userId}
+        ORDER BY u.user_number, w.weekly_report_id, w.report_date DESC
     </select>
 
     <!-- 検索 -->
@@ -218,6 +262,12 @@
         <result property="userId" column="user_id" />
         <result property="userNumber" column="user_number" />
         <result property="userName" column="user_name" />
+		<association property="affiliation" resultMap="affiliationResult"/>
+    </resultMap>
+
+	<resultMap id="affiliationResult" type="com.mailnaxx2.entity.Affiliations">
+        <result property="affiliationId" column="affiliation_id" />
+        <result property="affiliationName" column="affiliation_name" />
     </resultMap>
 
     <resultMap id="salesUserResult" type="com.mailnaxx2.entity.Users">
