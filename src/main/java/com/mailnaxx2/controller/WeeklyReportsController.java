@@ -67,6 +67,10 @@ public class WeeklyReportsController {
             isConfirmer = true;
         }
         session.setAttribute("session_isConfirmer", isConfirmer);
+        model.addAttribute("isConfirmer", isConfirmer);
+
+        // 自分の所属
+        int myAffiliation = loginUser.getLoginUser().getAffiliation().getAffiliationId();
 
     	List<WeeklyReports> weeklyReportList = null;
         // 営業の場合、週報を全件取得
@@ -74,17 +78,20 @@ public class WeeklyReportsController {
     		weeklyReportList = weeklyReportsService.findAll();
     	} else if (loginUser.getLoginUser().getRoleClass().equals(RoleClass.LEADER.getCode())) {
     		// 所属長の場合、所属メンバーの週報を取得
-    		weeklyReportList = weeklyReportsService.findMyAffiliation(loginUser.getLoginUser().getAffiliation().getAffiliationId());
+    		weeklyReportList = weeklyReportsService.findMyAffiliation(myAffiliation);
     	} else {
     		// その他の場合、自分の週報を取得
     		weeklyReportList = weeklyReportsService.findMine(loginUser.getLoginUser().getUserId());
     	}
         model.addAttribute("weeklyReportList", weeklyReportList);
 
-        // 営業以外は自分の所属をデフォルト表示
         // 所属プルダウン
         List<Affiliations> affiliationList = affiliationsService.findAll();
         model.addAttribute("affiliationList", affiliationList);
+        // 営業以外は自分の所属をデフォルト表示
+        if (!isConfirmer) {
+        	searchWeeklyReportForm.setAffiliationId(myAffiliation);
+        }
 
         // 担当営業プルダウン
         List<Projects> projectList = projectsService.findAll();
@@ -101,8 +108,6 @@ public class WeeklyReportsController {
         }
         model.addAttribute("reportDateList", reportDateList);
 
-
-        model.addAttribute("isConfirmer", isConfirmer);
         model.addAttribute("loginUserInfo", loginUser.getLoginUser());
         return "weekly-report/list";
     }
