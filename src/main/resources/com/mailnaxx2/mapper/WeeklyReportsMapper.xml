@@ -318,9 +318,7 @@
 			improvements,
             next_plan,
             remarks,
-			confirmed_flg,
             comment,
-            shared_flg,
             created_by,
             created_at
         )
@@ -342,9 +340,7 @@
             #{improvements},
             #{nextPlan},
             #{remarks},
-			#{confirmedFlg},
             #{comment},
-            #{sharedFlg},
             #{createdBy},
             CURRENT_TIMESTAMP
         )
