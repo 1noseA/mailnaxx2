@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,12 +29,14 @@ import com.mailnaxx2.entity.Users;
 import com.mailnaxx2.entity.WeeklyReports;
 import com.mailnaxx2.form.SearchWeeklyReportForm;
 import com.mailnaxx2.form.SelectForm;
+import com.mailnaxx2.form.UsersForm;
 import com.mailnaxx2.form.WeeklyReportForm;
 import com.mailnaxx2.security.LoginUserDetails;
 import com.mailnaxx2.service.AffiliationsService;
 import com.mailnaxx2.service.ProjectsService;
 import com.mailnaxx2.service.UsersService;
 import com.mailnaxx2.service.WeeklyReportsService;
+import com.mailnaxx2.validation.All;
 import com.mailnaxx2.values.RoleClass;
 
 @Controller
@@ -219,10 +223,11 @@ public class WeeklyReportsController {
         return detail(weeklyReportId, model, loginUser);
     }
 
-    // 登録画面初期表示
+    // 作成画面初期表示
     @SuppressWarnings("unchecked")
 	@GetMapping("/weekly-report/create")
-    public String create(Model model,
+    public String create(@ModelAttribute WeeklyReportForm weeklyReportForm,
+    					Model model,
     					@AuthenticationPrincipal LoginUserDetails loginUser) {
 
         // 担当営業プルダウン
@@ -237,11 +242,10 @@ public class WeeklyReportsController {
         // 現在日付を取得
         LocalDate now = LocalDate.now();
         // 現在日の週の月曜日を取得
-        LocalDate monday = now.with(DayOfWeek.MONDAY);
+        LocalDate reportDate = now.with(DayOfWeek.MONDAY);
         // 現在日の週の日曜日を取得
-        LocalDate sunday = now.with(DayOfWeek.SUNDAY);
-        String reportDate =
-                monday.format(DateTimeFormatter.ofPattern("yyyy/MM/dd(E)")) + " 〜 " + sunday.format(DateTimeFormatter.ofPattern("yyyy/MM/dd(E)"));
+        //LocalDate sunday = now.with(DayOfWeek.SUNDAY);
+        //LocalDate reportDate = monday.format(DateTimeFormatter.ofPattern("yyyy/MM/dd(E)")) + " 〜 " + sunday.format(DateTimeFormatter.ofPattern("yyyy/MM/dd(E)"));
         model.addAttribute("reportDate", reportDate);
 
         // ラジオボタン
@@ -262,4 +266,27 @@ public class WeeklyReportsController {
         model.addAttribute("loginUserInfo", loginUser.getLoginUser());
         return "weekly-report/create";
     }
+
+    // 一時保存処理
+    @PostMapping("/weekly-report/save")
+    public String save(@ModelAttribute WeeklyReportForm weeklyReportForm,
+    					Model model,
+    					@AuthenticationPrincipal LoginUserDetails loginUser) {
+        // 入力エラーチェック
+//        if (result.hasErrors()) {
+//            // リダイレクトだと入力エラーの値が引き継がれない
+//            // return "redirect:/user/create";
+//            return create(weeklyReportForm, model, loginUser);
+//        }
+
+        // 登録
+        weeklyReportsService.insert(weeklyReportForm, loginUser);
+
+        return "redirect:/weekly-report/list";
+    }
+
+    // 編集画面初期表示
+    // 更新処理
+    // 提出処理（メール送信）
+    // 物理削除処理
 }

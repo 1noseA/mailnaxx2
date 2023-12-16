@@ -298,4 +298,56 @@
         </foreach>
     </update>
 
+	<!-- 登録 -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="weeklyReportId">
+        INSERT INTO weekly_reports
+        (
+           	user_id,
+            project_id,
+            report_date,
+            ave_overtime_hours,
+            progress,
+            condition,
+            relationship,
+            plan,
+            work_content,
+            difficulty,
+            schedule,
+            result,
+            impression,
+			improvements,
+            next_plan,
+            remarks,
+			confirmed_flg,
+            comment,
+            shared_flg,
+            created_by,
+            created_at
+        )
+        VALUES
+        (
+            #{user.userId},
+            #{project.projectId},
+            #{reportDate},
+            #{aveOvertimeHours},
+            #{progress},
+            #{condition},
+            #{relationship},
+            #{plan},
+            #{workContent},
+            #{difficulty},
+            #{schedule},
+            #{result},
+			#{impression},
+            #{improvements},
+            #{nextPlan},
+            #{remarks},
+			#{confirmedFlg},
+            #{comment},
+            #{sharedFlg},
+            #{createdBy},
+            CURRENT_TIMESTAMP
+        )
+    </insert>
+
 </mapper>

@@ -11,7 +11,7 @@
         <div class="container">
             <div class="title text-center mt-5 p-3">週次報告書</div>
             <div class="formArea mx-auto mb-5">
-                <form method="POST" th:action="@{/weekly-report/create}" th:object="${weeklyReportForm}">
+                <form method="POST" th:action="@{/weekly-report/save}" th:object="${weeklyReportForm}">
                     <div class="row mb-3">
                         <div class="col-6">
                             <label for="salesName" class="col-form-label">担当営業
@@ -217,7 +217,7 @@
 
                     <div class="text-center m-5">
                         <button type="submit" class="btn btnLight">一時保存</button>
-                        <button type="submit" class="btn btnMain ms-3">提出</button>
+                        <!-- <button type="submit" class="btn btnMain ms-3">提出</button> -->
                     </div>
                 </form>
             </div>

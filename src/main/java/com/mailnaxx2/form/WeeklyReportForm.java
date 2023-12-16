@@ -1,5 +1,7 @@
 package com.mailnaxx2.form;
 
+import java.time.LocalDate;
+
 import lombok.Data;
 
 @Data
@@ -12,7 +14,7 @@ public class WeeklyReportForm {
     private int projectId;
 
     // 報告対象週
-    private String reportDate;
+    private LocalDate reportDate;
 
     // 平均残業時間
     private int aveOvertimeHours;

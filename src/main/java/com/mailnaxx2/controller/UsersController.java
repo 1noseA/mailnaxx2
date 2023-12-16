@@ -109,10 +109,8 @@ public class UsersController {
             return create(usersForm, model, loginUser);
         }
 
-        Users user = new Users();
-
         // 登録サービス実行
-        usersService.insert(user, usersForm, loginUser);
+        usersService.insert(usersForm, loginUser);
 
         return "redirect:/user/list";
     }
