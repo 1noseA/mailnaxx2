@@ -20,8 +20,8 @@
                             <select class="form-select" name="salesUserId" id="salesUserId">
                                 <option>選択してください</option>
                                 <option th:each="sales : ${salesList}"
-                                        th:value="${sales.user_name}"
-                                        th:text="${sales.user_name}">
+                                        th:value="${sales.userId}"
+                                        th:text="${sales.userName}">
                                 </option>
                             </select>
                         </div>
@@ -32,8 +32,8 @@
                             <select class="form-select" name="projectId" id="projectId">
                                 <option>選択してください</option>
                                 <option th:each="project : ${projectList}"
-                                        th:value="${project.project_id}"
-                                        th:text="${project.project_name}">
+                                        th:value="${project.projectId}"
+                                        th:text="${project.projectName}">
                                 </option>
                             </select>
                         </div>
@@ -223,7 +223,7 @@
             </div>
             <div class="row mb-5">
                 <div class="col-auto">
-                    <button type="button" class="btn btnBack" onclick="location.href='/user/list'">戻る</button>
+                    <button type="button" class="btn btnBack" onclick="location.href='/weekly-report/list'">戻る</button>
                 </div>
             </div>
         </div>

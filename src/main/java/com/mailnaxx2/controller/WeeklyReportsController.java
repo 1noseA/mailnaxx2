@@ -58,11 +58,31 @@ public class WeeklyReportsController {
         return new WeeklyReportForm();
     }
 
+    // 確認権限
+    boolean isConfirmer;
+
+    // 週報一覧
+    List<WeeklyReports> weeklyReportList;
+
+    // 所属プルダウン
+    List<Affiliations> affiliationList;
+
+    // 担当営業プルダウン
+    Set<Users> salesList;
+
+    // 現場プルダウン
+    List<Projects> projectList;
+
+    // 報告対象週プルダウン
+    Set<LocalDate> reportDateList;
+
     // 一覧画面初期表示
     @RequestMapping("/weekly-report/list")
-    public String index(SearchWeeklyReportForm searchWeeklyReportForm, Model model, @AuthenticationPrincipal LoginUserDetails loginUser) {
+    public String index(SearchWeeklyReportForm searchWeeklyReportForm,
+    					Model model,
+    					@AuthenticationPrincipal LoginUserDetails loginUser) {
     	// 権限（営業のみ）
-        boolean isConfirmer = false;
+        isConfirmer = false;
         if (loginUser.getLoginUser().getSalesFlg().equals("1")) {
             isConfirmer = true;
         }
@@ -72,9 +92,9 @@ public class WeeklyReportsController {
         // 自分の所属
         int myAffiliation = loginUser.getLoginUser().getAffiliation().getAffiliationId();
 
-    	List<WeeklyReports> weeklyReportList = null;
-        // 営業の場合、週報を全件取得
+        // 週報一覧
     	if (isConfirmer) {
+    		// 営業の場合、週報を全件取得
     		weeklyReportList = weeklyReportsService.findAll();
     	} else if (loginUser.getLoginUser().getRoleClass().equals(RoleClass.LEADER.getCode())) {
     		// 所属長の場合、所属メンバーの週報を取得
@@ -86,7 +106,8 @@ public class WeeklyReportsController {
         model.addAttribute("weeklyReportList", weeklyReportList);
 
         // 所属プルダウン
-        List<Affiliations> affiliationList = affiliationsService.findAll();
+        affiliationList = affiliationsService.findAll();
+        session.setAttribute("session_affiliationList", affiliationList);
         model.addAttribute("affiliationList", affiliationList);
         // 営業以外は自分の所属をデフォルト表示
         if (!isConfirmer) {
@@ -94,18 +115,21 @@ public class WeeklyReportsController {
         }
 
         // 担当営業プルダウン
-        List<Projects> projectList = projectsService.findAll();
-        Set<Users> salesList = new LinkedHashSet<>();
+        projectList = projectsService.findAll();
+        session.setAttribute("session_projectList", projectList);
+        salesList = new LinkedHashSet<>();
         for (Projects p : projectList) {
             salesList.add(p.getSalesUser());
         }
+        session.setAttribute("session_salesList", salesList);
         model.addAttribute("salesList", salesList);
 
         // 報告対象週プルダウン
-        Set<LocalDate> reportDateList = new LinkedHashSet<>();
+        reportDateList = new LinkedHashSet<>();
         for (WeeklyReports w : weeklyReportList) {
             reportDateList.add(w.getReportDate());
         }
+        session.setAttribute("session_reportDateList", reportDateList);
         model.addAttribute("reportDateList", reportDateList);
 
         model.addAttribute("loginUserInfo", loginUser.getLoginUser());
@@ -113,33 +137,29 @@ public class WeeklyReportsController {
     }
 
     // 検索処理
-    @PostMapping("/weekly-report/search")
-    public String search(SearchWeeklyReportForm searchWeeklyReportForm, Model model, @AuthenticationPrincipal LoginUserDetails loginUser) {
-        List<WeeklyReports> weeklyReportList = weeklyReportsService.findBySearchForm(searchWeeklyReportForm);
+    @SuppressWarnings("unchecked")
+	@PostMapping("/weekly-report/search")
+    public String search(SearchWeeklyReportForm searchWeeklyReportForm,
+    					Model model,
+    					@AuthenticationPrincipal LoginUserDetails loginUser) {
+    	// 週報一覧
+        weeklyReportList = weeklyReportsService.findBySearchForm(searchWeeklyReportForm);
         model.addAttribute("weeklyReportList", weeklyReportList);
 
-        // 所属プルダウン★
-        List<Affiliations> affiliationList = affiliationsService.findAll();
+        // 所属プルダウン
+        affiliationList = (List<Affiliations>) session.getAttribute("session_affiliationList");
         model.addAttribute("affiliationList", affiliationList);
 
         // 担当営業プルダウン
-        List<Projects> projectList = projectsService.findAll();
-        Set<Users> salesList = new LinkedHashSet<>();
-        for (Projects p : projectList) {
-            salesList.add(p.getSalesUser());
-        }
+        salesList = (Set<Users>) session.getAttribute("session_salesList");
         model.addAttribute("salesList", salesList);
 
         // 報告対象週プルダウン
-        List<WeeklyReports> list = weeklyReportsService.findAll();
-        Set<LocalDate> reportDateList = new LinkedHashSet<>();
-        for (WeeklyReports w : list) {
-            reportDateList.add(w.getReportDate());
-        }
+        reportDateList = (Set<LocalDate>) session.getAttribute("session_reportDateList");
         model.addAttribute("reportDateList", reportDateList);
 
         // 権限（営業のみ）
-        boolean isConfirmer = (boolean) session.getAttribute("session_isConfirmer");
+        isConfirmer = (boolean) session.getAttribute("session_isConfirmer");
         model.addAttribute("isConfirmer", isConfirmer);
         model.addAttribute("loginUserInfo", loginUser.getLoginUser());
         return "weekly-report/list";
@@ -147,7 +167,10 @@ public class WeeklyReportsController {
 
     // 一括確認処理（営業のみ）
     @PostMapping("/weekly-report/bulkConfirm")
-    public String bulkConfirm(@ModelAttribute SelectForm selectForm, SearchWeeklyReportForm searchWeeklyReportForm, Model model, @AuthenticationPrincipal LoginUserDetails loginUser) {
+    public String bulkConfirm(@ModelAttribute SelectForm selectForm,
+    						SearchWeeklyReportForm searchWeeklyReportForm,
+    						Model model,
+    						@AuthenticationPrincipal LoginUserDetails loginUser) {
         // 入力チェック
         if (selectForm.getSelectTarget() == null) {
             // エラーメッセージを表示
@@ -168,12 +191,14 @@ public class WeeklyReportsController {
 
     // 詳細画面初期表示
     @PostMapping("/weekly-report/detail")
-    public String detail(int weeklyReportId, Model model, @AuthenticationPrincipal LoginUserDetails loginUser) {
+    public String detail(int weeklyReportId,
+    					Model model,
+    					@AuthenticationPrincipal LoginUserDetails loginUser) {
         WeeklyReports weeklyReportInfo = weeklyReportsService.findById(weeklyReportId);
         model.addAttribute("weeklyReportInfo", weeklyReportInfo);
 
         // 権限
-        boolean isConfirmer = (boolean) session.getAttribute("session_isConfirmer");
+        isConfirmer = (boolean) session.getAttribute("session_isConfirmer");
         model.addAttribute("isConfirmer", isConfirmer);
         model.addAttribute("loginUserInfo", loginUser.getLoginUser());
         return "weekly-report/detail";
@@ -181,7 +206,9 @@ public class WeeklyReportsController {
 
     // 確認処理（営業のみ）
     @PostMapping("/weekly-report/confirm")
-    public String confirm(int weeklyReportId, Model model, @AuthenticationPrincipal LoginUserDetails loginUser) {
+    public String confirm(int weeklyReportId,
+    					Model model,
+    					@AuthenticationPrincipal LoginUserDetails loginUser) {
         // 権限チェック
         if (loginUser.getLoginUser().getSalesFlg().equals("1")) {
             weeklyReportsService.confirm(weeklyReportId, loginUser);
@@ -193,18 +220,17 @@ public class WeeklyReportsController {
     }
 
     // 登録画面初期表示
-    @GetMapping("/weekly-report/create")
-    public String create(Model model, @AuthenticationPrincipal LoginUserDetails loginUser) {
+    @SuppressWarnings("unchecked")
+	@GetMapping("/weekly-report/create")
+    public String create(Model model,
+    					@AuthenticationPrincipal LoginUserDetails loginUser) {
 
         // 担当営業プルダウン
-        List<Projects> projectList = projectsService.findAll();
-        Set<Users> salesList = new HashSet<>();
-        for (Projects p : projectList) {
-            salesList.add(p.getSalesUser());
-        }
+    	salesList = (Set<Users>) session.getAttribute("session_salesList");
         model.addAttribute("salesList", salesList);
 
         // 現場プルダウン
+        projectList = (List<Projects>) session.getAttribute("session_projectList");
         model.addAttribute("projectList", projectList);
 
         // 報告対象週ラベル
