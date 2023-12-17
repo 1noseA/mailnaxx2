@@ -100,12 +100,17 @@ public class WeeklyReportsController {
     	if (isConfirmer) {
     		// 営業の場合、週報を全件取得
     		weeklyReportList = weeklyReportsService.findAll();
-    	} else if (loginUser.getLoginUser().getRoleClass().equals(RoleClass.LEADER.getCode())) {
-    		// 所属長の場合、所属メンバーの週報を取得
-    		weeklyReportList = weeklyReportsService.findMyAffiliation(myAffiliation);
     	} else {
-    		// その他の場合、自分の週報を取得
-    		weeklyReportList = weeklyReportsService.findMine(loginUser.getLoginUser().getUserId());
+    		// 営業以外は自分の所属をデフォルト表示
+    		searchWeeklyReportForm.setAffiliationId(myAffiliation);
+    		if (loginUser.getLoginUser().getRoleClass().equals(RoleClass.LEADER.getCode())) {
+        		// 所属長の場合、所属メンバーの週報を取得
+        		weeklyReportList = weeklyReportsService.findMyAffiliation(myAffiliation);
+        	} else {
+        		// その他の場合、自分の週報を取得
+        		weeklyReportList = weeklyReportsService.findMine(loginUser.getLoginUser().getUserId());
+        		searchWeeklyReportForm.setUserName(loginUser.getLoginUser().getUserName());
+        	}
     	}
         model.addAttribute("weeklyReportList", weeklyReportList);
 
@@ -113,10 +118,6 @@ public class WeeklyReportsController {
         affiliationList = affiliationsService.findAll();
         session.setAttribute("session_affiliationList", affiliationList);
         model.addAttribute("affiliationList", affiliationList);
-        // 営業以外は自分の所属をデフォルト表示
-        if (!isConfirmer) {
-        	searchWeeklyReportForm.setAffiliationId(myAffiliation);
-        }
 
         // 担当営業プルダウン
         projectList = projectsService.findAll();
