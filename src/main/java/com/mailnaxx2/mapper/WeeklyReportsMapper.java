@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 
 import com.mailnaxx2.entity.Affiliations;
+import com.mailnaxx2.entity.Users;
 import com.mailnaxx2.entity.WeeklyReports;
 import com.mailnaxx2.form.SearchWeeklyReportForm;
 
@@ -33,11 +34,14 @@ public interface WeeklyReportsMapper {
     public List<WeeklyReports> forLockByIdList(List<Integer> idList);
 
     // 確認
-    public void confirm(WeeklyReports weeklyReports);
+    public void confirm(WeeklyReports weeklyReport);
 
     // 一括確認
     public void bulkConfirm(List<WeeklyReports> weeklyReportList);
 
     // 登録
-    public void insert(WeeklyReports weeklyReports);
+    public void insert(WeeklyReports weeklyReport);
+
+    // 更新
+    public void update(WeeklyReports weeklyReport);
 }

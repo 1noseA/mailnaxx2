@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -23,6 +24,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.mailnaxx2.constants.CommonConstants;
+import com.mailnaxx2.constants.UserConstants;
 import com.mailnaxx2.entity.Affiliations;
 import com.mailnaxx2.entity.Projects;
 import com.mailnaxx2.entity.Users;
@@ -37,6 +40,7 @@ import com.mailnaxx2.service.ProjectsService;
 import com.mailnaxx2.service.UsersService;
 import com.mailnaxx2.service.WeeklyReportsService;
 import com.mailnaxx2.validation.All;
+import com.mailnaxx2.validation.GroupOrder;
 import com.mailnaxx2.values.RoleClass;
 
 @Controller
@@ -79,6 +83,9 @@ public class WeeklyReportsController {
 
     // 報告対象週プルダウン
     Set<LocalDate> reportDateList;
+
+    // 週報詳細
+    WeeklyReports weeklyReportInfo;
 
     // 一覧画面初期表示
     @RequestMapping("/weekly-report/list")
@@ -199,7 +206,7 @@ public class WeeklyReportsController {
     public String detail(int weeklyReportId,
     					Model model,
     					@AuthenticationPrincipal LoginUserDetails loginUser) {
-        WeeklyReports weeklyReportInfo = weeklyReportsService.findById(weeklyReportId);
+        weeklyReportInfo = weeklyReportsService.findById(weeklyReportId);
         model.addAttribute("weeklyReportInfo", weeklyReportInfo);
 
         // 権限
@@ -244,9 +251,6 @@ public class WeeklyReportsController {
         LocalDate now = LocalDate.now();
         // 現在日の週の月曜日を取得
         LocalDate reportDate = now.with(DayOfWeek.MONDAY);
-        // 現在日の週の日曜日を取得
-        //LocalDate sunday = now.with(DayOfWeek.SUNDAY);
-        //LocalDate reportDate = monday.format(DateTimeFormatter.ofPattern("yyyy/MM/dd(E)")) + " 〜 " + sunday.format(DateTimeFormatter.ofPattern("yyyy/MM/dd(E)"));
         model.addAttribute("reportDate", reportDate);
 
         // ラジオボタン
@@ -287,7 +291,89 @@ public class WeeklyReportsController {
     }
 
     // 編集画面初期表示
+    @SuppressWarnings("unchecked")
+	@PostMapping("/weekly-report/edit")
+    public String edit(int weeklyReportId,
+    				@ModelAttribute WeeklyReportForm weeklyReportForm,
+    				Model model,
+    				@AuthenticationPrincipal LoginUserDetails loginUser) {
+    	weeklyReportInfo = weeklyReportsService.findById(weeklyReportId);
+        model.addAttribute("weeklyReportId", weeklyReportId);
+
+        // Formクラスに設定
+        weeklyReportForm.setSalesUserId(weeklyReportInfo.getProject().getSalesUser().getUserId());
+        weeklyReportForm.setProjectId(weeklyReportInfo.getProject().getProjectId());
+        weeklyReportForm.setReportDate(weeklyReportInfo.getReportDate());
+        weeklyReportForm.setAveOvertimeHours(weeklyReportInfo.getAveOvertimeHours());
+        weeklyReportForm.setProgress(weeklyReportInfo.getProgress());
+        weeklyReportForm.setCondition(weeklyReportInfo.getCondition());
+        weeklyReportForm.setRelationship(weeklyReportInfo.getRelationship());
+        weeklyReportForm.setPlan(weeklyReportInfo.getPlan());
+        weeklyReportForm.setWorkContent(weeklyReportInfo.getWorkContent());
+        weeklyReportForm.setDifficulty(weeklyReportInfo.getDifficulty());
+        weeklyReportForm.setSchedule(weeklyReportInfo.getSchedule());
+        weeklyReportForm.setResult(weeklyReportInfo.getResult());
+        weeklyReportForm.setImpression(weeklyReportInfo.getImpression());
+        weeklyReportForm.setImprovements(weeklyReportInfo.getImprovements());
+        weeklyReportForm.setNextPlan(weeklyReportInfo.getNextPlan());
+        weeklyReportForm.setRemarks(weeklyReportInfo.getRemarks());
+
+        // 担当営業プルダウン
+    	salesList = (Set<Users>) session.getAttribute("session_salesList");
+        model.addAttribute("salesList", salesList);
+
+        // 現場プルダウン
+        projectList = (List<Projects>) session.getAttribute("session_projectList");
+        model.addAttribute("projectList", projectList);
+
+        // 報告対象週ラベル
+        // 現在日付を取得
+        LocalDate now = LocalDate.now();
+        // 現在日の週の月曜日を取得
+        LocalDate reportDate = now.with(DayOfWeek.MONDAY);
+        model.addAttribute("reportDate", reportDate);
+
+        // ラジオボタン
+        Map<String, String> radioThree = new LinkedHashMap<>();
+        radioThree.put("1", "良い");
+        radioThree.put("2", "やや良い");
+        radioThree.put("3", "普通");
+        radioThree.put("4", "やや悪い");
+        radioThree.put("5", "悪い");
+        model.addAttribute("radioProgress", radioThree);
+        model.addAttribute("radioCondition", radioThree);
+        model.addAttribute("radioRelationship", radioThree);
+
+        // 現場社員プルダウン
+        List<Users> userList = usersService.findAll();
+        model.addAttribute("userList", userList);
+
+        model.addAttribute("loginUserInfo", loginUser.getLoginUser());
+        return "weekly-report/create";
+    }
+
     // 更新処理
+    @Transactional
+    @PostMapping("/weekly-report/update")
+    public String update(int weeklyReportId,
+    					@ModelAttribute @Validated(GroupOrder.class) WeeklyReportForm weeklyReportForm,
+    					BindingResult result,
+    					Model model,
+    					@AuthenticationPrincipal LoginUserDetails loginUser) {
+        // 入力エラーチェック
+        if (result.hasErrors()) {
+            return "weekly-report/create";
+        }
+
+        WeeklyReports weeklyReport = new WeeklyReports();
+        weeklyReport.setWeeklyReportId(weeklyReportId);
+
+        // 更新
+        weeklyReportsService.update(weeklyReport, weeklyReportForm, loginUser);
+
+        return "redirect:/weekly-report/list";
+    }
+
     // 提出処理（メール送信）
     // 物理削除処理
 }

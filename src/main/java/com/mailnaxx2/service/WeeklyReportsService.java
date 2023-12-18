@@ -1,10 +1,12 @@
 package com.mailnaxx2.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +15,7 @@ import com.mailnaxx2.entity.Users;
 import com.mailnaxx2.entity.WeeklyReports;
 import com.mailnaxx2.form.SearchWeeklyReportForm;
 import com.mailnaxx2.form.SelectForm;
+import com.mailnaxx2.form.UsersForm;
 import com.mailnaxx2.form.WeeklyReportForm;
 import com.mailnaxx2.mapper.WeeklyReportsMapper;
 import com.mailnaxx2.security.LoginUserDetails;
@@ -110,6 +113,21 @@ public class WeeklyReportsService {
     }
 
     // 更新処理
+    @Transactional
+    public void update(WeeklyReports weeklyReport, WeeklyReportForm weeklyReportForm, @AuthenticationPrincipal LoginUserDetails loginUser) {
+        // 排他ロック
+    	weeklyReport = weeklyReportsMapper.forLockById(weeklyReport.getWeeklyReportId());
+
+        // 入力値をセットする
+    	weeklyReport = setWeeklyReportForm(weeklyReport, weeklyReportForm);
+
+        // 更新者はセッションの社員番号
+    	weeklyReport.setUpdatedBy(loginUser.getLoginUser().getUserNumber());
+
+        // 更新
+        weeklyReportsMapper.update(weeklyReport);
+    }
+
     // メール送信処理
 
     // 入力値をセットする

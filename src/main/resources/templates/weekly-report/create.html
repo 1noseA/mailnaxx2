@@ -21,7 +21,8 @@
                                 <option>選択してください</option>
                                 <option th:each="sales : ${salesList}"
                                         th:value="${sales.userId}"
-                                        th:text="${sales.userName}">
+                                        th:text="${sales.userName}"
+                                        th:selected="${sales.userId == weeklyReportForm.salesUserId}">
                                 </option>
                             </select>
                         </div>
@@ -33,7 +34,8 @@
                                 <option>選択してください</option>
                                 <option th:each="project : ${projectList}"
                                         th:value="${project.projectId}"
-                                        th:text="${project.projectName}">
+                                        th:text="${project.projectName}"
+                                        th:selected="${project.projectId == weeklyReportForm.projectId}">
                                 </option>
                             </select>
                         </div>
@@ -42,13 +44,13 @@
                     <div class="row mb-3">
                         <div class="col-6">
                             <label for="reportDate" class="col-form-label">報告対象週</label>
-                            <input type="text" class="form-control" name="reportDate" id="reportDate" th:value="${reportDate}" readonly />
+                            <input type="text" class="form-control" name="reportDate" id="reportDate" th:value="${reportDate}" th:field="*{reportDate}" readonly />
                         </div>
                         <div class="col-6">
                             <label for="aveOvertimeHours" class="col-form-label">平均残業時間
                                 <span class="badge bg-secondary ms-1">必須</span>
                             </label>
-                            <input type="text" class="form-control" placeholder="X時間" name="aveOvertimeHours" id="aveOvertimeHours" />
+                            <input type="text" class="form-control" placeholder="X時間" name="aveOvertimeHours" id="aveOvertimeHours" th:field="*{aveOvertimeHours}" />
                         </div>
                     </div>
 
@@ -59,7 +61,7 @@
                         <div class="col-12">
                             <div th:each="item : ${radioProgress}" class="form-check-inline">
                                 <!-- nameを指定することで1つのみ選択になる -->
-                                <input type="radio" class="form-check-input" name="progress" th:text="${item.value}" th:value="${item.key}" th:checked="${item.key == '3'}">
+                                <input type="radio" class="form-check-input" name="progress" th:text="${item.value}" th:value="${item.key}" th:checked="${item.key == '3'}" th:field="*{progress}">
                             </div>
                         </div>
                     </div>
@@ -70,7 +72,7 @@
                         </div>
                         <div class="col-12">
                             <div th:each="item : ${radioCondition}" class="form-check-inline">
-                                <input type="radio" class="form-check-input" name="condition" th:text="${item.value}" th:value="${item.key}" th:checked="${item.key == '3'}">
+                                <input type="radio" class="form-check-input" name="condition" th:text="${item.value}" th:value="${item.key}" th:checked="${item.key == '3'}" th:field="*{condition}">
                             </div>
                         </div>
                     </div>
@@ -81,7 +83,7 @@
                         </div>
                         <div class="col-12">
                             <div th:each="item : ${radioRelationship}" class="form-check-inline">
-                                <input type="radio" class="form-check-input" name="relationship" th:text="${item.value}" th:value="${item.key}" th:checked="${item.key == '3'}">
+                                <input type="radio" class="form-check-input" name="relationship" th:text="${item.value}" th:value="${item.key}" th:checked="${item.key == '3'}" th:field="*{relationship}">
                             </div>
                         </div>
                     </div>
@@ -91,7 +93,7 @@
                             <label for="plan" class="col-form-label">今週の計画
                                 <span class="badge bg-secondary ms-1">必須</span>
                             </label>
-                            <textarea class="form-control" placeholder="" name="plan" id="plan"></textarea>
+                            <textarea class="form-control" placeholder="" name="plan" id="plan" th:field="*{plan}"></textarea>
                         </div>
                     </div>
 
@@ -100,7 +102,7 @@
                             <label for="workContent" class="col-form-label">作業内容
                                 <span class="badge bg-secondary ms-1">必須</span>
                             </label>
-                            <textarea class="form-control" placeholder="" name="workContent" id="workContent"></textarea>
+                            <textarea class="form-control" placeholder="" name="workContent" id="workContent" th:field="*{workContent}"></textarea>
                         </div>
                     </div>
 
@@ -109,13 +111,13 @@
                             <label for="difficulty" class="col-form-label">難易度
                                 <span class="badge bg-secondary ms-1">必須</span>
                             </label>
-                            <input type="text" class="form-control" placeholder="基準：100" name="difficulty" id="difficulty" />
+                            <input type="text" class="form-control" placeholder="基準：100" name="difficulty" id="difficulty" th:field="*{difficulty}" />
                         </div>
                         <div class="col-6">
                             <label for="schedule" class="col-form-label">スケジュール感
                                 <span class="badge bg-secondary ms-1">必須</span>
                             </label>
-                            <input type="text" class="form-control" placeholder="基準：100" name="schedule" id="schedule" />
+                            <input type="text" class="form-control" placeholder="基準：100" name="schedule" id="schedule" th:field="*{schedule}" />
                         </div>
                     </div>
 
@@ -124,7 +126,7 @@
                             <label for="result" class="col-form-label">結果
                                 <span class="badge bg-secondary ms-1">必須</span>
                             </label>
-                            <textarea class="form-control" placeholder="" name="result" id="result"></textarea>
+                            <textarea class="form-control" placeholder="" name="result" id="result" th:field="*{result}"></textarea>
                         </div>
                     </div>
 
@@ -133,14 +135,14 @@
                             <label for="impression" class="col-form-label">所感
                                 <span class="badge bg-secondary ms-1">必須</span>
                             </label>
-                            <textarea class="form-control" placeholder="" name="impression" id="impression"></textarea>
+                            <textarea class="form-control" placeholder="" name="impression" id="impression" th:field="*{impression}"></textarea>
                         </div>
                     </div>
 
                     <div class="row mb-3">
                         <div class="col-12">
                             <label for="improvements" class="col-form-label">改善点</label>
-                            <textarea class="form-control" placeholder="" name="improvements" id="improvements"></textarea>
+                            <textarea class="form-control" placeholder="" name="improvements" id="improvements" th:field="*{improvements}"></textarea>
                         </div>
                     </div>
 
@@ -149,14 +151,14 @@
                             <label for="nextPlan" class="col-form-label">次週の計画
                                 <span class="badge bg-secondary ms-1">必須</span>
                             </label>
-                            <textarea class="form-control" placeholder="" name="nextPlan" id="nextPlan"></textarea>
+                            <textarea class="form-control" placeholder="" name="nextPlan" id="nextPlan" th:field="*{nextPlan}"></textarea>
                         </div>
                     </div>
 
                     <div class="row mb-3">
                         <div class="col-12">
                             <label for="remarks" class="col-form-label">特記事項</label>
-                            <textarea class="form-control" placeholder="営業に関する情報、困っていることなど" name="remarks" id="remarks"></textarea>
+                            <textarea class="form-control" placeholder="営業に関する情報、困っていることなど" name="remarks" id="remarks" th:field="*{remarks}"></textarea>
                         </div>
                     </div>
 
@@ -216,7 +218,12 @@
                     <!-- モーダルここまで -->
 
                     <div class="text-center m-5">
-                        <button type="submit" class="btn btnLight">一時保存</button>
+                    	<th:block th:if="${weeklyReportId == 0}">
+                        	<button type="submit" class="btn btnLight">一時保存</button>
+                        </th:block>
+                        <th:block th:unless="${weeklyReportId == 0}">
+                        	<button type="submit" class="btn btnMain" th:formaction="@{/weekly-report/update}" th:value="${weeklyReportId}" name="weeklyReportId">更新</button>
+                        </th:block>
                         <!-- <button type="submit" class="btn btnMain ms-3">提出</button> -->
                     </div>
                 </form>
