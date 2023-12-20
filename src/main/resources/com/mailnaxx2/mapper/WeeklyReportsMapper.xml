@@ -150,6 +150,7 @@
     <select id="forLockById" resultMap="weeklyReportMap">
         SELECT
             w.weekly_report_id,
+			u1.user_id AS my_user_id,
             u1.user_number AS my_user_number,
             u1.user_name AS my_user_name,
             u2.user_name AS sales_user_name,
@@ -188,6 +189,7 @@
     <select id="forLockByIdList" resultMap="weeklyReportMap">
         SELECT
             w.weekly_report_id,
+			u1.user_id AS my_user_id,
             u1.user_number AS my_user_number,
             u1.user_name AS my_user_name,
             u2.user_name AS sales_user_name,
