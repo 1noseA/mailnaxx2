@@ -212,6 +212,12 @@ public class WeeklyReportsController {
         // 権限
         isConfirmer = (boolean) session.getAttribute("session_isConfirmer");
         model.addAttribute("isConfirmer", isConfirmer);
+        boolean isAuthenticated = false;
+        // 自分の週報の場合
+        if (weeklyReportInfo.getUser().getUserId() == loginUser.getLoginUser().getUserId()) {
+        	isAuthenticated = true;
+        }
+		model.addAttribute("isAuthenticated", isAuthenticated);
         model.addAttribute("loginUserInfo", loginUser.getLoginUser());
         return "weekly-report/detail";
     }
