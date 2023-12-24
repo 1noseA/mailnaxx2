@@ -61,10 +61,10 @@ public class WeeklyReportsController {
     @Autowired
     ProjectsService projectsService;
 
-    @ModelAttribute
-    WeeklyReportForm setUpForm() {
-        return new WeeklyReportForm();
-    }
+//    @ModelAttribute
+//    WeeklyReportForm setUpForm() {
+//        return new WeeklyReportForm();
+//    }
 
     // 確認権限
     boolean isConfirmer;
@@ -243,7 +243,6 @@ public class WeeklyReportsController {
     public String create(@ModelAttribute WeeklyReportForm weeklyReportForm,
     					Model model,
     					@AuthenticationPrincipal LoginUserDetails loginUser) {
-
         // 担当営業プルダウン
     	salesList = (Set<Users>) session.getAttribute("session_salesList");
         model.addAttribute("salesList", salesList);
@@ -257,7 +256,9 @@ public class WeeklyReportsController {
         LocalDate now = LocalDate.now();
         // 現在日の週の月曜日を取得
         LocalDate reportDate = now.with(DayOfWeek.MONDAY);
-        model.addAttribute("reportDate", reportDate);
+        //String strReportDate = reportDate.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
+        weeklyReportForm.setReportDate(reportDate);
+        //model.addAttribute("reportDate", strReportDate);
 
         // ラジオボタン
         Map<String, String> radioThree = new LinkedHashMap<>();
@@ -270,25 +271,29 @@ public class WeeklyReportsController {
         model.addAttribute("radioCondition", radioThree);
         model.addAttribute("radioRelationship", radioThree);
 
+        // 初期値
+        weeklyReportForm.setDifficulty(100);
+        weeklyReportForm.setSchedule(100);
+
         // 現場社員プルダウン
         List<Users> userList = usersService.findAll();
         model.addAttribute("userList", userList);
 
+        model.addAttribute("weeklyReportId", 0);
         model.addAttribute("loginUserInfo", loginUser.getLoginUser());
         return "weekly-report/create";
     }
 
     // 一時保存処理
     @PostMapping("/weekly-report/save")
-    public String save(@ModelAttribute WeeklyReportForm weeklyReportForm,
+    public String save(@ModelAttribute @Validated(GroupOrder.class) WeeklyReportForm weeklyReportForm,
+    					BindingResult result,
     					Model model,
     					@AuthenticationPrincipal LoginUserDetails loginUser) {
         // 入力エラーチェック
-//        if (result.hasErrors()) {
-//            // リダイレクトだと入力エラーの値が引き継がれない
-//            // return "redirect:/user/create";
-//            return create(weeklyReportForm, model, loginUser);
-//        }
+        if (result.hasErrors()) {
+            return create(weeklyReportForm, model, loginUser);
+        }
 
         // 登録
         weeklyReportsService.insert(weeklyReportForm, loginUser);
@@ -331,13 +336,6 @@ public class WeeklyReportsController {
         // 現場プルダウン
         projectList = (List<Projects>) session.getAttribute("session_projectList");
         model.addAttribute("projectList", projectList);
-
-        // 報告対象週ラベル
-        // 現在日付を取得
-        LocalDate now = LocalDate.now();
-        // 現在日の週の月曜日を取得
-        LocalDate reportDate = now.with(DayOfWeek.MONDAY);
-        model.addAttribute("reportDate", reportDate);
 
         // ラジオボタン
         Map<String, String> radioThree = new LinkedHashMap<>();

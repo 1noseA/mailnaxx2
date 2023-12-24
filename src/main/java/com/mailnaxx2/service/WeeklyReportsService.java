@@ -1,12 +1,10 @@
 package com.mailnaxx2.service;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,7 +13,6 @@ import com.mailnaxx2.entity.Users;
 import com.mailnaxx2.entity.WeeklyReports;
 import com.mailnaxx2.form.SearchWeeklyReportForm;
 import com.mailnaxx2.form.SelectForm;
-import com.mailnaxx2.form.UsersForm;
 import com.mailnaxx2.form.WeeklyReportForm;
 import com.mailnaxx2.mapper.WeeklyReportsMapper;
 import com.mailnaxx2.security.LoginUserDetails;
@@ -135,6 +132,9 @@ public class WeeklyReportsService {
     	// 現場ID
     	Projects project = new Projects();
     	project.setProjectId(weeklyReportForm.getProjectId());
+    	Users salesUser = new Users();
+    	salesUser.setUserId(weeklyReportForm.getSalesUserId());
+    	project.setSalesUser(salesUser);
     	weeklyReport.setProject(project);
 
         // 報告対象週
