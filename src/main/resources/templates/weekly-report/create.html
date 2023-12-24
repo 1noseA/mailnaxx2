@@ -3,6 +3,7 @@
 <head th:replace="common :: meta_header('週報フォーム',~{::link},~{::script})">
 <link rel="stylesheet" th:href="@{/css/weekly-report/create.css}" />
 <script th:src="@{/js/common.js}"></script>
+<script th:src="@{/js/validation.js}"></script>
 </head>
 <body>
     <div th:replace="common :: header"></div>
@@ -17,7 +18,7 @@
                             <label for="salesName" class="col-form-label">担当営業
                                 <span class="badge bg-secondary ms-1">必須</span>
                             </label>
-                            <select class="form-select" name="salesUserId" id="salesUserId">
+                            <select class="form-select" name="salesUserId" id="salesUserId" th:errorclass="is-invalid">
                                 <option value=0>選択してください</option>
                                 <option th:each="sales : ${salesList}"
                                         th:value="${sales.userId}"
@@ -30,7 +31,7 @@
                             <label for="projectId" class="col-form-label">現場
                                 <span class="badge bg-secondary ms-1">必須</span>
                             </label>
-                            <select class="form-select" name="projectId" id="projectId">
+                            <select class="form-select" name="projectId" id="projectId" th:errorclass="is-invalid">
                                 <option value=0>選択してください</option>
                                 <option th:each="project : ${projectList}"
                                         th:value="${project.projectId}"
@@ -50,7 +51,7 @@
                             <label for="aveOvertimeHours" class="col-form-label">平均残業時間（時間）
                                 <span class="badge bg-secondary ms-1">必須</span>
                             </label>
-                            <input type="text" class="form-control" name="aveOvertimeHours" id="aveOvertimeHours" th:field="*{aveOvertimeHours}" />
+                            <input type="text" class="form-control" name="aveOvertimeHours" id="aveOvertimeHours" th:errorclass="is-invalid" th:field="*{aveOvertimeHours}" />
                             <span class="invalid-feedback" th:if="${#fields.hasErrors('aveOvertimeHours')}" th:errors="*{aveOvertimeHours}"></span>
                         </div>
                     </div>
@@ -62,7 +63,7 @@
                         <div class="col-12">
                             <div th:each="item : ${radioProgress}" class="form-check-inline">
                                 <!-- nameを指定することで1つのみ選択になる -->
-                                <input type="radio" class="form-check-input" name="progress" th:text="${item.value}" th:value="${item.key}" th:checked="${item.key == '3'}">
+                                <input type="radio" class="form-check-input" name="progress" th:text="${item.value}" th:value="${item.key}" th:checked="${item.key == '3'}" th:errorclass="is-invalid">
                                 <span class="invalid-feedback" th:if="${#fields.hasErrors('progress')}" th:errors="*{progress}"></span>
                             </div>
                         </div>
@@ -74,7 +75,7 @@
                         </div>
                         <div class="col-12">
                             <div th:each="item : ${radioCondition}" class="form-check-inline">
-                                <input type="radio" class="form-check-input" name="condition" th:text="${item.value}" th:value="${item.key}" th:checked="${item.key == '3'}">
+                                <input type="radio" class="form-check-input" name="condition" th:text="${item.value}" th:value="${item.key}" th:checked="${item.key == '3'}" th:errorclass="is-invalid">
                                 <span class="invalid-feedback" th:if="${#fields.hasErrors('condition')}" th:errors="*{condition}"></span>
                             </div>
                         </div>
@@ -86,7 +87,7 @@
                         </div>
                         <div class="col-12">
                             <div th:each="item : ${radioRelationship}" class="form-check-inline">
-                                <input type="radio" class="form-check-input" name="relationship" th:text="${item.value}" th:value="${item.key}" th:checked="${item.key == '3'}">
+                                <input type="radio" class="form-check-input" name="relationship" th:text="${item.value}" th:value="${item.key}" th:checked="${item.key == '3'}" th:errorclass="is-invalid">
                                 <span class="invalid-feedback" th:if="${#fields.hasErrors('relationship')}" th:errors="*{relationship}"></span>
                             </div>
                         </div>
@@ -97,7 +98,7 @@
                             <label for="plan" class="col-form-label">今週の計画
                                 <span class="badge bg-secondary ms-1">必須</span>
                             </label>
-                            <textarea class="form-control" placeholder="" name="plan" id="plan" th:field="*{plan}"></textarea>
+                            <textarea class="form-control" placeholder="" name="plan" id="plan" th:errorclass="is-invalid" th:field="*{plan}"></textarea>
                             <span class="invalid-feedback" th:if="${#fields.hasErrors('plan')}" th:errors="*{plan}"></span>
                         </div>
                     </div>
@@ -107,7 +108,7 @@
                             <label for="workContent" class="col-form-label">作業内容
                                 <span class="badge bg-secondary ms-1">必須</span>
                             </label>
-                            <textarea class="form-control" placeholder="" name="workContent" id="workContent" th:field="*{workContent}"></textarea>
+                            <textarea class="form-control" placeholder="" name="workContent" id="workContent" th:errorclass="is-invalid" th:field="*{workContent}"></textarea>
                             <span class="invalid-feedback" th:if="${#fields.hasErrors('workContent')}" th:errors="*{workContent}"></span>
                         </div>
                     </div>
@@ -117,14 +118,14 @@
                             <label for="difficulty" class="col-form-label">難易度（基準：100）
                                 <span class="badge bg-secondary ms-1">必須</span>
                             </label>
-                            <input type="text" class="form-control" name="difficulty" id="difficulty" th:field="*{difficulty}" />
+                            <input type="text" class="form-control" name="difficulty" id="difficulty" th:errorclass="is-invalid" th:field="*{difficulty}" />
                             <span class="invalid-feedback" th:if="${#fields.hasErrors('difficulty')}" th:errors="*{difficulty}"></span>
                         </div>
                         <div class="col-6">
                             <label for="schedule" class="col-form-label">スケジュール感（基準：100）
                                 <span class="badge bg-secondary ms-1">必須</span>
                             </label>
-                            <input type="text" class="form-control" name="schedule" id="schedule" th:field="*{schedule}" />
+                            <input type="text" class="form-control" name="schedule" id="schedule" th:errorclass="is-invalid" th:field="*{schedule}" />
                             <span class="invalid-feedback" th:if="${#fields.hasErrors('schedule')}" th:errors="*{schedule}"></span>
                         </div>
                     </div>
@@ -134,7 +135,7 @@
                             <label for="result" class="col-form-label">結果
                                 <span class="badge bg-secondary ms-1">必須</span>
                             </label>
-                            <textarea class="form-control" placeholder="" name="result" id="result" th:field="*{result}"></textarea>
+                            <textarea class="form-control" placeholder="" name="result" id="result" th:errorclass="is-invalid" th:field="*{result}"></textarea>
                             <span class="invalid-feedback" th:if="${#fields.hasErrors('result')}" th:errors="*{result}"></span>
                         </div>
                     </div>
@@ -144,7 +145,7 @@
                             <label for="impression" class="col-form-label">所感
                                 <span class="badge bg-secondary ms-1">必須</span>
                             </label>
-                            <textarea class="form-control" placeholder="" name="impression" id="impression" th:field="*{impression}"></textarea>
+                            <textarea class="form-control" placeholder="" name="impression" id="impression" th:errorclass="is-invalid" th:field="*{impression}"></textarea>
                             <span class="invalid-feedback" th:if="${#fields.hasErrors('impression')}" th:errors="*{impression}"></span>
                         </div>
                     </div>
@@ -152,7 +153,7 @@
                     <div class="row mb-3">
                         <div class="col-12">
                             <label for="improvements" class="col-form-label">改善点</label>
-                            <textarea class="form-control" placeholder="" name="improvements" id="improvements" th:field="*{improvements}"></textarea>
+                            <textarea class="form-control" placeholder="" name="improvements" id="improvements" th:errorclass="is-invalid" th:field="*{improvements}"></textarea>
                             <span class="invalid-feedback" th:if="${#fields.hasErrors('improvements')}" th:errors="*{improvements}"></span>
                         </div>
                     </div>
@@ -162,7 +163,7 @@
                             <label for="nextPlan" class="col-form-label">次週の計画
                                 <span class="badge bg-secondary ms-1">必須</span>
                             </label>
-                            <textarea class="form-control" placeholder="" name="nextPlan" id="nextPlan" th:field="*{nextPlan}"></textarea>
+                            <textarea class="form-control" placeholder="" name="nextPlan" id="nextPlan" th:errorclass="is-invalid" th:field="*{nextPlan}"></textarea>
                             <span class="invalid-feedback" th:if="${#fields.hasErrors('nextPlan')}" th:errors="*{nextPlan}"></span>
                         </div>
                     </div>
@@ -170,7 +171,7 @@
                     <div class="row mb-3">
                         <div class="col-12">
                             <label for="remarks" class="col-form-label">特記事項</label>
-                            <textarea class="form-control" placeholder="営業に関する情報、困っていることなど" name="remarks" id="remarks" th:field="*{remarks}"></textarea>
+                            <textarea class="form-control" placeholder="営業に関する情報、困っていることなど" name="remarks" id="remarks" th:errorclass="is-invalid" th:field="*{remarks}"></textarea>
                         </div>
                     </div>
 
