@@ -61,11 +61,6 @@ public class WeeklyReportsController {
     @Autowired
     ProjectsService projectsService;
 
-//    @ModelAttribute
-//    WeeklyReportForm setUpForm() {
-//        return new WeeklyReportForm();
-//    }
-
     // 確認権限
     boolean isConfirmer;
 
@@ -272,8 +267,8 @@ public class WeeklyReportsController {
         model.addAttribute("radioRelationship", radioThree);
 
         // 初期値
-        weeklyReportForm.setDifficulty(100);
-        weeklyReportForm.setSchedule(100);
+//        weeklyReportForm.setDifficulty(100);
+//        weeklyReportForm.setSchedule(100);
 
         // 現場社員プルダウン
         List<Users> userList = usersService.findAll();
@@ -315,14 +310,14 @@ public class WeeklyReportsController {
         weeklyReportForm.setSalesUserId(weeklyReportInfo.getProject().getSalesUser().getUserId());
         weeklyReportForm.setProjectId(weeklyReportInfo.getProject().getProjectId());
         weeklyReportForm.setReportDate(weeklyReportInfo.getReportDate());
-        weeklyReportForm.setAveOvertimeHours(weeklyReportInfo.getAveOvertimeHours());
+        weeklyReportForm.setAveOvertimeHours(String.valueOf(weeklyReportInfo.getAveOvertimeHours()));
         weeklyReportForm.setProgress(weeklyReportInfo.getProgress());
         weeklyReportForm.setCondition(weeklyReportInfo.getCondition());
         weeklyReportForm.setRelationship(weeklyReportInfo.getRelationship());
         weeklyReportForm.setPlan(weeklyReportInfo.getPlan());
         weeklyReportForm.setWorkContent(weeklyReportInfo.getWorkContent());
-        weeklyReportForm.setDifficulty(weeklyReportInfo.getDifficulty());
-        weeklyReportForm.setSchedule(weeklyReportInfo.getSchedule());
+        weeklyReportForm.setDifficulty(String.valueOf(weeklyReportInfo.getDifficulty()));
+        weeklyReportForm.setSchedule(String.valueOf(weeklyReportInfo.getSchedule()));
         weeklyReportForm.setResult(weeklyReportInfo.getResult());
         weeklyReportForm.setImpression(weeklyReportInfo.getImpression());
         weeklyReportForm.setImprovements(weeklyReportInfo.getImprovements());

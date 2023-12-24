@@ -141,7 +141,7 @@ public class WeeklyReportsService {
     	weeklyReport.setReportDate(weeklyReportForm.getReportDate());
 
     	// 平均残業時間
-    	weeklyReport.setAveOvertimeHours(weeklyReportForm.getAveOvertimeHours());
+    	weeklyReport.setAveOvertimeHours(Integer.parseInt(weeklyReportForm.getAveOvertimeHours()));
 
     	// 進捗状況
     	weeklyReport.setProgress(weeklyReportForm.getProgress());
@@ -159,10 +159,10 @@ public class WeeklyReportsService {
     	weeklyReport.setWorkContent(weeklyReportForm.getWorkContent());
 
     	// 難易度
-    	weeklyReport.setDifficulty(weeklyReportForm.getDifficulty());
+    	weeklyReport.setDifficulty(Integer.parseInt(weeklyReportForm.getDifficulty()));
 
     	// スケジュール感
-    	weeklyReport.setSchedule(weeklyReportForm.getSchedule());
+    	weeklyReport.setSchedule(Integer.parseInt(weeklyReportForm.getSchedule()));
 
     	// 結果
     	weeklyReport.setResult(weeklyReportForm.getResult());

@@ -29,8 +29,8 @@ public class WeeklyReportForm {
     private LocalDate reportDate;
 
     // 平均残業時間
-    @PositiveOrZero(groups = ValidGroup1.class, message = "半角数字で入力してください")
-    private int aveOvertimeHours;
+    @NotBlank(groups = ValidGroup1.class, message = "半角数字で入力してください")
+    private String aveOvertimeHours;
 
     // 進捗状況
     @NotBlank(groups = ValidGroup1.class, message = "選択してください")
@@ -53,14 +53,14 @@ public class WeeklyReportForm {
     private String workContent;
 
     // 難易度
-    @PositiveOrZero(groups = ValidGroup1.class, message = "半角数字3桁で入力してください")
+    @NotBlank(groups = ValidGroup1.class, message = "半角数字3桁で入力してください")
     @Pattern(regexp="^[0-9]+$", groups = ValidGroup2.class, message = "半角数字3桁で入力してください")
-    private int difficulty;
+    private String difficulty;
 
     // スケジュール感
-    @PositiveOrZero(groups = ValidGroup1.class, message = "半角数字3桁で入力してください")
+    @NotBlank(groups = ValidGroup1.class, message = "半角数字3桁で入力してください")
     @Pattern(regexp="^[0-9]+$", groups = ValidGroup2.class, message = "半角数字3桁で入力してください")
-    private int schedule;
+    private String schedule;
 
     // 結果
     @NotBlank(groups = ValidGroup1.class, message = "入力してください")
