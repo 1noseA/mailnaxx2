@@ -30,6 +30,7 @@ import com.mailnaxx2.entity.Affiliations;
 import com.mailnaxx2.entity.Projects;
 import com.mailnaxx2.entity.Users;
 import com.mailnaxx2.entity.WeeklyReports;
+import com.mailnaxx2.form.SearchUsersForm;
 import com.mailnaxx2.form.SearchWeeklyReportForm;
 import com.mailnaxx2.form.SelectForm;
 import com.mailnaxx2.form.UsersForm;
@@ -201,6 +202,7 @@ public class WeeklyReportsController {
     public String detail(int weeklyReportId,
     					Model model,
     					@AuthenticationPrincipal LoginUserDetails loginUser) {
+    	// 詳細情報を取得
         weeklyReportInfo = weeklyReportsService.findById(weeklyReportId);
         model.addAttribute("weeklyReportInfo", weeklyReportInfo);
 
@@ -251,9 +253,7 @@ public class WeeklyReportsController {
         LocalDate now = LocalDate.now();
         // 現在日の週の月曜日を取得
         LocalDate reportDate = now.with(DayOfWeek.MONDAY);
-        //String strReportDate = reportDate.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
         weeklyReportForm.setReportDate(reportDate);
-        //model.addAttribute("reportDate", strReportDate);
 
         // ラジオボタン
         Map<String, String> radioThree = new LinkedHashMap<>();
@@ -265,10 +265,6 @@ public class WeeklyReportsController {
         model.addAttribute("radioProgress", radioThree);
         model.addAttribute("radioCondition", radioThree);
         model.addAttribute("radioRelationship", radioThree);
-
-        // 初期値
-//        weeklyReportForm.setDifficulty(100);
-//        weeklyReportForm.setSchedule(100);
 
         // 現場社員プルダウン
         List<Users> userList = usersService.findAll();
@@ -303,26 +299,10 @@ public class WeeklyReportsController {
     				@ModelAttribute WeeklyReportForm weeklyReportForm,
     				Model model,
     				@AuthenticationPrincipal LoginUserDetails loginUser) {
+    	// 詳細情報を取得
     	weeklyReportInfo = weeklyReportsService.findById(weeklyReportId);
-        model.addAttribute("weeklyReportId", weeklyReportId);
-
-        // Formクラスに設定
-        weeklyReportForm.setSalesUserId(weeklyReportInfo.getProject().getSalesUser().getUserId());
-        weeklyReportForm.setProjectId(weeklyReportInfo.getProject().getProjectId());
-        weeklyReportForm.setReportDate(weeklyReportInfo.getReportDate());
-        weeklyReportForm.setAveOvertimeHours(String.valueOf(weeklyReportInfo.getAveOvertimeHours()));
-        weeklyReportForm.setProgress(weeklyReportInfo.getProgress());
-        weeklyReportForm.setCondition(weeklyReportInfo.getCondition());
-        weeklyReportForm.setRelationship(weeklyReportInfo.getRelationship());
-        weeklyReportForm.setPlan(weeklyReportInfo.getPlan());
-        weeklyReportForm.setWorkContent(weeklyReportInfo.getWorkContent());
-        weeklyReportForm.setDifficulty(String.valueOf(weeklyReportInfo.getDifficulty()));
-        weeklyReportForm.setSchedule(String.valueOf(weeklyReportInfo.getSchedule()));
-        weeklyReportForm.setResult(weeklyReportInfo.getResult());
-        weeklyReportForm.setImpression(weeklyReportInfo.getImpression());
-        weeklyReportForm.setImprovements(weeklyReportInfo.getImprovements());
-        weeklyReportForm.setNextPlan(weeklyReportInfo.getNextPlan());
-        weeklyReportForm.setRemarks(weeklyReportInfo.getRemarks());
+    	// 入力フォームに設定
+    	setInputForm(weeklyReportInfo, weeklyReportForm);
 
         // 担当営業プルダウン
     	salesList = (Set<Users>) session.getAttribute("session_salesList");
@@ -347,6 +327,7 @@ public class WeeklyReportsController {
         List<Users> userList = usersService.findAll();
         model.addAttribute("userList", userList);
 
+        model.addAttribute("weeklyReportId", weeklyReportId);
         model.addAttribute("loginUserInfo", loginUser.getLoginUser());
         return "weekly-report/create";
     }
@@ -361,7 +342,7 @@ public class WeeklyReportsController {
     					@AuthenticationPrincipal LoginUserDetails loginUser) {
         // 入力エラーチェック
         if (result.hasErrors()) {
-            return "weekly-report/create";
+        	return edit(weeklyReportId, weeklyReportForm, model, loginUser);
         }
 
         WeeklyReports weeklyReport = new WeeklyReports();
@@ -375,4 +356,24 @@ public class WeeklyReportsController {
 
     // 提出処理（メール送信）
     // 物理削除処理
+
+    // 入力フォームに設定
+    private void setInputForm(WeeklyReports weeklyReportInfo, WeeklyReportForm weeklyReportForm) {
+        weeklyReportForm.setSalesUserId(weeklyReportInfo.getProject().getSalesUser().getUserId());
+        weeklyReportForm.setProjectId(weeklyReportInfo.getProject().getProjectId());
+        weeklyReportForm.setReportDate(weeklyReportInfo.getReportDate());
+        weeklyReportForm.setAveOvertimeHours(String.valueOf(weeklyReportInfo.getAveOvertimeHours()));
+        weeklyReportForm.setProgress(weeklyReportInfo.getProgress());
+        weeklyReportForm.setCondition(weeklyReportInfo.getCondition());
+        weeklyReportForm.setRelationship(weeklyReportInfo.getRelationship());
+        weeklyReportForm.setPlan(weeklyReportInfo.getPlan());
+        weeklyReportForm.setWorkContent(weeklyReportInfo.getWorkContent());
+        weeklyReportForm.setDifficulty(String.valueOf(weeklyReportInfo.getDifficulty()));
+        weeklyReportForm.setSchedule(String.valueOf(weeklyReportInfo.getSchedule()));
+        weeklyReportForm.setResult(weeklyReportInfo.getResult());
+        weeklyReportForm.setImpression(weeklyReportInfo.getImpression());
+        weeklyReportForm.setImprovements(weeklyReportInfo.getImprovements());
+        weeklyReportForm.setNextPlan(weeklyReportInfo.getNextPlan());
+        weeklyReportForm.setRemarks(weeklyReportInfo.getRemarks());
+    }
 }
