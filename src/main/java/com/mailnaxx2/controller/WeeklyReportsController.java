@@ -24,23 +24,18 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.mailnaxx2.constants.CommonConstants;
-import com.mailnaxx2.constants.UserConstants;
 import com.mailnaxx2.entity.Affiliations;
 import com.mailnaxx2.entity.Projects;
 import com.mailnaxx2.entity.Users;
 import com.mailnaxx2.entity.WeeklyReports;
-import com.mailnaxx2.form.SearchUsersForm;
 import com.mailnaxx2.form.SearchWeeklyReportForm;
 import com.mailnaxx2.form.SelectForm;
-import com.mailnaxx2.form.UsersForm;
 import com.mailnaxx2.form.WeeklyReportForm;
 import com.mailnaxx2.security.LoginUserDetails;
 import com.mailnaxx2.service.AffiliationsService;
 import com.mailnaxx2.service.ProjectsService;
 import com.mailnaxx2.service.UsersService;
 import com.mailnaxx2.service.WeeklyReportsService;
-import com.mailnaxx2.validation.All;
 import com.mailnaxx2.validation.GroupOrder;
 import com.mailnaxx2.values.RoleClass;
 
@@ -99,7 +94,7 @@ public class WeeklyReportsController {
         // 自分の所属
         int myAffiliation = loginUser.getLoginUser().getAffiliation().getAffiliationId();
 
-        // 週報一覧
+        // 週報一覧を取得
     	if (isConfirmer) {
     		// 営業の場合、週報を全件取得
     		weeklyReportList = weeklyReportsService.findAll();
@@ -150,7 +145,7 @@ public class WeeklyReportsController {
     public String search(SearchWeeklyReportForm searchWeeklyReportForm,
     					Model model,
     					@AuthenticationPrincipal LoginUserDetails loginUser) {
-    	// 週報一覧
+    	// 週報一覧を取得
         weeklyReportList = weeklyReportsService.findBySearchForm(searchWeeklyReportForm);
         model.addAttribute("weeklyReportList", weeklyReportList);
 

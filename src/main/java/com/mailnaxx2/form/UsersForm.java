@@ -74,12 +74,12 @@ public class UsersForm {
 
     // 郵便番号1
     @NotBlank(groups = ValidGroup1.class, message = "入力してください")
-    @Pattern(regexp="^[0-9]+$", groups = ValidGroup2.class, message = "数字で入力してください")
+    @Pattern(regexp="^[0-9]+$", groups = ValidGroup2.class, message = "半角数字3桁で入力してください")
     private String postCode1;
 
     // 郵便番号2
     @NotBlank(groups = ValidGroup1.class, message = "入力してください")
-    @Pattern(regexp="^[0-9]+$", groups = ValidGroup2.class, message = "数字で入力してください")
+    @Pattern(regexp="^[0-9]+$", groups = ValidGroup2.class, message = "半角数字4桁で入力してください")
     private String postCode2;
 
     // 住所
@@ -90,17 +90,17 @@ public class UsersForm {
 
     // 電話番号1
     @NotBlank(groups = ValidGroup1.class, message = "入力してください")
-    @Pattern(regexp="^[0-9]+$", groups = ValidGroup2.class, message = "数字で入力してください")
+    @Pattern(regexp="^[0-9]+$", groups = ValidGroup2.class, message = "半角数字5桁以内で入力してください")
     private String phoneNumber1;
 
     // 電話番号2
     @NotBlank(groups = ValidGroup1.class, message = "入力してください")
-    @Pattern(regexp="^[0-9]+$", groups = ValidGroup2.class, message = "数字で入力してください")
+    @Pattern(regexp="^[0-9]+$", groups = ValidGroup2.class, message = "半角数字4桁以内で入力してください")
     private String phoneNumber2;
 
     // 電話番号3
     @NotBlank(groups = ValidGroup1.class, message = "入力してください")
-    @Pattern(regexp="^[0-9]+$", groups = ValidGroup2.class, message = "数字で入力してください")
+    @Pattern(regexp="^[0-9]+$", groups = ValidGroup2.class, message = "半角数字4桁以内で入力してください")
     private String phoneNumber3;
 
     // メールアドレス
