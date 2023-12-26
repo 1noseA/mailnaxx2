@@ -21,7 +21,51 @@
         WHERE
             w.confirmed_flg = '0'
         AND p.deleted_flg = '0'
-        ORDER BY u.user_number, w.weekly_report_id
+        ORDER BY u.user_number, w.weekly_report_id, w.report_date DESC
+    </select>
+
+	<!-- 所属メンバーの週報取得 -->
+    <select id="findMyAffiliation" resultMap="weeklyReportMap">
+        SELECT
+            w.weekly_report_id,
+            w.report_date,
+            w.confirmed_flg,
+            u.user_id AS my_user_id,
+            u.user_number AS my_user_number,
+            u.user_name AS my_user_name
+        FROM weekly_reports w
+        INNER JOIN users u
+            ON w.user_id = u.user_id
+		INNER JOIN affiliations a
+            ON u.affiliation_id = a.affiliation_id
+        INNER JOIN projects p
+            ON w.project_id = p.project_id
+        WHERE
+            w.confirmed_flg = '0'
+        AND p.deleted_flg = '0'
+		AND u.affiliation_id = #{affiliationId}
+        ORDER BY u.user_number, w.weekly_report_id, w.report_date DESC
+    </select>
+
+	<!-- 自分の週報取得 -->
+    <select id="findMine" resultMap="weeklyReportMap">
+        SELECT
+            w.weekly_report_id,
+            w.report_date,
+            w.confirmed_flg,
+            u.user_id AS my_user_id,
+            u.user_number AS my_user_number,
+            u.user_name AS my_user_name
+        FROM weekly_reports w
+        INNER JOIN users u
+            ON w.user_id = u.user_id
+        INNER JOIN projects p
+            ON w.project_id = p.project_id
+        WHERE
+            w.confirmed_flg = '0'
+        AND p.deleted_flg = '0'
+		AND w.user_id = #{userId}
+        ORDER BY u.user_number, w.weekly_report_id, w.report_date DESC
     </select>
 
     <!-- 検索 -->
@@ -67,9 +111,12 @@
     <select id="findById" resultMap="weeklyReportMap">
         SELECT
             w.weekly_report_id,
+			u1.user_id AS my_user_id,
             u1.user_number AS my_user_number,
             u1.user_name AS my_user_name,
+			u2.user_id AS sales_user_id,
             u2.user_name AS sales_user_name,
+			p.project_id,
             p.project_name,
             w.report_date,
             w.ave_overtime_hours,
@@ -104,6 +151,7 @@
     <select id="forLockById" resultMap="weeklyReportMap">
         SELECT
             w.weekly_report_id,
+			u1.user_id AS my_user_id,
             u1.user_number AS my_user_number,
             u1.user_name AS my_user_name,
             u2.user_name AS sales_user_name,
@@ -142,6 +190,7 @@
     <select id="forLockByIdList" resultMap="weeklyReportMap">
         SELECT
             w.weekly_report_id,
+			u1.user_id AS my_user_id,
             u1.user_number AS my_user_number,
             u1.user_name AS my_user_name,
             u2.user_name AS sales_user_name,
@@ -218,6 +267,12 @@
         <result property="userId" column="user_id" />
         <result property="userNumber" column="user_number" />
         <result property="userName" column="user_name" />
+		<association property="affiliation" resultMap="affiliationResult"/>
+    </resultMap>
+
+	<resultMap id="affiliationResult" type="com.mailnaxx2.entity.Affiliations">
+        <result property="affiliationId" column="affiliation_id" />
+        <result property="affiliationName" column="affiliation_name" />
     </resultMap>
 
     <resultMap id="salesUserResult" type="com.mailnaxx2.entity.Users">
@@ -248,4 +303,76 @@
         </foreach>
     </update>
 
+	<!-- 登録 -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="weeklyReportId">
+        INSERT INTO weekly_reports
+        (
+           	user_id,
+            project_id,
+            report_date,
+            ave_overtime_hours,
+            progress,
+            condition,
+            relationship,
+            plan,
+            work_content,
+            difficulty,
+            schedule,
+            result,
+            impression,
+			improvements,
+            next_plan,
+            remarks,
+            comment,
+            created_by,
+            created_at
+        )
+        VALUES
+        (
+            #{user.userId},
+            #{project.projectId},
+            #{reportDate},
+            #{aveOvertimeHours},
+            #{progress},
+            #{condition},
+            #{relationship},
+            #{plan},
+            #{workContent},
+            #{difficulty},
+            #{schedule},
+            #{result},
+			#{impression},
+            #{improvements},
+            #{nextPlan},
+            #{remarks},
+            #{comment},
+            #{createdBy},
+            CURRENT_TIMESTAMP
+        )
+    </insert>
+
+	<!-- 更新 -->
+    <update id="update">
+        UPDATE weekly_reports SET
+            user_id = #{user.userId},
+            project_id = #{project.projectId},
+            report_date = #{reportDate},
+            ave_overtime_hours = #{aveOvertimeHours},
+            progress = #{progress},
+            condition = #{condition},
+            relationship = #{relationship},
+            plan = #{plan},
+            work_content = #{workContent},
+            difficulty = #{difficulty},
+            schedule = #{schedule},
+            result = #{result},
+            impression = #{impression},
+			improvements = #{improvements},
+            next_plan = #{nextPlan},
+            remarks = #{remarks},
+            comment = #{comment},
+            updated_by = #{updatedBy},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE weekly_report_id = #{weeklyReportId}
+    </update>
 </mapper>

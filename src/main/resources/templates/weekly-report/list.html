@@ -66,10 +66,10 @@
                         </div>
                         <div class="col-md-3 pe-0">
                             <select class="form-select" th:errorclass="is-invalid" name="fromReportDate">
-                                <option value="">全て</option>
+                                <option value=""></option>
                                 <option th:each="reportDate : ${reportDateList}"
                                         th:value="${reportDate}"
-                                        th:text="${#temporals.format(reportDate, 'yyyy/MM/dd')}"
+                                        th:text="${#temporals.format(reportDate, 'yyyy/MM/dd') + '週'}"
                                         th:selected="${(reportDate.toString()).equals(searchWeeklyReportForm.fromReportDate)}">
                                 </option>
                             </select>
@@ -79,10 +79,10 @@
                         </div>
                         <div class="col-md-3 ps-0">
                             <select class="form-select" th:errorclass="is-invalid" name="toReportDate">
-                                <option value="">全て</option>
+                                <option value=""></option>
                                 <option th:each="reportDate : ${reportDateList}"
                                         th:value="${reportDate}"
-                                        th:text="${#temporals.format(reportDate, 'yyyy/MM/dd')}"
+                                        th:text="${#temporals.format(reportDate, 'yyyy/MM/dd') + '週'}"
                                         th:selected="${(reportDate.toString()).equals(searchWeeklyReportForm.toReportDate)}">
                                 </option>
                             </select>

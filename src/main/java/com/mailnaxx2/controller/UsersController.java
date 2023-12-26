@@ -20,9 +20,11 @@ import com.mailnaxx2.constants.CommonConstants;
 import com.mailnaxx2.constants.UserConstants;
 import com.mailnaxx2.entity.Affiliations;
 import com.mailnaxx2.entity.Users;
+import com.mailnaxx2.entity.WeeklyReports;
 import com.mailnaxx2.form.SearchUsersForm;
 import com.mailnaxx2.form.SelectForm;
 import com.mailnaxx2.form.UsersForm;
+import com.mailnaxx2.form.WeeklyReportForm;
 import com.mailnaxx2.security.LoginUserDetails;
 import com.mailnaxx2.service.AffiliationsService;
 import com.mailnaxx2.service.UsersService;
@@ -42,15 +44,25 @@ public class UsersController {
     @Autowired
     AffiliationsService affiliationsService;
 
-    @ModelAttribute("searchUsersForm")
-    public SearchUsersForm createSearchForm(){
-        return new SearchUsersForm();
-    }
+    // 管理者権限
+    boolean isAdmin;
+
+    // 社員一覧
+    List<Users> userList;
+
+    // 所属プルダウン
+    List<Affiliations> affiliationList;
+
+     // 社員詳細
+    Users userInfo;
 
     // 一覧画面初期表示
     @RequestMapping("/user/list")
-    public String index(SearchUsersForm searchUsersForm, Model model, @AuthenticationPrincipal LoginUserDetails loginUser) {
-        List<Users> userList = usersService.findAll();
+    public String index(SearchUsersForm searchUsersForm,
+    					Model model,
+    					@AuthenticationPrincipal LoginUserDetails loginUser) {
+    	// 社員一覧を取得
+        userList = usersService.findAll();
         model.addAttribute("userList", userList);
         model.addAttribute("roleClassList", RoleClass.values());
 
@@ -58,7 +70,7 @@ public class UsersController {
         model.addAttribute("searchUsersForm", searchUsersForm);
 
         // 権限（総務のみ）
-        boolean isAdmin = false;
+        isAdmin = false;
         if (loginUser.getLoginUser().getRoleClass().equals(RoleClass.AFFAIRS.getCode())) {
             isAdmin = true;
         }
@@ -70,13 +82,16 @@ public class UsersController {
 
     // 検索処理
     @PostMapping("/user/search")
-    public String search(SearchUsersForm searchUsersForm, Model model, @AuthenticationPrincipal LoginUserDetails loginUser) {
-        List<Users> userList = usersService.findBySearchForm(searchUsersForm);
+    public String search(SearchUsersForm searchUsersForm,
+    					Model model,
+    					@AuthenticationPrincipal LoginUserDetails loginUser) {
+    	// 社員一覧を取得
+        userList = usersService.findBySearchForm(searchUsersForm);
         model.addAttribute("userList", userList);
         model.addAttribute("roleClassList", RoleClass.values());
 
         // 権限
-        boolean isAdmin = (boolean) session.getAttribute("session_isAdmin");
+        isAdmin = (boolean) session.getAttribute("session_isAdmin");
         model.addAttribute("isAdmin", isAdmin);
         model.addAttribute("loginUserInfo", loginUser.getLoginUser());
         return "user/list";
@@ -84,11 +99,13 @@ public class UsersController {
 
     // 登録画面初期表示
     @GetMapping("/user/create")
-    public String create(@ModelAttribute UsersForm usersForm, Model model, @AuthenticationPrincipal LoginUserDetails loginUser) {
+    public String create(@ModelAttribute UsersForm usersForm,
+    					Model model,
+    					@AuthenticationPrincipal LoginUserDetails loginUser) {
         model.addAttribute("userId", 0);
 
         // 所属プルダウン
-        List<Affiliations> affiliationList = affiliationsService.findAll();
+        affiliationList = affiliationsService.findAll();
         model.addAttribute("affiliationList", affiliationList);
         model.addAttribute("notAffiliation", UserConstants.NOT_AFFILIATION);
 
@@ -101,7 +118,10 @@ public class UsersController {
 
     // 登録処理
     @PostMapping("/user/create")
-    public String create(@ModelAttribute @Validated(All.class) UsersForm usersForm, BindingResult result, Model model, @AuthenticationPrincipal LoginUserDetails loginUser) {
+    public String create(@ModelAttribute @Validated(All.class) UsersForm usersForm,
+    					BindingResult result,
+    					Model model,
+    					@AuthenticationPrincipal LoginUserDetails loginUser) {
         // 入力エラーチェック
         if (result.hasErrors()) {
             // リダイレクトだと入力エラーの値が引き継がれない
@@ -109,17 +129,18 @@ public class UsersController {
             return create(usersForm, model, loginUser);
         }
 
-        Users user = new Users();
-
         // 登録サービス実行
-        usersService.insert(user, usersForm, loginUser);
+        usersService.insert(usersForm, loginUser);
 
         return "redirect:/user/list";
     }
 
     // 論理削除処理
     @RequestMapping("/user/delete")
-    public String delete(@ModelAttribute SelectForm selectForm, SearchUsersForm searchUsersForm, Model model, @AuthenticationPrincipal LoginUserDetails loginUser) {
+    public String delete(@ModelAttribute SelectForm selectForm,
+    					SearchUsersForm searchUsersForm,
+    					Model model,
+    					@AuthenticationPrincipal LoginUserDetails loginUser) {
         // 入力チェック
         if (selectForm.getSelectTarget() == null) {
             // エラーメッセージを表示
@@ -147,8 +168,11 @@ public class UsersController {
 
     // 詳細画面初期表示
     @PostMapping("/user/detail")
-    public String detail(int userId, Model model, @AuthenticationPrincipal LoginUserDetails loginUser) {
-        Users userInfo = usersService.findById(userId);
+    public String detail(int userId,
+    					Model model,
+    					@AuthenticationPrincipal LoginUserDetails loginUser) {
+    	// 詳細情報を取得
+        userInfo = usersService.findById(userId);
         model.addAttribute("userInfo", userInfo);
         model.addAttribute("roleClass", RoleClass.getViewNameByCode(userInfo.getRoleClass()));
         model.addAttribute("loginUserInfo", loginUser.getLoginUser());
@@ -157,13 +181,54 @@ public class UsersController {
 
     // 編集画面初期表示
     @PostMapping("/user/edit")
-    public String edit(int userId, @ModelAttribute UsersForm usersForm, Model model, @AuthenticationPrincipal LoginUserDetails loginUser) {
-        Users userInfo = usersService.findById(userId);
+    public String edit(int userId,
+    					@ModelAttribute UsersForm usersForm,
+    					Model model,
+    					@AuthenticationPrincipal LoginUserDetails loginUser) {
+    	// 詳細情報を取得
+        userInfo = usersService.findById(userId);
+        // 入力フォームに設定
+        setInputForm(userInfo, usersForm);
+
+        // 所属プルダウン
+        affiliationList = affiliationsService.findAll();
+        model.addAttribute("affiliationList", affiliationList);
+        model.addAttribute("notAffiliation", UserConstants.NOT_AFFILIATION);
+
+        // 権限区分プルダウン
+        model.addAttribute("roleClassList", RoleClass.values());
+
         model.addAttribute("userId", userId);
         model.addAttribute("roleClass", RoleClass.getViewNameByCode(userInfo.getRoleClass()));
+        model.addAttribute("loginUserInfo", loginUser.getLoginUser());
+        return "user/create";
+    }
 
-        // Formクラスに設定
-        String[] userName = userInfo.getUserName().split(CommonConstants.HALF_SPACE);
+    // 更新処理
+    @Transactional
+    @PostMapping("/user/update")
+    public String update(int userId,
+    					@ModelAttribute @Validated(GroupOrder.class) UsersForm usersForm,
+    					BindingResult result,
+    					Model model,
+    					@AuthenticationPrincipal LoginUserDetails loginUser) {
+        // 入力エラーチェック
+        if (result.hasErrors()) {
+            return edit(userId, usersForm, model, loginUser);
+        }
+
+        Users user = new Users();
+        user.setUserId(userId);
+
+        // 更新サービス実行
+        usersService.update(user, usersForm, loginUser);
+
+        return "redirect:/user/list";
+    }
+
+    // 入力フォームに設定
+    private void setInputForm(Users userInfo, UsersForm usersForm) {
+    	String[] userName = userInfo.getUserName().split(CommonConstants.HALF_SPACE);
         usersForm.setUserLastName(userName[0]);
         usersForm.setUserFirstName(userName[1]);
         String[] userNameKana = userInfo.getUserNameKana().split(CommonConstants.HALF_SPACE);
@@ -188,44 +253,5 @@ public class UsersController {
         usersForm.setPhoneNumber2(phoneNumber[1]);
         usersForm.setPhoneNumber3(phoneNumber[2]);
         usersForm.setEmailAddress(userInfo.getEmailAddress());
-
-        // 所属プルダウン
-        List<Affiliations> affiliationList = affiliationsService.findAll();
-        model.addAttribute("affiliationList", affiliationList);
-        model.addAttribute("notAffiliation", UserConstants.NOT_AFFILIATION);
-
-        // 権限区分プルダウン
-        model.addAttribute("roleClassList", RoleClass.values());
-
-        model.addAttribute("loginUserInfo", loginUser.getLoginUser());
-        return "user/create";
-    }
-
-    // 更新処理
-    @Transactional
-    @PostMapping("/user/update")
-    public String update(int userId, @ModelAttribute @Validated(GroupOrder.class) UsersForm usersForm, BindingResult result, Model model, @AuthenticationPrincipal LoginUserDetails loginUser) {
-        // 入力エラーチェック
-        if (result.hasErrors()) {
-            // 所属プルダウン
-            List<Affiliations> affiliationList = affiliationsService.findAll();
-            model.addAttribute("affiliationList", affiliationList);
-            model.addAttribute("notAffiliation", UserConstants.NOT_AFFILIATION);
-
-            // 権限区分プルダウン
-            model.addAttribute("roleClassList", RoleClass.values());
-
-            model.addAttribute("userId", userId);
-            model.addAttribute("loginUserInfo", loginUser.getLoginUser());
-            return "user/create";
-        }
-
-        Users user = new Users();
-        user.setUserId(userId);
-
-        // 更新サービス実行
-        usersService.update(user, usersForm, loginUser);
-
-        return "redirect:/user/list";
     }
 }

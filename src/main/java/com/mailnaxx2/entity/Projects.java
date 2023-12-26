@@ -2,12 +2,12 @@ package com.mailnaxx2.entity;
 
 import java.time.LocalDateTime;
 
-import lombok.Getter;
+import lombok.Data;
 
 /**
  * 現場
  */
-@Getter
+@Data
 public class Projects {
 
     // 現場ID

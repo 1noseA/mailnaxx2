@@ -11,6 +11,11 @@
         <div class="container">
             <div class="weeklyReportInfoArea mt-5">
                 <div th:object="${weeklyReportInfo}">
+                	<th:block th:if="${message != null}">
+                        <div class="col-md-12 ms-3">
+                            <p class="text-danger" th:text="${message}"></p>
+                        </div>
+                    </th:block>
                     <table class="table table-bordered">
                         <tr>
                             <th>社員番号</th>
@@ -92,8 +97,18 @@
 
             <div class="btn-toolbar justify-content-between mt-4 mb-5" role="toolbar">
                 <div>
-                    <button type="button" class="btn btnMain m-1" th:onclick="|edit('${weeklyReportInfo.weeklyReportId}')|">編集する</button>
-                    <button type="button" class="btn btnAccent m-1" th:onclick="|confirm('${weeklyReportInfo.weeklyReportId}')|">確認する</button>
+                	<th:block th:if="${isAuthenticated}">
+                    	<button type="button" class="btn btnMain m-1" th:onclick="|edit('${weeklyReportInfo.weeklyReportId}')|">編集する</button>
+                    </th:block>
+                    <th:block th:unless="${isAuthenticated}">
+                    	<button type="button" class="btn btnMain m-1" disabled>編集する</button>
+                    </th:block>
+                    <th:block th:if="${isConfirmer}">
+                    	<button type="button" class="btn btnAccent m-1" th:onclick="|confirm('${weeklyReportInfo.weeklyReportId}')|">確認する</button>
+                   	</th:block>
+                   	<th:block th:unless="${isConfirmer}">
+                   		<button type="button" class="btn btnAccent m-1" disabled>確認する</button>
+                    </th:block>
                     <button type="button" class="btn btnAccent m-1">共有する</button>
                 </div>
                 <div>

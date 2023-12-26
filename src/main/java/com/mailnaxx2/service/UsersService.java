@@ -47,9 +47,9 @@ public class UsersService {
 
     // 登録処理
     @Transactional
-    public void insert(Users user, UsersForm usersForm, @AuthenticationPrincipal LoginUserDetails loginUser) {
+    public void insert(UsersForm usersForm, @AuthenticationPrincipal LoginUserDetails loginUser) {
         // 入力値をセットする
-        user = setUserForm(user, usersForm);
+    	Users user = setUserForm(new Users(), usersForm);
 
         // パスワードはハッシュにする
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
