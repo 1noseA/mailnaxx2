@@ -346,7 +346,7 @@ public class WeeklyReportsController {
         // 更新
         weeklyReportsService.update(weeklyReport, weeklyReportForm, loginUser);
 
-        return "redirect:/weekly-report/list";
+        return detail(weeklyReportId, model, loginUser);
     }
 
     // 提出処理（メール送信）

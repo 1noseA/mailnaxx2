@@ -234,8 +234,8 @@
                     	<th:block th:if="${weeklyReportId == 0}">
                         	<button type="submit" class="btn btnLight">一時保存</button>
                         </th:block>
-                        <th:block th:unless="${weeklyReportId == 0}">
-                        	<button type="submit" class="btn btnMain" th:formaction="@{/weekly-report/update}" th:value="${weeklyReportId}" name="weeklyReportId">更新</button>
+                        <th:block >
+                       		<button type="submit" class="btn btnMain" th:formaction="@{/weekly-report/update}" th:value="${weeklyReportId}" name="weeklyReportId">更新</button>
                         </th:block>
                         <!-- <button type="submit" class="btn btnMain ms-3">提出</button> -->
                     </div>
@@ -243,7 +243,14 @@
             </div>
             <div class="row mb-5">
                 <div class="col-auto">
-                    <button type="button" class="btn btnBack" onclick="location.href='/weekly-report/list'">戻る</button>
+                	<th:block th:if="${weeklyReportId == 0}">
+                    	<button type="button" class="btn btnBack"  onclick="location.href='/weekly-report/list'">戻る</button>
+                   	</th:block>
+                    <th:block th:unless="${weeklyReportId == 0}">
+                    	<form method="POST" th:action="@{/weekly-report/detail}" th:object="${weeklyReportForm}">
+                    		<button type="submit" class="btn btnBack" th:value="${weeklyReportId}" name="weeklyReportId">戻る</button>
+                    	</form>
+                    </th:block>
                 </div>
             </div>
         </div>
