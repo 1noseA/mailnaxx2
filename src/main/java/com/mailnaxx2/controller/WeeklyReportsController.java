@@ -2,8 +2,6 @@ package com.mailnaxx2.controller;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -199,7 +197,24 @@ public class WeeklyReportsController {
     					@AuthenticationPrincipal LoginUserDetails loginUser) {
     	// 詳細情報を取得
         weeklyReportInfo = weeklyReportsService.findById(weeklyReportId);
-        model.addAttribute("weeklyReportInfo", weeklyReportInfo);
+
+        // ラジオボタン項目
+        Map<String, String> radioThree = makeRadioThree();
+    	for (Map.Entry<String, String> radio : radioThree.entrySet()) {
+    		// 進捗状況
+        	if ((radio.getKey()).equals(weeklyReportInfo.getProgress())) {
+        		weeklyReportInfo.setProgress(radio.getValue());
+        	}
+        	// 体調
+        	if ((radio.getKey()).equals(weeklyReportInfo.getCondition())) {
+        		weeklyReportInfo.setCondition(radio.getValue());
+        	}
+        	// 人間関係
+        	if ((radio.getKey()).equals(weeklyReportInfo.getRelationship())) {
+        		weeklyReportInfo.setRelationship(radio.getValue());
+        	}
+        }
+    	model.addAttribute("weeklyReportInfo", weeklyReportInfo);
 
         // 権限
         isConfirmer = (boolean) session.getAttribute("session_isConfirmer");
@@ -250,13 +265,8 @@ public class WeeklyReportsController {
         LocalDate reportDate = now.with(DayOfWeek.MONDAY);
         weeklyReportForm.setReportDate(reportDate);
 
-        // ラジオボタン
-        Map<String, String> radioThree = new LinkedHashMap<>();
-        radioThree.put("1", "良い");
-        radioThree.put("2", "やや良い");
-        radioThree.put("3", "普通");
-        radioThree.put("4", "やや悪い");
-        radioThree.put("5", "悪い");
+        // ラジオボタン作成
+        Map<String, String> radioThree = makeRadioThree();
         model.addAttribute("radioProgress", radioThree);
         model.addAttribute("radioCondition", radioThree);
         model.addAttribute("radioRelationship", radioThree);
@@ -351,6 +361,17 @@ public class WeeklyReportsController {
 
     // 提出処理（メール送信）
     // 物理削除処理
+
+    // ラジオボタン作成
+    private Map<String, String> makeRadioThree() {
+    	Map<String, String> radioThree = new LinkedHashMap<>();
+        radioThree.put("1", "良い");
+        radioThree.put("2", "やや良い");
+        radioThree.put("3", "普通");
+        radioThree.put("4", "やや悪い");
+        radioThree.put("5", "悪い");
+        return radioThree;
+    }
 
     // 入力フォームに設定
     private void setInputForm(WeeklyReports weeklyReportInfo, WeeklyReportForm weeklyReportForm) {

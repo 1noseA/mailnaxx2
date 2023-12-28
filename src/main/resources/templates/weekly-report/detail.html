@@ -33,7 +33,7 @@
                             <th>報告対象週</th>
                             <td th:text="*{#strings.replace(reportDate, '-', '/')}" colspan="2"></td>
                             <th>平均残業時間</th>
-                            <td th:text="*{aveOvertimeHours}" colspan="2"></td>
+                            <td th:text="*{aveOvertimeHours + '時間'}" colspan="2"></td>
                         </tr>
                         <tr>
                             <th>進捗状況</th>
