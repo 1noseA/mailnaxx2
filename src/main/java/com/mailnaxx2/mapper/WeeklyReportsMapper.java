@@ -4,8 +4,6 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
-import com.mailnaxx2.entity.Affiliations;
-import com.mailnaxx2.entity.Users;
 import com.mailnaxx2.entity.WeeklyReports;
 import com.mailnaxx2.form.SearchWeeklyReportForm;
 

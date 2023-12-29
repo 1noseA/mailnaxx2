@@ -20,11 +20,9 @@ import com.mailnaxx2.constants.CommonConstants;
 import com.mailnaxx2.constants.UserConstants;
 import com.mailnaxx2.entity.Affiliations;
 import com.mailnaxx2.entity.Users;
-import com.mailnaxx2.entity.WeeklyReports;
 import com.mailnaxx2.form.SearchUsersForm;
 import com.mailnaxx2.form.SelectForm;
 import com.mailnaxx2.form.UsersForm;
-import com.mailnaxx2.form.WeeklyReportForm;
 import com.mailnaxx2.security.LoginUserDetails;
 import com.mailnaxx2.service.AffiliationsService;
 import com.mailnaxx2.service.UsersService;
@@ -44,7 +42,7 @@ public class UsersController {
     @Autowired
     AffiliationsService affiliationsService;
 
-    // 管理者権限
+    // 管理者
     boolean isAdmin;
 
     // 社員一覧
