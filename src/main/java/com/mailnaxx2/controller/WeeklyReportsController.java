@@ -26,6 +26,7 @@ import com.mailnaxx2.entity.Affiliations;
 import com.mailnaxx2.entity.Projects;
 import com.mailnaxx2.entity.Users;
 import com.mailnaxx2.entity.WeeklyReports;
+import com.mailnaxx2.form.SearchUsersForm;
 import com.mailnaxx2.form.SearchWeeklyReportForm;
 import com.mailnaxx2.form.SelectForm;
 import com.mailnaxx2.form.WeeklyReportForm;
@@ -56,7 +57,10 @@ public class WeeklyReportsController {
     ProjectsService projectsService;
 
     // 確認権限
-    boolean isConfirmer;
+    boolean isConfirm;
+
+    // 削除権限
+    boolean isDelete;
 
     // 週報一覧
     List<WeeklyReports> weeklyReportList;
@@ -81,19 +85,25 @@ public class WeeklyReportsController {
     public String index(SearchWeeklyReportForm searchWeeklyReportForm,
     					Model model,
     					@AuthenticationPrincipal LoginUserDetails loginUser) {
-    	// 権限（営業のみ）
-        isConfirmer = false;
+    	// 確認権限（営業のみ）
+    	isConfirm = false;
         if (loginUser.getLoginUser().getSalesFlg().equals("1")) {
-            isConfirmer = true;
+        	isConfirm = true;
         }
-        session.setAttribute("session_isConfirmer", isConfirmer);
-        model.addAttribute("isConfirmer", isConfirmer);
+        session.setAttribute("session_isConfirm", isConfirm);
+        model.addAttribute("isConfirm", isConfirm);
+
+        // 削除権限（総務・自分のみ）
+        isDelete = false;
+        if (loginUser.getLoginUser().getRoleClass().equals(RoleClass.AFFAIRS.getCode())) {
+        	isDelete = true;
+        }
 
         // 自分の所属
         int myAffiliation = loginUser.getLoginUser().getAffiliation().getAffiliationId();
 
         // 週報一覧を取得
-    	if (isConfirmer) {
+    	if (isConfirm) {
     		// 営業の場合、週報を全件取得
     		weeklyReportList = weeklyReportsService.findAll();
     	} else {
@@ -106,9 +116,11 @@ public class WeeklyReportsController {
         		// その他の場合、自分の週報を取得
         		weeklyReportList = weeklyReportsService.findMine(loginUser.getLoginUser().getUserId());
         		searchWeeklyReportForm.setUserName(loginUser.getLoginUser().getUserName());
+        		isDelete = true;
         	}
     	}
         model.addAttribute("weeklyReportList", weeklyReportList);
+        model.addAttribute("isDelete", isDelete);
 
         // 所属プルダウン
         affiliationList = affiliationsService.findAll();
@@ -160,8 +172,8 @@ public class WeeklyReportsController {
         model.addAttribute("reportDateList", reportDateList);
 
         // 権限（営業のみ）
-        isConfirmer = (boolean) session.getAttribute("session_isConfirmer");
-        model.addAttribute("isConfirmer", isConfirmer);
+        isConfirm = (boolean) session.getAttribute("session_isConfirm");
+        model.addAttribute("isConfirm", isConfirm);
         model.addAttribute("loginUserInfo", loginUser.getLoginUser());
         return "weekly-report/list";
     }
@@ -173,7 +185,7 @@ public class WeeklyReportsController {
     						Model model,
     						@AuthenticationPrincipal LoginUserDetails loginUser) {
         // 入力チェック
-        if (selectForm.getSelectTarget() == null) {
+        if (selectForm.getSelectWeeklyReportId() == null) {
             // エラーメッセージを表示
             model.addAttribute("message", "対象を選択してください。");
             return index(searchWeeklyReportForm, model, loginUser);
@@ -216,9 +228,9 @@ public class WeeklyReportsController {
         }
     	model.addAttribute("weeklyReportInfo", weeklyReportInfo);
 
-        // 権限
-        isConfirmer = (boolean) session.getAttribute("session_isConfirmer");
-        model.addAttribute("isConfirmer", isConfirmer);
+        // 確認権限
+        isConfirm = (boolean) session.getAttribute("session_isConfirm");
+        model.addAttribute("isConfirm", isConfirm);
         boolean isAuthenticated = false;
         // 自分の週報の場合
         if (weeklyReportInfo.getUser().getUserId() == loginUser.getLoginUser().getUserId()) {
@@ -361,6 +373,29 @@ public class WeeklyReportsController {
 
     // 提出処理（メール送信）
     // 物理削除処理
+    @RequestMapping("/weekly-report/delete")
+    public String delete(@ModelAttribute SelectForm selectForm,
+    					SearchWeeklyReportForm searchWeeklyReportForm,
+    					Model model,
+    					@AuthenticationPrincipal LoginUserDetails loginUser) {
+        // 入力チェック
+        if (selectForm.getSelectWeeklyReportId() == null) {
+            // エラーメッセージを表示
+            model.addAttribute("message", "対象を選択してください。");
+            return index(searchWeeklyReportForm, model, loginUser);
+        }
+
+        // 権限チェック（自分か総務のみ）
+        if (loginUser.getLoginUser().getUserId() == selectForm.getSelectUserId().get(0) ||
+        	loginUser.getLoginUser().getRoleClass().equals(RoleClass.AFFAIRS.getCode())) {
+        	weeklyReportsService.delete(selectForm, loginUser);
+            return "redirect:/weekly-report/list";
+        } else {
+            // エラーメッセージを表示
+            model.addAttribute("message", "権限がありません。");
+            return index(searchWeeklyReportForm, model, loginUser);
+        }
+    }
 
     // ラジオボタン作成
     private Map<String, String> makeRadioThree() {

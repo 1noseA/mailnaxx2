@@ -71,10 +71,7 @@
                         <div class="mb-4" role="group">
                             <button type="button" class="btn btnAccent me-3" onclick="location.href='/weekly-report/list'">報告を見る</button>
                             <th:block th:if="${isAdmin}">
-                                <input type="submit" class="btn btnDark" value="削除">
-                            </th:block>
-                            <th:block th:unless="${isAdmin}">
-                                <input type="submit" class="btn btnDark" value="削除" disabled>
+                                <button type="submit" class="btn btnDark">削除</button>
                             </th:block>
                         </div>
                     </div>
@@ -98,7 +95,7 @@
                                         <tr>
                                             <td>
                                                 <div class="form-check d-flex justify-content-center align-items-center">
-                                                    <input class="form-check-input" type="checkbox" name="selectUser" th:value="${userList.userId}">
+                                                    <input class="form-check-input" type="checkbox" name="selectUserId" th:value="${userList.userId}">
                                                 </div>
                                             </td>
                                             <td>

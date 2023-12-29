@@ -112,11 +112,11 @@
                             <button type="button" class="btn btnLight" onclick="location.href='/weekly-report/create'">週報作成</button>
                         </div>
                         <div class="mb-4" role="group">
-                            <th:block th:if="${isConfirmer}">
+                            <th:block th:if="${isConfirm}">
                                 <input type="submit" class="btn btnDark" value="確認">
                             </th:block>
-                            <th:block th:unless="${isConfirmer}">
-                                <input type="submit" class="btn btnDark" value="確認" disabled>
+                            <th:block th:if="${isDelete}">
+                                <button type="submit" class="btn btnDark" th:formaction="@{'/weekly-report/delete'}">削除</button>
                             </th:block>
                         </div>
                     </div>
@@ -138,10 +138,8 @@
                                             <td>
                                                 <div class="form-check d-flex justify-content-center align-items-center">
                                                     <th:block th:if="${weeklyReportList.confirmedFlg == '0'}">
-                                                        <input class="form-check-input" type="checkbox" name="selectTarget" th:value="${weeklyReportList.weeklyReportId}">
-                                                    </th:block>
-                                                    <th:block th:unless="${weeklyReportList.confirmedFlg == '0'}">
-                                                        <input class="form-check-input" type="checkbox" name="selectTarget" th:value="${weeklyReportList.weeklyReportId}" disabled>
+                                                        <input class="form-check-input" type="checkbox" name="selectWeeklyReportId" th:value="${weeklyReportList.weeklyReportId}">
+                                                        <input type="hidden" name="selectUserId" th:value="${weeklyReportList.getUser().getUserId()}">
                                                     </th:block>
                                                 </div>
                                             </td>

@@ -10,6 +10,9 @@ import lombok.Data;
 @Data
 public class SelectForm {
 
-    // 選択チェックボックス
-    private List<Integer> selectTarget;
+    // 選択チェックボックス(社員ID)
+    private List<Integer> selectUserId;
+
+    // 選択チェックボックス(週報ID)
+    private List<Integer> selectWeeklyReportId;
 }

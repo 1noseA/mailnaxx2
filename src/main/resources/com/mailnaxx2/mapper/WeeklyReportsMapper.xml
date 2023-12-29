@@ -375,4 +375,13 @@
             updated_at = CURRENT_TIMESTAMP
         WHERE weekly_report_id = #{weeklyReportId}
     </update>
+
+	<!-- 物理削除 -->
+	<delete id="delete">
+		<foreach collection="weeklyReportList" item="w" separator=";">
+            DELETE FROM weekly_reports
+            WHERE
+                weekly_report_id = #{w.weeklyReportId}
+        </foreach>
+    </delete>
 </mapper>

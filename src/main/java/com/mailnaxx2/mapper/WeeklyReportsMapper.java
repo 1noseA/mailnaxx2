@@ -44,4 +44,7 @@ public interface WeeklyReportsMapper {
 
     // 更新
     public void update(WeeklyReports weeklyReport);
+
+    // 物理削除
+    public void delete(List<WeeklyReports> weeklyReportList);
 }

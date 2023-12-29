@@ -14,6 +14,9 @@ public class SearchWeeklyReportForm {
     // 担当営業
     private int salesUserId;
 
+    // 社員ID
+    private int userId;
+
     // 氏名
     private String userName;
 

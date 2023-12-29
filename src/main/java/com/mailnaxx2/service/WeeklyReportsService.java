@@ -57,8 +57,8 @@ public class WeeklyReportsService {
     @Transactional
     public void bulkConfirm(SelectForm selectForm, @AuthenticationPrincipal LoginUserDetails loginUser) {
         List<Integer> idList = new ArrayList<>();
-        for (int i = 0; i < selectForm.getSelectTarget().size(); i++) {
-            idList.add(selectForm.getSelectTarget().get(i));
+        for (int i = 0; i < selectForm.getSelectWeeklyReportId().size(); i++) {
+            idList.add(selectForm.getSelectWeeklyReportId().get(i));
         }
         // 複数件排他ロック
         weeklyReportList = weeklyReportsMapper.forLockByIdList(idList);
@@ -183,4 +183,16 @@ public class WeeklyReportsService {
     }
 
     // 物理削除処理
+    @Transactional
+    public void delete(SelectForm selectForm, @AuthenticationPrincipal LoginUserDetails loginUser) {
+        List<Integer> idList = new ArrayList<>();
+        for (int i = 0; i < selectForm.getSelectUserId().size(); i++) {
+            idList.add(selectForm.getSelectUserId().get(i));
+        }
+        // 複数件排他ロック
+        weeklyReportList = weeklyReportsMapper.forLockByIdList(idList);
+
+        // 物理削除
+        weeklyReportsMapper.delete(weeklyReportList);
+    }
 }

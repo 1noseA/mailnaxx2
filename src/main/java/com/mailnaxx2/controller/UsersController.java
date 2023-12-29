@@ -142,12 +142,12 @@ public class UsersController {
     					Model model,
     					@AuthenticationPrincipal LoginUserDetails loginUser) {
         // 入力チェック
-        if (selectForm.getSelectTarget() == null) {
+        if (selectForm.getSelectUserId() == null) {
             // エラーメッセージを表示
             model.addAttribute("message", "対象を選択してください。");
             return index(searchUsersForm, model, loginUser);
         }
-        for (int selectUser : selectForm.getSelectTarget()) {
+        for (int selectUser : selectForm.getSelectUserId()) {
             if (selectUser == loginUser.getLoginUser().getUserId()) {
                 // エラーメッセージを表示
                 model.addAttribute("message", "自分自身は削除できません。");
