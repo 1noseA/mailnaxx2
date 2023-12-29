@@ -112,7 +112,7 @@
                             <button type="button" class="btn btnLight" onclick="location.href='/weekly-report/create'">週報作成</button>
                         </div>
                         <div class="mb-4" role="group">
-                            <th:block th:if="${isConfirm}">
+                            <th:block th:if="${isSales}">
                                 <input type="submit" class="btn btnDark" value="確認">
                             </th:block>
                             <th:block th:if="${isDelete}">

@@ -26,7 +26,6 @@ import com.mailnaxx2.entity.Affiliations;
 import com.mailnaxx2.entity.Projects;
 import com.mailnaxx2.entity.Users;
 import com.mailnaxx2.entity.WeeklyReports;
-import com.mailnaxx2.form.SearchUsersForm;
 import com.mailnaxx2.form.SearchWeeklyReportForm;
 import com.mailnaxx2.form.SelectForm;
 import com.mailnaxx2.form.WeeklyReportForm;
@@ -56,8 +55,14 @@ public class WeeklyReportsController {
     @Autowired
     ProjectsService projectsService;
 
-    // 確認権限
-    boolean isConfirm;
+    // 管理者
+    boolean isAdmin;
+
+    // 営業
+    boolean isSales;
+
+    // 確認済み
+    boolean isConfirmed;
 
     // 削除権限
     boolean isDelete;
@@ -86,25 +91,27 @@ public class WeeklyReportsController {
     					Model model,
     					@AuthenticationPrincipal LoginUserDetails loginUser) {
     	// 確認権限（営業のみ）
-    	isConfirm = false;
+    	isSales = false;
         if (loginUser.getLoginUser().getSalesFlg().equals("1")) {
-        	isConfirm = true;
+        	isSales = true;
         }
-        session.setAttribute("session_isConfirm", isConfirm);
-        model.addAttribute("isConfirm", isConfirm);
+        session.setAttribute("session_isSales", isSales);
+        model.addAttribute("isSales", isSales);
 
         // 削除権限（総務・自分のみ）
         isDelete = false;
+        isAdmin = false;
         if (loginUser.getLoginUser().getRoleClass().equals(RoleClass.AFFAIRS.getCode())) {
         	isDelete = true;
+        	isAdmin = true;
         }
 
         // 自分の所属
         int myAffiliation = loginUser.getLoginUser().getAffiliation().getAffiliationId();
 
         // 週報一覧を取得
-    	if (isConfirm) {
-    		// 営業の場合、週報を全件取得
+    	if (isSales || isAdmin) {
+    		// 営業・総務の場合、週報を全件取得
     		weeklyReportList = weeklyReportsService.findAll();
     	} else {
     		// 営業以外は自分の所属をデフォルト表示
@@ -172,8 +179,8 @@ public class WeeklyReportsController {
         model.addAttribute("reportDateList", reportDateList);
 
         // 権限（営業のみ）
-        isConfirm = (boolean) session.getAttribute("session_isConfirm");
-        model.addAttribute("isConfirm", isConfirm);
+        isSales = (boolean) session.getAttribute("session_isSales");
+        model.addAttribute("isSales", isSales);
         model.addAttribute("loginUserInfo", loginUser.getLoginUser());
         return "weekly-report/list";
     }
@@ -229,8 +236,17 @@ public class WeeklyReportsController {
     	model.addAttribute("weeklyReportInfo", weeklyReportInfo);
 
         // 確認権限
-        isConfirm = (boolean) session.getAttribute("session_isConfirm");
-        model.addAttribute("isConfirm", isConfirm);
+    	isSales = (boolean) session.getAttribute("session_isSales");
+    	if (isSales) {
+    		if (weeklyReportInfo.getConfirmedFlg().equals("0")) {
+    			isConfirmed = false; // 未確認
+    		} else {
+    			isConfirmed = true;  // 確認済み
+    		}
+    	}
+    	model.addAttribute("isSales", isSales);
+        model.addAttribute("isConfirmed", isConfirmed);
+
         boolean isAuthenticated = false;
         // 自分の週報の場合
         if (weeklyReportInfo.getUser().getUserId() == loginUser.getLoginUser().getUserId()) {

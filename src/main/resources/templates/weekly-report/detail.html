@@ -100,11 +100,13 @@
                 	<th:block th:if="${isAuthenticated}">
                     	<button type="button" class="btn btnMain m-1" th:onclick="|edit('${weeklyReportInfo.weeklyReportId}')|">編集する</button>
                     </th:block>
-                    <th:block th:if="${isConfirm}">
-                    	<button type="button" class="btn btnAccent m-1" th:onclick="|confirm('${weeklyReportInfo.weeklyReportId}')|">確認する</button>
-                   	</th:block>
-                   	<th:block th:unless="${isConfirm}">
-                   		<button type="button" class="btn btnAccent m-1" disabled>確認する</button>
+                    <th:block th:if="${isSales}">
+	                    <th:block th:if="${!isConfirmed}">
+	                    	<button type="button" class="btn btnAccent m-1" th:onclick="|confirm('${weeklyReportInfo.weeklyReportId}')|">確認する</button>
+	                   	</th:block>
+	                   	<th:block th:if="${isConfirmed}">
+	                   		<button type="button" class="btn btnAccent m-1" disabled>確認する</button>
+	                    </th:block>
                     </th:block>
                     <button type="button" class="btn btnAccent m-1">共有する</button>
                 </div>
