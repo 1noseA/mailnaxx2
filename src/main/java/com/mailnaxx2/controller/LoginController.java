@@ -17,8 +17,13 @@ import com.mailnaxx2.entity.Users;
 import com.mailnaxx2.mapper.UsersMapper;
 import com.mailnaxx2.security.LoginUserDetails;
 
+import jakarta.servlet.http.HttpSession;
+
 @Controller
 public class LoginController {
+
+	@Autowired
+    HttpSession session;
 
     @Autowired
     UsersMapper usersMapper;
@@ -51,6 +56,12 @@ public class LoginController {
 
     @GetMapping("/logout")
     public String logout() {
+    	session.removeAttribute("session_isAdmin");
+    	session.removeAttribute("session_isSales");
+    	session.removeAttribute("session_affiliationList");
+    	session.removeAttribute("session_salesList");
+    	session.removeAttribute("session_reportDateList");
+    	session.removeAttribute("session_projectList");
         return "/";
     }
 }
