@@ -417,12 +417,19 @@
         WHERE weekly_report_id = #{weeklyReportId}
     </update>
 
-	<!-- 物理削除 -->
-	<delete id="delete">
+	<!-- 一括物理削除 -->
+	<delete id="bulkDelete">
 		<foreach collection="weeklyReportList" item="w" separator=";">
             DELETE FROM weekly_reports
             WHERE
                 weekly_report_id = #{w.weeklyReportId}
         </foreach>
+    </delete>
+
+	<!-- 物理削除 -->
+	<delete id="delete">
+        DELETE FROM weekly_reports
+        WHERE
+            weekly_report_id = #{weeklyReportId}
     </delete>
 </mapper>

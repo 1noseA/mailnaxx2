@@ -189,9 +189,9 @@ public class WeeklyReportsService {
         return weeklyReport;
     }
 
-    // 物理削除処理
+    // 一括物理削除処理
     @Transactional
-    public void delete(SelectForm selectForm, @AuthenticationPrincipal LoginUserDetails loginUser) {
+    public void bulkDelete(SelectForm selectForm) {
         List<Integer> idList = new ArrayList<>();
         for (int i = 0; i < selectForm.getSelectUserId().size(); i++) {
             idList.add(selectForm.getSelectUserId().get(i));
@@ -199,7 +199,14 @@ public class WeeklyReportsService {
         // 複数件排他ロック
         weeklyReportList = weeklyReportsMapper.forLockByIdList(idList);
 
+        // 一括物理削除
+        weeklyReportsMapper.bulkDelete(weeklyReportList);
+    }
+
+    // 物理削除処理
+    @Transactional
+    public void delete(int weeklyReportId) {
         // 物理削除
-        weeklyReportsMapper.delete(weeklyReportList);
+        weeklyReportsMapper.delete(weeklyReportId);
     }
 }

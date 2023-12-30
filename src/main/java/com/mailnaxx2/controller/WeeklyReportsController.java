@@ -247,11 +247,19 @@ public class WeeklyReportsController {
     	model.addAttribute("isSales", isSales);
         model.addAttribute("isConfirmed", isConfirmed);
 
-        boolean isAuthenticated = false;
+        // 削除権限（総務・自分のみ）
+        isDelete = false;
+        if (loginUser.getLoginUser().getRoleClass().equals(RoleClass.AFFAIRS.getCode())) {
+        	isDelete = true;
+        }
+
         // 自分の週報の場合
+        boolean isAuthenticated = false;
         if (weeklyReportInfo.getUser().getUserId() == loginUser.getLoginUser().getUserId()) {
         	isAuthenticated = true;
+        	isDelete = true;
         }
+        model.addAttribute("isDelete", isDelete);
 		model.addAttribute("isAuthenticated", isAuthenticated);
         model.addAttribute("loginUserInfo", loginUser.getLoginUser());
         return "weekly-report/detail";
@@ -401,9 +409,9 @@ public class WeeklyReportsController {
     }
 
     // 提出処理（メール送信）
-    // 物理削除処理
-    @RequestMapping("/weekly-report/delete")
-    public String delete(@ModelAttribute SelectForm selectForm,
+    // 一括物理削除処理
+    @RequestMapping("/weekly-report/bulkDelete")
+    public String bulkDelete(@ModelAttribute SelectForm selectForm,
     					SearchWeeklyReportForm searchWeeklyReportForm,
     					Model model,
     					@AuthenticationPrincipal LoginUserDetails loginUser) {
@@ -417,12 +425,29 @@ public class WeeklyReportsController {
         // 権限チェック（自分か総務のみ）
         if (loginUser.getLoginUser().getUserId() == selectForm.getSelectUserId().get(0) ||
         	loginUser.getLoginUser().getRoleClass().equals(RoleClass.AFFAIRS.getCode())) {
-        	weeklyReportsService.delete(selectForm, loginUser);
+        	weeklyReportsService.bulkDelete(selectForm);
             return "redirect:/weekly-report/list";
         } else {
             // エラーメッセージを表示
             model.addAttribute("message", "権限がありません。");
             return index(searchWeeklyReportForm, model, loginUser);
+        }
+    }
+
+    // 物理削除処理
+    @RequestMapping("/weekly-report/delete")
+    public String delete(@ModelAttribute SelectForm selectForm,
+    					Model model,
+    					@AuthenticationPrincipal LoginUserDetails loginUser) {
+        // 権限チェック（自分か総務のみ）
+        if (loginUser.getLoginUser().getUserId() == selectForm.getSelectUserId().get(0) ||
+        	loginUser.getLoginUser().getRoleClass().equals(RoleClass.AFFAIRS.getCode())) {
+        	weeklyReportsService.delete(selectForm.getSelectWeeklyReportId().get(0));
+            return "redirect:/weekly-report/list";
+        } else {
+            // エラーメッセージを表示
+            model.addAttribute("message", "権限がありません。");
+            return detail(selectForm.getSelectWeeklyReportId().get(0), model, loginUser);
         }
     }
 

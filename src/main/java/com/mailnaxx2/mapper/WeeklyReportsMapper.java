@@ -47,6 +47,9 @@ public interface WeeklyReportsMapper {
     // 更新
     public void update(WeeklyReports weeklyReport);
 
+    // 一括物理削除
+    public void bulkDelete(List<WeeklyReports> weeklyReportList);
+
     // 物理削除
-    public void delete(List<WeeklyReports> weeklyReportList);
+    public void delete(int weeklyReportId);
 }
