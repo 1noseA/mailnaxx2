@@ -299,6 +299,19 @@ public class WeeklyReportsController {
         model.addAttribute("radioCondition", radioThree);
         model.addAttribute("radioRelationship", radioThree);
 
+        // 先週分の週報を取得
+        LocalDate lastWeek = reportDate.minusDays(7);
+        WeeklyReports lastWeekReportInfo = weeklyReportsService.findByLastWeek(loginUser.getLoginUser().getUserId(), lastWeek);
+        // 先週分がある場合、以下の項目は自動入力
+    	if (lastWeekReportInfo != null) {
+    		// 担当営業
+    		weeklyReportForm.setSalesUserId(lastWeekReportInfo.getProject().getSalesUser().getUserId());
+    		// 現場
+    		weeklyReportForm.setProjectId(lastWeekReportInfo.getProject().getProjectId());
+    		// 今週の目標
+    		weeklyReportForm.setPlan(lastWeekReportInfo.getNextPlan());
+    	}
+
         // 現場社員プルダウン
         List<Users> userList = usersService.findAll();
         model.addAttribute("userList", userList);

@@ -1,5 +1,6 @@
 package com.mailnaxx2.service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -76,6 +77,12 @@ public class WeeklyReportsService {
     public WeeklyReports findById(int weeklyReportId) {
         weeklyReportInfo = weeklyReportsMapper.findById(weeklyReportId);
         return weeklyReportInfo;
+    }
+
+    // 先週分取得
+    public WeeklyReports findByLastWeek(int userId, LocalDate lastReportDate) {
+    	WeeklyReports lastWeekReportInfo = weeklyReportsMapper.findByLastWeek(userId, lastReportDate);
+        return lastWeekReportInfo;
     }
 
     // 確認処理
