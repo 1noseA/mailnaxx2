@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import com.mailnaxx2.validation.ValidGroup1;
 import com.mailnaxx2.validation.ValidGroup2;
 
+import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
@@ -28,8 +29,9 @@ public class WeeklyReportForm {
     private LocalDate reportDate;
 
     // 平均残業時間
-    @NotBlank(groups = ValidGroup1.class, message = "半角数字で入力してください")
-    private String aveOvertimeHours;
+    //@Positive(groups = ValidGroup1.class, message = "半角数字で入力してください")
+    @Digits(integer = 2 , fraction = 2, message = "整数部2桁、少数部2桁以内で入力してください")
+    private double aveOvertimeHours;
 
     // 進捗状況
     @NotBlank(groups = ValidGroup1.class, message = "選択してください")

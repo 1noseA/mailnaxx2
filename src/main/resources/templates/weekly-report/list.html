@@ -93,9 +93,9 @@
                         <div class="col-md-3 text-md-end">
                         </div>
                         <div class="col-md-8">
-                            <input type="checkbox" class="form-check-input" th:field="*{confirmedFlg}" id="confirmedFlg" th:value="1" />
-                            <input type="hidden" name="!confirmedFlg" value="0" />
-                            <label for="confirmedFlg" class="form-check-label">確認済みを表示</label>
+                            <input type="checkbox" class="form-check-input" th:field="*{status}" id="status" th:value="1" />
+                            <input type="hidden" name="!status" value="0" />
+                            <label for="status" class="form-check-label">確認済みを非表示</label>
                         </div>
                     </div>
 
@@ -134,10 +134,10 @@
                                 </thead>
                                 <tbody>
                                     <th:block th:each="weeklyReportList : ${weeklyReportList}">
-                                        <tr th:classappend="${weeklyReportList.confirmedFlg == '1'} ? 'bg-secondary' : ''">
+                                        <tr th:classappend="${weeklyReportList.status == '3'} ? 'bg-secondary' : ''">
                                             <td>
                                                 <div class="form-check d-flex justify-content-center align-items-center">
-                                                    <th:block th:if="${weeklyReportList.confirmedFlg == '0'}">
+                                                    <th:block th:if="${weeklyReportList.status != '3'}">
                                                         <input class="form-check-input" type="checkbox" name="selectWeeklyReportId" th:value="${weeklyReportList.weeklyReportId}">
                                                         <input type="hidden" name="selectUserId" th:value="${weeklyReportList.getUser().getUserId()}">
                                                     </th:block>

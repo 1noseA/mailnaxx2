@@ -24,7 +24,7 @@ public class WeeklyReports {
     private LocalDate reportDate;
 
     // 平均残業時間
-    private int aveOvertimeHours;
+    private double aveOvertimeHours;
 
     // 進捗状況
     private String progress;
@@ -62,11 +62,14 @@ public class WeeklyReports {
     // 特記事項
     private String remarks;
 
-    // 確認済フラグ
-    private String confirmedFlg;
+    // ステータス
+    private String status;
 
     // コメント
     private String comment;
+
+    // 既読フラグ
+    private String readedFlg;
 
     // 共有フラグ
     private String sharedFlg;

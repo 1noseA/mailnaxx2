@@ -238,10 +238,10 @@ public class WeeklyReportsController {
         // 確認権限
     	isSales = (boolean) session.getAttribute("session_isSales");
     	if (isSales) {
-    		if (weeklyReportInfo.getConfirmedFlg().equals("0")) {
-    			isConfirmed = false; // 未確認
-    		} else {
+    		if (weeklyReportInfo.getStatus().equals("3")) {
     			isConfirmed = true;  // 確認済み
+    		} else {
+    			isConfirmed = false; // 未確認
     		}
     	}
     	model.addAttribute("isSales", isSales);
@@ -467,7 +467,7 @@ public class WeeklyReportsController {
         weeklyReportForm.setSalesUserId(weeklyReportInfo.getProject().getSalesUser().getUserId());
         weeklyReportForm.setProjectId(weeklyReportInfo.getProject().getProjectId());
         weeklyReportForm.setReportDate(weeklyReportInfo.getReportDate());
-        weeklyReportForm.setAveOvertimeHours(String.valueOf(weeklyReportInfo.getAveOvertimeHours()));
+        weeklyReportForm.setAveOvertimeHours(weeklyReportInfo.getAveOvertimeHours());
         weeklyReportForm.setProgress(weeklyReportInfo.getProgress());
         weeklyReportForm.setCondition(weeklyReportInfo.getCondition());
         weeklyReportForm.setRelationship(weeklyReportInfo.getRelationship());

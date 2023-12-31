@@ -148,7 +148,7 @@ public class WeeklyReportsService {
     	weeklyReport.setReportDate(weeklyReportForm.getReportDate());
 
     	// 平均残業時間
-    	weeklyReport.setAveOvertimeHours(Integer.parseInt(weeklyReportForm.getAveOvertimeHours()));
+    	weeklyReport.setAveOvertimeHours(weeklyReportForm.getAveOvertimeHours());
 
     	// 進捗状況
     	weeklyReport.setProgress(weeklyReportForm.getProgress());

@@ -26,6 +26,6 @@ public class SearchWeeklyReportForm {
     // 報告対象週（To）
     private String toReportDate;
 
-    // 確認済みフラグ
-    private String confirmedFlg;
+    // ステータス
+    private String status;
 }
