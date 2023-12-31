@@ -19,8 +19,8 @@ public class Affiliations {
     // 管理者
     private int administratorUserId;
 
-    // 非表示フラグ
-    private String hiddenFlg;
+    // 削除フラグ
+    private String deletedFlg;
 
     // レコード登録者
     private String createdBy;
