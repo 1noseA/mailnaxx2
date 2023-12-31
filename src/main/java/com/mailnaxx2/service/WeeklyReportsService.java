@@ -166,10 +166,10 @@ public class WeeklyReportsService {
     	weeklyReport.setWorkContent(weeklyReportForm.getWorkContent());
 
     	// 難易度
-    	weeklyReport.setDifficulty(Integer.parseInt(weeklyReportForm.getDifficulty()));
+    	weeklyReport.setDifficulty(weeklyReportForm.getDifficulty());
 
     	// スケジュール感
-    	weeklyReport.setSchedule(Integer.parseInt(weeklyReportForm.getSchedule()));
+    	weeklyReport.setSchedule(weeklyReportForm.getSchedule());
 
     	// 結果
     	weeklyReport.setResult(weeklyReportForm.getResult());

@@ -307,6 +307,10 @@ public class WeeklyReportsController {
         model.addAttribute("radioCondition", radioThree);
         model.addAttribute("radioRelationship", radioThree);
 
+        // 初期値
+        weeklyReportForm.setDifficulty(100);
+        weeklyReportForm.setSchedule(100);
+
         // 先週分の週報を取得
         LocalDate lastWeek = reportDate.minusDays(7);
         WeeklyReports lastWeekReportInfo = weeklyReportsService.findByLastWeek(loginUser.getLoginUser().getUserId(), lastWeek);
@@ -473,8 +477,8 @@ public class WeeklyReportsController {
         weeklyReportForm.setRelationship(weeklyReportInfo.getRelationship());
         weeklyReportForm.setPlan(weeklyReportInfo.getPlan());
         weeklyReportForm.setWorkContent(weeklyReportInfo.getWorkContent());
-        weeklyReportForm.setDifficulty(String.valueOf(weeklyReportInfo.getDifficulty()));
-        weeklyReportForm.setSchedule(String.valueOf(weeklyReportInfo.getSchedule()));
+        weeklyReportForm.setDifficulty(weeklyReportInfo.getDifficulty());
+        weeklyReportForm.setSchedule(weeklyReportInfo.getSchedule());
         weeklyReportForm.setResult(weeklyReportInfo.getResult());
         weeklyReportForm.setImpression(weeklyReportInfo.getImpression());
         weeklyReportForm.setImprovements(weeklyReportInfo.getImprovements());
