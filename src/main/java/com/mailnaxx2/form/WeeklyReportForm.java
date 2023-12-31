@@ -31,9 +31,9 @@ public class WeeklyReportForm {
     private LocalDate reportDate;
 
     // 平均残業時間
-    @NotNull(groups = ValidGroup1.class, message = "半角数字で入力してください")
+    @NotNull(groups = ValidGroup1.class, message = "入力してください")
     @Digits(integer = 2 , fraction = 2, groups = ValidGroup2.class, message = "整数部2桁、少数部2桁以内で入力してください")
-    private double aveOvertimeHours;
+    private Double aveOvertimeHours;
 
     // 進捗状況
     @NotBlank(groups = ValidGroup1.class, message = "選択してください")
@@ -56,14 +56,14 @@ public class WeeklyReportForm {
     private String workContent;
 
     // 難易度
-    @NotNull(groups = ValidGroup1.class, message = "半角数字3桁で入力してください")
+    @NotNull(groups = ValidGroup1.class, message = "入力してください")
     @Range(min = 0, max = 999, groups = ValidGroup2.class, message = "半角数字3桁で入力してください")
-    private int difficulty;
+    private Integer difficulty;
 
     // スケジュール感
-    @NotNull(groups = ValidGroup1.class, message = "半角数字3桁で入力してください")
+    @NotNull(groups = ValidGroup1.class, message = "入力してください")
     @Range(min = 0, max = 999, groups = ValidGroup2.class, message = "半角数字3桁で入力してください")
-    private int schedule;
+    private Integer schedule;
 
     // 結果
     @NotBlank(groups = ValidGroup1.class, message = "入力してください")
