@@ -5,18 +5,18 @@
 <mapper namespace="com.mailnaxx2.mapper.AffiliationsMapper">
     <select id="findAll" resultMap="AffiliationMap">
         SELECT
-            affiliation_id
-            ,affiliation_name
+            affiliation_id,
+            affiliation_name
         FROM
             affiliations
-        WHERE hidden_flg = '0'
+        WHERE deleted_flg = '0'
     </select>
 
     <resultMap id="AffiliationMap" type="com.mailnaxx2.entity.Affiliations">
         <result property="affiliationId" column="affiliation_id" />
         <result property="affiliationName" column="affiliation_name" />
         <result property="administratorUserId" column="administrator_user_id" />
-        <result property="hiddenFlg" column="hidden_flg" />
+        <result property="deletedFlg" column="deleted_flg" />
         <result property="createdBy" column="created_by" />
         <result property="createdAt" column="created_at" />
         <result property="updatedBy" column="updated_by" />

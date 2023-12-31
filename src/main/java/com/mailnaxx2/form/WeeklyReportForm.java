@@ -2,13 +2,15 @@ package com.mailnaxx2.form;
 
 import java.time.LocalDate;
 
+import org.hibernate.validator.constraints.Range;
+
 import com.mailnaxx2.validation.ValidGroup1;
 import com.mailnaxx2.validation.ValidGroup2;
 
+import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Data;
 
 /**
@@ -29,8 +31,9 @@ public class WeeklyReportForm {
     private LocalDate reportDate;
 
     // 平均残業時間
-    @NotBlank(groups = ValidGroup1.class, message = "半角数字で入力してください")
-    private String aveOvertimeHours;
+    @NotNull(groups = ValidGroup1.class, message = "入力してください")
+    @Digits(integer = 2 , fraction = 2, groups = ValidGroup2.class, message = "整数部2桁、少数部2桁以内で入力してください")
+    private Double aveOvertimeHours;
 
     // 進捗状況
     @NotBlank(groups = ValidGroup1.class, message = "選択してください")
@@ -53,14 +56,14 @@ public class WeeklyReportForm {
     private String workContent;
 
     // 難易度
-    @NotBlank(groups = ValidGroup1.class, message = "半角数字3桁で入力してください")
-    @Pattern(regexp="^[0-9]+$", groups = ValidGroup2.class, message = "半角数字3桁で入力してください")
-    private String difficulty;
+    @NotNull(groups = ValidGroup1.class, message = "入力してください")
+    @Range(min = 0, max = 999, groups = ValidGroup2.class, message = "半角数字3桁で入力してください")
+    private Integer difficulty;
 
     // スケジュール感
-    @NotBlank(groups = ValidGroup1.class, message = "半角数字3桁で入力してください")
-    @Pattern(regexp="^[0-9]+$", groups = ValidGroup2.class, message = "半角数字3桁で入力してください")
-    private String schedule;
+    @NotNull(groups = ValidGroup1.class, message = "入力してください")
+    @Range(min = 0, max = 999, groups = ValidGroup2.class, message = "半角数字3桁で入力してください")
+    private Integer schedule;
 
     // 結果
     @NotBlank(groups = ValidGroup1.class, message = "入力してください")

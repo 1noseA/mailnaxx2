@@ -2,8 +2,6 @@ package com.mailnaxx2.controller;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -57,8 +55,17 @@ public class WeeklyReportsController {
     @Autowired
     ProjectsService projectsService;
 
-    // 確認権限
-    boolean isConfirmer;
+    // 管理者
+    boolean isAdmin;
+
+    // 営業
+    boolean isSales;
+
+    // 確認済み
+    boolean isConfirmed;
+
+    // 削除権限
+    boolean isDelete;
 
     // 週報一覧
     List<WeeklyReports> weeklyReportList;
@@ -83,20 +90,28 @@ public class WeeklyReportsController {
     public String index(SearchWeeklyReportForm searchWeeklyReportForm,
     					Model model,
     					@AuthenticationPrincipal LoginUserDetails loginUser) {
-    	// 権限（営業のみ）
-        isConfirmer = false;
+    	// 確認権限（営業のみ）
+    	isSales = false;
         if (loginUser.getLoginUser().getSalesFlg().equals("1")) {
-            isConfirmer = true;
+        	isSales = true;
         }
-        session.setAttribute("session_isConfirmer", isConfirmer);
-        model.addAttribute("isConfirmer", isConfirmer);
+        session.setAttribute("session_isSales", isSales);
+        model.addAttribute("isSales", isSales);
+
+        // 削除権限（総務・自分のみ）
+        isDelete = false;
+        isAdmin = false;
+        if (loginUser.getLoginUser().getRoleClass().equals(RoleClass.AFFAIRS.getCode())) {
+        	isDelete = true;
+        	isAdmin = true;
+        }
 
         // 自分の所属
         int myAffiliation = loginUser.getLoginUser().getAffiliation().getAffiliationId();
 
         // 週報一覧を取得
-    	if (isConfirmer) {
-    		// 営業の場合、週報を全件取得
+    	if (isSales || isAdmin) {
+    		// 営業・総務の場合、週報を全件取得
     		weeklyReportList = weeklyReportsService.findAll();
     	} else {
     		// 営業以外は自分の所属をデフォルト表示
@@ -108,9 +123,11 @@ public class WeeklyReportsController {
         		// その他の場合、自分の週報を取得
         		weeklyReportList = weeklyReportsService.findMine(loginUser.getLoginUser().getUserId());
         		searchWeeklyReportForm.setUserName(loginUser.getLoginUser().getUserName());
+        		isDelete = true;
         	}
     	}
         model.addAttribute("weeklyReportList", weeklyReportList);
+        model.addAttribute("isDelete", isDelete);
 
         // 所属プルダウン
         affiliationList = affiliationsService.findAll();
@@ -162,8 +179,8 @@ public class WeeklyReportsController {
         model.addAttribute("reportDateList", reportDateList);
 
         // 権限（営業のみ）
-        isConfirmer = (boolean) session.getAttribute("session_isConfirmer");
-        model.addAttribute("isConfirmer", isConfirmer);
+        isSales = (boolean) session.getAttribute("session_isSales");
+        model.addAttribute("isSales", isSales);
         model.addAttribute("loginUserInfo", loginUser.getLoginUser());
         return "weekly-report/list";
     }
@@ -175,7 +192,7 @@ public class WeeklyReportsController {
     						Model model,
     						@AuthenticationPrincipal LoginUserDetails loginUser) {
         // 入力チェック
-        if (selectForm.getSelectTarget() == null) {
+        if (selectForm.getSelectWeeklyReportId() == null) {
             // エラーメッセージを表示
             model.addAttribute("message", "対象を選択してください。");
             return index(searchWeeklyReportForm, model, loginUser);
@@ -199,16 +216,50 @@ public class WeeklyReportsController {
     					@AuthenticationPrincipal LoginUserDetails loginUser) {
     	// 詳細情報を取得
         weeklyReportInfo = weeklyReportsService.findById(weeklyReportId);
-        model.addAttribute("weeklyReportInfo", weeklyReportInfo);
 
-        // 権限
-        isConfirmer = (boolean) session.getAttribute("session_isConfirmer");
-        model.addAttribute("isConfirmer", isConfirmer);
-        boolean isAuthenticated = false;
+        // ラジオボタン項目
+        Map<String, String> radioThree = makeRadioThree();
+    	for (Map.Entry<String, String> radio : radioThree.entrySet()) {
+    		// 進捗状況
+        	if ((radio.getKey()).equals(weeklyReportInfo.getProgress())) {
+        		weeklyReportInfo.setProgress(radio.getValue());
+        	}
+        	// 体調
+        	if ((radio.getKey()).equals(weeklyReportInfo.getCondition())) {
+        		weeklyReportInfo.setCondition(radio.getValue());
+        	}
+        	// 人間関係
+        	if ((radio.getKey()).equals(weeklyReportInfo.getRelationship())) {
+        		weeklyReportInfo.setRelationship(radio.getValue());
+        	}
+        }
+    	model.addAttribute("weeklyReportInfo", weeklyReportInfo);
+
+        // 確認権限
+    	isSales = (boolean) session.getAttribute("session_isSales");
+    	if (isSales) {
+    		if (weeklyReportInfo.getStatus().equals("3")) {
+    			isConfirmed = true;  // 確認済み
+    		} else {
+    			isConfirmed = false; // 未確認
+    		}
+    	}
+    	model.addAttribute("isSales", isSales);
+        model.addAttribute("isConfirmed", isConfirmed);
+
+        // 削除権限（総務・自分のみ）
+        isDelete = false;
+        if (loginUser.getLoginUser().getRoleClass().equals(RoleClass.AFFAIRS.getCode())) {
+        	isDelete = true;
+        }
+
         // 自分の週報の場合
+        boolean isAuthenticated = false;
         if (weeklyReportInfo.getUser().getUserId() == loginUser.getLoginUser().getUserId()) {
         	isAuthenticated = true;
+        	isDelete = true;
         }
+        model.addAttribute("isDelete", isDelete);
 		model.addAttribute("isAuthenticated", isAuthenticated);
         model.addAttribute("loginUserInfo", loginUser.getLoginUser());
         return "weekly-report/detail";
@@ -250,16 +301,28 @@ public class WeeklyReportsController {
         LocalDate reportDate = now.with(DayOfWeek.MONDAY);
         weeklyReportForm.setReportDate(reportDate);
 
-        // ラジオボタン
-        Map<String, String> radioThree = new LinkedHashMap<>();
-        radioThree.put("1", "良い");
-        radioThree.put("2", "やや良い");
-        radioThree.put("3", "普通");
-        radioThree.put("4", "やや悪い");
-        radioThree.put("5", "悪い");
+        // ラジオボタン作成
+        Map<String, String> radioThree = makeRadioThree();
         model.addAttribute("radioProgress", radioThree);
         model.addAttribute("radioCondition", radioThree);
         model.addAttribute("radioRelationship", radioThree);
+
+        // 初期値
+        weeklyReportForm.setDifficulty(100);
+        weeklyReportForm.setSchedule(100);
+
+        // 先週分の週報を取得
+        LocalDate lastWeek = reportDate.minusDays(7);
+        WeeklyReports lastWeekReportInfo = weeklyReportsService.findByLastWeek(loginUser.getLoginUser().getUserId(), lastWeek);
+        // 先週分がある場合、以下の項目は自動入力
+    	if (lastWeekReportInfo != null) {
+    		// 担当営業
+    		weeklyReportForm.setSalesUserId(lastWeekReportInfo.getProject().getSalesUser().getUserId());
+    		// 現場
+    		weeklyReportForm.setProjectId(lastWeekReportInfo.getProject().getProjectId());
+    		// 今週の目標
+    		weeklyReportForm.setPlan(lastWeekReportInfo.getNextPlan());
+    	}
 
         // 現場社員プルダウン
         List<Users> userList = usersService.findAll();
@@ -346,25 +409,76 @@ public class WeeklyReportsController {
         // 更新
         weeklyReportsService.update(weeklyReport, weeklyReportForm, loginUser);
 
-        return "redirect:/weekly-report/list";
+        return detail(weeklyReportId, model, loginUser);
     }
 
     // 提出処理（メール送信）
+    // 一括物理削除処理
+    @RequestMapping("/weekly-report/bulkDelete")
+    public String bulkDelete(@ModelAttribute SelectForm selectForm,
+    					SearchWeeklyReportForm searchWeeklyReportForm,
+    					Model model,
+    					@AuthenticationPrincipal LoginUserDetails loginUser) {
+        // 入力チェック
+        if (selectForm.getSelectWeeklyReportId() == null) {
+            // エラーメッセージを表示
+            model.addAttribute("message", "対象を選択してください。");
+            return index(searchWeeklyReportForm, model, loginUser);
+        }
+
+        // 権限チェック（自分か総務のみ）
+        if (loginUser.getLoginUser().getUserId() == selectForm.getSelectUserId().get(0) ||
+        	loginUser.getLoginUser().getRoleClass().equals(RoleClass.AFFAIRS.getCode())) {
+        	weeklyReportsService.bulkDelete(selectForm);
+            return "redirect:/weekly-report/list";
+        } else {
+            // エラーメッセージを表示
+            model.addAttribute("message", "権限がありません。");
+            return index(searchWeeklyReportForm, model, loginUser);
+        }
+    }
+
     // 物理削除処理
+    @RequestMapping("/weekly-report/delete")
+    public String delete(@ModelAttribute SelectForm selectForm,
+    					Model model,
+    					@AuthenticationPrincipal LoginUserDetails loginUser) {
+        // 権限チェック（自分か総務のみ）
+        if (loginUser.getLoginUser().getUserId() == selectForm.getSelectUserId().get(0) ||
+        	loginUser.getLoginUser().getRoleClass().equals(RoleClass.AFFAIRS.getCode())) {
+        	weeklyReportsService.delete(selectForm.getSelectWeeklyReportId().get(0));
+            return "redirect:/weekly-report/list";
+        } else {
+            // エラーメッセージを表示
+            model.addAttribute("message", "権限がありません。");
+            return detail(selectForm.getSelectWeeklyReportId().get(0), model, loginUser);
+        }
+    }
+
+    // ラジオボタン作成
+    private Map<String, String> makeRadioThree() {
+    	Map<String, String> radioThree = new LinkedHashMap<>();
+        radioThree.put("1", "良い");
+        radioThree.put("2", "やや良い");
+        radioThree.put("3", "普通");
+        radioThree.put("4", "やや悪い");
+        radioThree.put("5", "悪い");
+        return radioThree;
+    }
 
     // 入力フォームに設定
     private void setInputForm(WeeklyReports weeklyReportInfo, WeeklyReportForm weeklyReportForm) {
         weeklyReportForm.setSalesUserId(weeklyReportInfo.getProject().getSalesUser().getUserId());
         weeklyReportForm.setProjectId(weeklyReportInfo.getProject().getProjectId());
         weeklyReportForm.setReportDate(weeklyReportInfo.getReportDate());
-        weeklyReportForm.setAveOvertimeHours(String.valueOf(weeklyReportInfo.getAveOvertimeHours()));
+        weeklyReportForm.setAveOvertimeHours(weeklyReportInfo.getAveOvertimeHours());
         weeklyReportForm.setProgress(weeklyReportInfo.getProgress());
         weeklyReportForm.setCondition(weeklyReportInfo.getCondition());
         weeklyReportForm.setRelationship(weeklyReportInfo.getRelationship());
         weeklyReportForm.setPlan(weeklyReportInfo.getPlan());
         weeklyReportForm.setWorkContent(weeklyReportInfo.getWorkContent());
-        weeklyReportForm.setDifficulty(String.valueOf(weeklyReportInfo.getDifficulty()));
-        weeklyReportForm.setSchedule(String.valueOf(weeklyReportInfo.getSchedule()));
+        weeklyReportForm.setDifficulty(weeklyReportInfo.getDifficulty());
+        weeklyReportForm.setSchedule(weeklyReportInfo.getSchedule());
         weeklyReportForm.setResult(weeklyReportInfo.getResult());
         weeklyReportForm.setImpression(weeklyReportInfo.getImpression());
         weeklyReportForm.setImprovements(weeklyReportInfo.getImprovements());

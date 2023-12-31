@@ -1,5 +1,6 @@
 package com.mailnaxx2.service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,8 +58,8 @@ public class WeeklyReportsService {
     @Transactional
     public void bulkConfirm(SelectForm selectForm, @AuthenticationPrincipal LoginUserDetails loginUser) {
         List<Integer> idList = new ArrayList<>();
-        for (int i = 0; i < selectForm.getSelectTarget().size(); i++) {
-            idList.add(selectForm.getSelectTarget().get(i));
+        for (int i = 0; i < selectForm.getSelectWeeklyReportId().size(); i++) {
+            idList.add(selectForm.getSelectWeeklyReportId().get(i));
         }
         // 複数件排他ロック
         weeklyReportList = weeklyReportsMapper.forLockByIdList(idList);
@@ -76,6 +77,12 @@ public class WeeklyReportsService {
     public WeeklyReports findById(int weeklyReportId) {
         weeklyReportInfo = weeklyReportsMapper.findById(weeklyReportId);
         return weeklyReportInfo;
+    }
+
+    // 先週分取得
+    public WeeklyReports findByLastWeek(int userId, LocalDate lastReportDate) {
+    	WeeklyReports lastWeekReportInfo = weeklyReportsMapper.findByLastWeek(userId, lastReportDate);
+        return lastWeekReportInfo;
     }
 
     // 確認処理
@@ -141,7 +148,7 @@ public class WeeklyReportsService {
     	weeklyReport.setReportDate(weeklyReportForm.getReportDate());
 
     	// 平均残業時間
-    	weeklyReport.setAveOvertimeHours(Integer.parseInt(weeklyReportForm.getAveOvertimeHours()));
+    	weeklyReport.setAveOvertimeHours(weeklyReportForm.getAveOvertimeHours());
 
     	// 進捗状況
     	weeklyReport.setProgress(weeklyReportForm.getProgress());
@@ -159,10 +166,10 @@ public class WeeklyReportsService {
     	weeklyReport.setWorkContent(weeklyReportForm.getWorkContent());
 
     	// 難易度
-    	weeklyReport.setDifficulty(Integer.parseInt(weeklyReportForm.getDifficulty()));
+    	weeklyReport.setDifficulty(weeklyReportForm.getDifficulty());
 
     	// スケジュール感
-    	weeklyReport.setSchedule(Integer.parseInt(weeklyReportForm.getSchedule()));
+    	weeklyReport.setSchedule(weeklyReportForm.getSchedule());
 
     	// 結果
     	weeklyReport.setResult(weeklyReportForm.getResult());
@@ -182,5 +189,24 @@ public class WeeklyReportsService {
         return weeklyReport;
     }
 
+    // 一括物理削除処理
+    @Transactional
+    public void bulkDelete(SelectForm selectForm) {
+        List<Integer> idList = new ArrayList<>();
+        for (int i = 0; i < selectForm.getSelectUserId().size(); i++) {
+            idList.add(selectForm.getSelectUserId().get(i));
+        }
+        // 複数件排他ロック
+        weeklyReportList = weeklyReportsMapper.forLockByIdList(idList);
+
+        // 一括物理削除
+        weeklyReportsMapper.bulkDelete(weeklyReportList);
+    }
+
     // 物理削除処理
+    @Transactional
+    public void delete(int weeklyReportId) {
+        // 物理削除
+        weeklyReportsMapper.delete(weeklyReportId);
+    }
 }

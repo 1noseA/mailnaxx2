@@ -9,7 +9,7 @@
         SELECT
             w.weekly_report_id,
             w.report_date,
-            w.confirmed_flg,
+            w.status,
             u.user_id AS my_user_id,
             u.user_number AS my_user_number,
             u.user_name AS my_user_name
@@ -19,8 +19,7 @@
         INNER JOIN projects p
             ON w.project_id = p.project_id
         WHERE
-            w.confirmed_flg = '0'
-        AND p.deleted_flg = '0'
+            p.deleted_flg = '0'
         ORDER BY u.user_number, w.weekly_report_id, w.report_date DESC
     </select>
 
@@ -29,7 +28,7 @@
         SELECT
             w.weekly_report_id,
             w.report_date,
-            w.confirmed_flg,
+            w.status,
             u.user_id AS my_user_id,
             u.user_number AS my_user_number,
             u.user_name AS my_user_name
@@ -41,8 +40,7 @@
         INNER JOIN projects p
             ON w.project_id = p.project_id
         WHERE
-            w.confirmed_flg = '0'
-        AND p.deleted_flg = '0'
+            p.deleted_flg = '0'
 		AND u.affiliation_id = #{affiliationId}
         ORDER BY u.user_number, w.weekly_report_id, w.report_date DESC
     </select>
@@ -52,7 +50,7 @@
         SELECT
             w.weekly_report_id,
             w.report_date,
-            w.confirmed_flg,
+            w.status,
             u.user_id AS my_user_id,
             u.user_number AS my_user_number,
             u.user_name AS my_user_name
@@ -62,8 +60,7 @@
         INNER JOIN projects p
             ON w.project_id = p.project_id
         WHERE
-            w.confirmed_flg = '0'
-        AND p.deleted_flg = '0'
+            p.deleted_flg = '0'
 		AND w.user_id = #{userId}
         ORDER BY u.user_number, w.weekly_report_id, w.report_date DESC
     </select>
@@ -73,7 +70,7 @@
         SELECT
             w.weekly_report_id,
             w.report_date,
-            w.confirmed_flg,
+            w.status,
             u1.user_id AS my_user_id,
             u1.user_number AS my_user_number,
             u1.user_name AS my_user_name
@@ -101,8 +98,8 @@
         <if test='toReportDate != ""'>
             AND w.report_date &lt;= CAST(#{toReportDate} AS DATE)
         </if>
-        <if test='confirmedFlg == "0"'>
-            AND w.confirmed_flg = '0'
+        <if test='status == "1"'>
+            AND w.status = '3'
         </if>
         ORDER BY u1.user_number, w.weekly_report_id
     </select>
@@ -132,7 +129,7 @@
             w.improvements,
             w.next_plan,
             w.remarks,
-            w.confirmed_flg,
+            w.status,
             w.comment,
             w.shared_flg
         FROM weekly_reports w
@@ -144,6 +141,47 @@
             ON p.sales_user_id = u2.user_id
         WHERE
             w.weekly_report_id = #{weeklyReportId}
+        AND p.deleted_flg = '0'
+    </select>
+
+	<!-- 先週分取得 -->
+    <select id="findByLastWeek" resultMap="weeklyReportMap">
+        SELECT
+            w.weekly_report_id,
+			u1.user_id AS my_user_id,
+            u1.user_number AS my_user_number,
+            u1.user_name AS my_user_name,
+			u2.user_id AS sales_user_id,
+            u2.user_name AS sales_user_name,
+			p.project_id,
+            p.project_name,
+            w.report_date,
+            w.ave_overtime_hours,
+            w.progress,
+            w.condition,
+            w.relationship,
+            w.plan,
+            w.work_content,
+            w.difficulty,
+            w.schedule,
+            w.result,
+            w.impression,
+            w.improvements,
+            w.next_plan,
+            w.remarks,
+            w.status,
+            w.comment,
+            w.shared_flg
+        FROM weekly_reports w
+        INNER JOIN users u1
+            ON w.user_id = u1.user_id
+        INNER JOIN projects p
+            ON w.project_id = p.project_id
+        INNER JOIN users u2
+            ON p.sales_user_id = u2.user_id
+        WHERE
+            w.user_id = #{userId}
+		AND w.report_date = #{lastReportDate}
         AND p.deleted_flg = '0'
     </select>
 
@@ -170,7 +208,7 @@
             w.improvements,
             w.next_plan,
             w.remarks,
-            w.confirmed_flg,
+            w.status,
             w.comment,
             w.shared_flg
         FROM weekly_reports w
@@ -209,7 +247,7 @@
             w.improvements,
             w.next_plan,
             w.remarks,
-            w.confirmed_flg,
+            w.status,
             w.comment,
             w.shared_flg
         FROM weekly_reports w
@@ -246,7 +284,7 @@
         <result property="improvements" column="improvements" />
         <result property="nextPlan" column="next_plan" />
         <result property="remarks" column="remarks" />
-        <result property="confirmedFlg" column="confirmed_flg" />
+        <result property="status" column="status" />
         <result property="comment" column="comment" />
         <result property="sharedFlg" column="shared_flg" />
         <result property="createdBy" column="created_by" />
@@ -284,7 +322,7 @@
 	<!-- 確認 -->
     <update id="confirm">
         UPDATE weekly_reports SET
-            confirmed_flg = '1',
+            status = '3',
             updated_by = #{updatedBy},
             updated_at = CURRENT_TIMESTAMP
         WHERE
@@ -295,7 +333,7 @@
     <update id="bulkConfirm">
         <foreach collection="weeklyReportList" item="w" separator=";">
             UPDATE weekly_reports SET
-                confirmed_flg = '1',
+                status = '3',
                 updated_by = #{w.updatedBy},
                 updated_at = CURRENT_TIMESTAMP
             WHERE
@@ -375,4 +413,20 @@
             updated_at = CURRENT_TIMESTAMP
         WHERE weekly_report_id = #{weeklyReportId}
     </update>
+
+	<!-- 一括物理削除 -->
+	<delete id="bulkDelete">
+		<foreach collection="weeklyReportList" item="w" separator=";">
+            DELETE FROM weekly_reports
+            WHERE
+                weekly_report_id = #{w.weeklyReportId}
+        </foreach>
+    </delete>
+
+	<!-- 物理削除 -->
+	<delete id="delete">
+        DELETE FROM weekly_reports
+        WHERE
+            weekly_report_id = #{weeklyReportId}
+    </delete>
 </mapper>

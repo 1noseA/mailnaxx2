@@ -14,6 +14,9 @@ public class SearchWeeklyReportForm {
     // 担当営業
     private int salesUserId;
 
+    // 社員ID
+    private int userId;
+
     // 氏名
     private String userName;
 
@@ -23,6 +26,6 @@ public class SearchWeeklyReportForm {
     // 報告対象週（To）
     private String toReportDate;
 
-    // 確認済みフラグ
-    private String confirmedFlg;
+    // ステータス
+    private String status;
 }

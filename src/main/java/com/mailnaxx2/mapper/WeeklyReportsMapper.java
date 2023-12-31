@@ -1,11 +1,10 @@
 package com.mailnaxx2.mapper;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
-import com.mailnaxx2.entity.Affiliations;
-import com.mailnaxx2.entity.Users;
 import com.mailnaxx2.entity.WeeklyReports;
 import com.mailnaxx2.form.SearchWeeklyReportForm;
 
@@ -27,6 +26,9 @@ public interface WeeklyReportsMapper {
     // 1件取得
     public WeeklyReports findById(int weeklyReportId);
 
+    // 先週分取得
+    public WeeklyReports findByLastWeek(int userId, LocalDate lastReportDate);
+
     // 1件排他ロック
     public WeeklyReports forLockById(int weeklyReportId);
 
@@ -44,4 +46,10 @@ public interface WeeklyReportsMapper {
 
     // 更新
     public void update(WeeklyReports weeklyReport);
+
+    // 一括物理削除
+    public void bulkDelete(List<WeeklyReports> weeklyReportList);
+
+    // 物理削除
+    public void delete(int weeklyReportId);
 }

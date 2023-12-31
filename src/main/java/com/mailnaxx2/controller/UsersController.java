@@ -20,11 +20,9 @@ import com.mailnaxx2.constants.CommonConstants;
 import com.mailnaxx2.constants.UserConstants;
 import com.mailnaxx2.entity.Affiliations;
 import com.mailnaxx2.entity.Users;
-import com.mailnaxx2.entity.WeeklyReports;
 import com.mailnaxx2.form.SearchUsersForm;
 import com.mailnaxx2.form.SelectForm;
 import com.mailnaxx2.form.UsersForm;
-import com.mailnaxx2.form.WeeklyReportForm;
 import com.mailnaxx2.security.LoginUserDetails;
 import com.mailnaxx2.service.AffiliationsService;
 import com.mailnaxx2.service.UsersService;
@@ -44,7 +42,7 @@ public class UsersController {
     @Autowired
     AffiliationsService affiliationsService;
 
-    // 管理者権限
+    // 管理者
     boolean isAdmin;
 
     // 社員一覧
@@ -142,12 +140,12 @@ public class UsersController {
     					Model model,
     					@AuthenticationPrincipal LoginUserDetails loginUser) {
         // 入力チェック
-        if (selectForm.getSelectTarget() == null) {
+        if (selectForm.getSelectUserId() == null) {
             // エラーメッセージを表示
             model.addAttribute("message", "対象を選択してください。");
             return index(searchUsersForm, model, loginUser);
         }
-        for (int selectUser : selectForm.getSelectTarget()) {
+        for (int selectUser : selectForm.getSelectUserId()) {
             if (selectUser == loginUser.getLoginUser().getUserId()) {
                 // エラーメッセージを表示
                 model.addAttribute("message", "自分自身は削除できません。");
