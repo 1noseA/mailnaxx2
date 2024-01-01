@@ -113,18 +113,27 @@ public class WeeklyReportsController {
     		// 営業・総務の場合、週報を全件取得
     		weeklyReportList = weeklyReportsService.findAll();
     	} else {
-    		// 営業以外は自分の所属をデフォルト表示
+    		// 営業・総務以外は自分の所属をデフォルト表示
     		searchWeeklyReportForm.setAffiliationId(myAffiliation);
-    		if (loginUser.getLoginUser().getRoleClass().equals(RoleClass.LEADER.getCode())) {
+    		isDelete = true;
+    		if (loginUser.getLoginUser().getRoleClass().equals(RoleClass.MANAGER.getCode()) ||
+    			loginUser.getLoginUser().getRoleClass().equals(RoleClass.LEADER.getCode())) {
         		// 所属長の場合、所属メンバーの週報を取得
         		weeklyReportList = weeklyReportsService.findMyAffiliation(myAffiliation);
         	} else {
         		// その他の場合、自分の週報を取得
         		weeklyReportList = weeklyReportsService.findMine(loginUser.getLoginUser().getUserId());
         		searchWeeklyReportForm.setUserName(loginUser.getLoginUser().getUserName());
-        		isDelete = true;
         	}
     	}
+
+    	// 自分の一時保存データがある場合、メッセージを表示
+		if (weeklyReportList.stream()
+				.filter(w -> w.getUser().getUserId() == (loginUser.getLoginUser().getUserId()))
+				.anyMatch(w -> w.getStatus().contains("1"))) {
+			model.addAttribute("infoMessage", "一時保存中の週次報告書があります。");
+		}
+
     	// ステータスを表示名に変換
     	weeklyReportList.forEach(w -> w.setStatus(convertDisplayStatus(w.getStatus())));
         model.addAttribute("weeklyReportList", weeklyReportList);
@@ -195,7 +204,7 @@ public class WeeklyReportsController {
         // 入力チェック
         if (selectForm.getSelectWeeklyReportId() == null) {
             // エラーメッセージを表示
-            model.addAttribute("message", "対象を選択してください。");
+            model.addAttribute("errorMessage", "対象を選択してください。");
             return index(searchWeeklyReportForm, model, loginUser);
         }
 
@@ -205,7 +214,7 @@ public class WeeklyReportsController {
             return "redirect:/weekly-report/list";
         } else {
             // エラーメッセージを表示
-            model.addAttribute("message", "権限がありません。");
+            model.addAttribute("errorMessage", "権限がありません。");
             return index(searchWeeklyReportForm, model, loginUser);
         }
     }
@@ -263,7 +272,7 @@ public class WeeklyReportsController {
             weeklyReportsService.confirm(weeklyReportId, loginUser);
         } else {
             // エラーメッセージを表示
-            model.addAttribute("message", "権限がありません。");
+            model.addAttribute("errorMessage", "権限がありません。");
         }
         return detail(weeklyReportId, model, loginUser);
     }
@@ -403,7 +412,7 @@ public class WeeklyReportsController {
         // 入力チェック
         if (selectForm.getSelectWeeklyReportId() == null) {
             // エラーメッセージを表示
-            model.addAttribute("message", "対象を選択してください。");
+            model.addAttribute("errorMessage", "対象を選択してください。");
             return index(searchWeeklyReportForm, model, loginUser);
         }
 
@@ -414,7 +423,7 @@ public class WeeklyReportsController {
             return "redirect:/weekly-report/list";
         } else {
             // エラーメッセージを表示
-            model.addAttribute("message", "権限がありません。");
+            model.addAttribute("errorMessage", "権限がありません。");
             return index(searchWeeklyReportForm, model, loginUser);
         }
     }
@@ -431,7 +440,7 @@ public class WeeklyReportsController {
             return "redirect:/weekly-report/list";
         } else {
             // エラーメッセージを表示
-            model.addAttribute("message", "権限がありません。");
+            model.addAttribute("errorMessage", "権限がありません。");
             return detail(selectForm.getSelectWeeklyReportId().get(0), model, loginUser);
         }
     }

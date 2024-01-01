@@ -12,9 +12,9 @@
             <div class="searchArea mx-auto my-5">
                 <form method="post" th:action="@{/weekly-report/search}" th:object="${searchWeeklyReportForm}">
                     <div class="row mb-3 align-items-center">
-                        <th:block th:if="${message != null}">
+                        <th:block th:if="${errorMessage != null}">
                             <div class="col-md-12 ms-3">
-                                <p class="text-danger" th:text="${message}"></p>
+                                <p class="text-danger" th:text="${errorMessage}"></p>
                             </div>
                         </th:block>
                     </div>
@@ -120,6 +120,12 @@
                             </th:block>
                         </div>
                     </div>
+
+                    <th:block th:if="${infoMessage != null}">
+                        <div class="col-md-12 ms-3">
+                            <p class="" th:text="${infoMessage}"></p>
+                        </div>
+                    </th:block>
 
                     <th:block th:if="${weeklyReportList.size() > 0}">
                         <div class="table-responsive">
