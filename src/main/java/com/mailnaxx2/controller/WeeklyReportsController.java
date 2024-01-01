@@ -126,6 +126,10 @@ public class WeeklyReportsController {
         		isDelete = true;
         	}
     	}
+    	// ステータスを表示名に変換
+    	for (int i = 0; i < weeklyReportList.size(); i++) {
+    		weeklyReportList.get(i).setStatus(convertDisplayStatus(weeklyReportList.get(i).getStatus()));
+    	}
         model.addAttribute("weeklyReportList", weeklyReportList);
         model.addAttribute("isDelete", isDelete);
 
@@ -453,6 +457,26 @@ public class WeeklyReportsController {
             model.addAttribute("message", "権限がありません。");
             return detail(selectForm.getSelectWeeklyReportId().get(0), model, loginUser);
         }
+    }
+
+    // ステータスを表示名に変換
+    private String convertDisplayStatus(String status) {
+    	String displayName = null;
+    	switch (status) {
+		case "1":
+			displayName = "一時保存";
+			break;
+		case "2":
+			displayName = "提出済み";
+			break;
+		case "3":
+			displayName = "確認済み";
+			break;
+		default:
+			displayName = "";
+			break;
+		}
+    	return displayName;
     }
 
     // ラジオボタン作成

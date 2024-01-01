@@ -127,9 +127,9 @@
                                 <thead>
                                     <tr class="border-bottom border-dark">
                                         <th scope="col" class="text-canter">選択</th>
+                                        <th scope="col">ステータス</th>
                                         <th scope="col">報告対象週</th>
-                                        <th scope="col">社員番号</th>
-                                        <th scope="col">氏名</th>
+                                        <th scope="col">社員番号：氏名</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -145,17 +145,17 @@
                                             </td>
                                             <td>
                                                 <a href="javascript:void(0);" th:onclick="|showDetail('${weeklyReportList.weeklyReportId}')|">
+                                                    <span th:text="${weeklyReportList.status}"></span>
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <a href="javascript:void(0);" th:onclick="|showDetail('${weeklyReportList.weeklyReportId}')|">
                                                     <span th:text="${#strings.replace(weeklyReportList.reportDate, '-', '/')}"></span>
                                                 </a>
                                             </td>
                                             <td>
                                                 <a href="javascript:void(0);" th:onclick="|showDetail('${weeklyReportList.weeklyReportId}')|">
-                                                    <span th:text="${weeklyReportList.user.userNumber}"></span>
-                                                </a>
-                                            </td>
-                                            <td>
-                                                <a href="javascript:void(0);" th:onclick="|showDetail('${weeklyReportList.weeklyReportId}')|">
-                                                    <span th:text="${weeklyReportList.user.userName}"></span>
+                                                    <span th:text="${weeklyReportList.user.userNumber} + '：' + ${weeklyReportList.user.userName}"></span>
                                                 </a>
                                             </td>
                                         </tr>
