@@ -2,10 +2,8 @@ package com.mailnaxx2.controller;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import jakarta.servlet.http.HttpSession;
@@ -22,6 +20,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.mailnaxx2.constants.WeeklyReportConstants;
 import com.mailnaxx2.entity.Affiliations;
 import com.mailnaxx2.entity.Projects;
 import com.mailnaxx2.entity.Users;
@@ -127,9 +126,7 @@ public class WeeklyReportsController {
         	}
     	}
     	// ステータスを表示名に変換
-    	for (int i = 0; i < weeklyReportList.size(); i++) {
-    		weeklyReportList.get(i).setStatus(convertDisplayStatus(weeklyReportList.get(i).getStatus()));
-    	}
+    	weeklyReportList.forEach(w -> w.setStatus(convertDisplayStatus(w.getStatus())));
         model.addAttribute("weeklyReportList", weeklyReportList);
         model.addAttribute("isDelete", isDelete);
 
@@ -220,23 +217,10 @@ public class WeeklyReportsController {
     					@AuthenticationPrincipal LoginUserDetails loginUser) {
     	// 詳細情報を取得
         weeklyReportInfo = weeklyReportsService.findById(weeklyReportId);
-
         // ラジオボタン項目
-        Map<String, String> radioThree = makeRadioThree();
-    	for (Map.Entry<String, String> radio : radioThree.entrySet()) {
-    		// 進捗状況
-        	if ((radio.getKey()).equals(weeklyReportInfo.getProgress())) {
-        		weeklyReportInfo.setProgress(radio.getValue());
-        	}
-        	// 体調
-        	if ((radio.getKey()).equals(weeklyReportInfo.getCondition())) {
-        		weeklyReportInfo.setCondition(radio.getValue());
-        	}
-        	// 人間関係
-        	if ((radio.getKey()).equals(weeklyReportInfo.getRelationship())) {
-        		weeklyReportInfo.setRelationship(radio.getValue());
-        	}
-        }
+    	weeklyReportInfo.setProgress(WeeklyReportConstants.RADIO.get(weeklyReportInfo.getProgress()));
+    	weeklyReportInfo.setCondition(WeeklyReportConstants.RADIO.get(weeklyReportInfo.getCondition()));
+    	weeklyReportInfo.setRelationship(WeeklyReportConstants.RADIO.get(weeklyReportInfo.getRelationship()));
     	model.addAttribute("weeklyReportInfo", weeklyReportInfo);
 
         // 確認権限
@@ -305,11 +289,10 @@ public class WeeklyReportsController {
         LocalDate reportDate = now.with(DayOfWeek.MONDAY);
         weeklyReportForm.setReportDate(reportDate);
 
-        // ラジオボタン作成
-        Map<String, String> radioThree = makeRadioThree();
-        model.addAttribute("radioProgress", radioThree);
-        model.addAttribute("radioCondition", radioThree);
-        model.addAttribute("radioRelationship", radioThree);
+        // ラジオボタン
+        model.addAttribute("radioProgress", WeeklyReportConstants.RADIO);
+        model.addAttribute("radioCondition", WeeklyReportConstants.RADIO);
+        model.addAttribute("radioRelationship", WeeklyReportConstants.RADIO);
 
         // 初期値
         weeklyReportForm.setDifficulty(100);
@@ -375,15 +358,9 @@ public class WeeklyReportsController {
         model.addAttribute("projectList", projectList);
 
         // ラジオボタン
-        Map<String, String> radioThree = new LinkedHashMap<>();
-        radioThree.put("1", "良い");
-        radioThree.put("2", "やや良い");
-        radioThree.put("3", "普通");
-        radioThree.put("4", "やや悪い");
-        radioThree.put("5", "悪い");
-        model.addAttribute("radioProgress", radioThree);
-        model.addAttribute("radioCondition", radioThree);
-        model.addAttribute("radioRelationship", radioThree);
+        model.addAttribute("radioProgress", WeeklyReportConstants.RADIO);
+        model.addAttribute("radioCondition", WeeklyReportConstants.RADIO);
+        model.addAttribute("radioRelationship", WeeklyReportConstants.RADIO);
 
         // 現場社員プルダウン
         List<Users> userList = usersService.findAll();
@@ -461,33 +438,8 @@ public class WeeklyReportsController {
 
     // ステータスを表示名に変換
     private String convertDisplayStatus(String status) {
-    	String displayName = null;
-    	switch (status) {
-		case "1":
-			displayName = "一時保存";
-			break;
-		case "2":
-			displayName = "提出済み";
-			break;
-		case "3":
-			displayName = "確認済み";
-			break;
-		default:
-			displayName = "";
-			break;
-		}
-    	return displayName;
-    }
-
-    // ラジオボタン作成
-    private Map<String, String> makeRadioThree() {
-    	Map<String, String> radioThree = new LinkedHashMap<>();
-        radioThree.put("1", "良い");
-        radioThree.put("2", "やや良い");
-        radioThree.put("3", "普通");
-        radioThree.put("4", "やや悪い");
-        radioThree.put("5", "悪い");
-        return radioThree;
+    	// キー（コード値）にマップされた値（表示名）を返却（キーがない場合は""）
+        return WeeklyReportConstants.STATUS.getOrDefault(status, "");
     }
 
     // 入力フォームに設定
