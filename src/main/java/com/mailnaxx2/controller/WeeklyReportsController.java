@@ -97,14 +97,6 @@ public class WeeklyReportsController {
         session.setAttribute("session_isSales", isSales);
         model.addAttribute("isSales", isSales);
 
-        // 削除権限（総務・自分のみ）
-        isDelete = false;
-        isAdmin = false;
-        if (loginUser.getLoginUser().getRoleClass().equals(RoleClass.AFFAIRS.getCode())) {
-        	isDelete = true;
-        	isAdmin = true;
-        }
-
         // 自分の所属
         int myAffiliation = loginUser.getLoginUser().getAffiliation().getAffiliationId();
 
@@ -115,7 +107,6 @@ public class WeeklyReportsController {
     	} else {
     		// 営業・総務以外は自分の所属をデフォルト表示
     		searchWeeklyReportForm.setAffiliationId(myAffiliation);
-    		isDelete = true;
     		if (loginUser.getLoginUser().getRoleClass().equals(RoleClass.MANAGER.getCode()) ||
     			loginUser.getLoginUser().getRoleClass().equals(RoleClass.LEADER.getCode())) {
         		// 所属長の場合、所属メンバーの週報を取得
@@ -137,7 +128,6 @@ public class WeeklyReportsController {
     	// ステータスを表示名に変換
     	weeklyReportList.forEach(w -> w.setStatus(convertDisplayStatus(w.getStatus())));
         model.addAttribute("weeklyReportList", weeklyReportList);
-        model.addAttribute("isDelete", isDelete);
 
         // 所属プルダウン
         affiliationList = affiliationsService.findAll();
@@ -174,6 +164,16 @@ public class WeeklyReportsController {
     					@AuthenticationPrincipal LoginUserDetails loginUser) {
     	// 週報一覧を取得
         weeklyReportList = weeklyReportsService.findBySearchForm(searchWeeklyReportForm);
+
+        // 自分の一時保存データがある場合、メッセージを表示
+ 		if (weeklyReportList.stream()
+ 				.filter(w -> w.getUser().getUserId() == (loginUser.getLoginUser().getUserId()))
+ 				.anyMatch(w -> w.getStatus().contains("1"))) {
+ 			model.addAttribute("infoMessage", "一時保存中の週次報告書があります。");
+ 		}
+
+     	// ステータスを表示名に変換
+     	weeklyReportList.forEach(w -> w.setStatus(convertDisplayStatus(w.getStatus())));
         model.addAttribute("weeklyReportList", weeklyReportList);
 
         // 所属プルダウン
