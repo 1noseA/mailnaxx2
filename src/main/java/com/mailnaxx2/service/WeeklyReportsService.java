@@ -98,6 +98,19 @@ public class WeeklyReportsService {
         weeklyReportsMapper.confirm(weeklyReport);
     }
 
+    // 既読処理
+    @Transactional
+    public void readed(int weeklyReportId, @AuthenticationPrincipal LoginUserDetails loginUser) {
+        // 排他ロック
+        WeeklyReports weeklyReport = weeklyReportsMapper.forLockById(weeklyReportId);
+
+        // 更新者はセッションの社員番号
+        weeklyReport.setUpdatedBy(loginUser.getLoginUser().getUserNumber());
+
+        // 既読
+        weeklyReportsMapper.readed(weeklyReport);
+    }
+
     // 登録処理
     @Transactional
     public void insert(WeeklyReportForm weeklyReportForm, @AuthenticationPrincipal LoginUserDetails loginUser) {

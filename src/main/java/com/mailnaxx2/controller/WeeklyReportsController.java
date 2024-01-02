@@ -119,6 +119,7 @@ public class WeeklyReportsController {
         		searchWeeklyReportForm.setUserName(loginUser.getLoginUser().getUserName());
         	}
     	}
+    	session.setAttribute("session_isBoss", isBoss);
     	model.addAttribute("isBoss", isBoss);
 
     	// 自分の一時保存データがある場合、メッセージを表示
@@ -194,6 +195,10 @@ public class WeeklyReportsController {
         // 権限（営業のみ）
         isSales = (boolean) session.getAttribute("session_isSales");
         model.addAttribute("isSales", isSales);
+
+        // 上長
+        isBoss  = (boolean) session.getAttribute("session_isBoss");
+        model.addAttribute("isBoss", isBoss);
         model.addAttribute("loginUserInfo", loginUser.getLoginUser());
         return "weekly-report/list";
     }
@@ -261,6 +266,13 @@ public class WeeklyReportsController {
         }
         model.addAttribute("isDelete", isDelete);
 		model.addAttribute("isAuthenticated", isAuthenticated);
+
+		// 既読処理
+		isBoss  = (boolean) session.getAttribute("session_isBoss");
+		if (isBoss) {
+            weeklyReportsService.readed(weeklyReportId, loginUser);
+		}
+
         model.addAttribute("loginUserInfo", loginUser.getLoginUser());
         return "weekly-report/detail";
     }

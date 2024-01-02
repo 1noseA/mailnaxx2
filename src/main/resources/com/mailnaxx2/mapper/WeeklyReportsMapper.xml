@@ -326,16 +326,6 @@
         <result property="userName" column="user_name" />
     </resultMap>
 
-	<!-- 確認 -->
-    <update id="confirm">
-        UPDATE weekly_reports SET
-            status = '3',
-            updated_by = #{updatedBy},
-            updated_at = CURRENT_TIMESTAMP
-        WHERE
-            weekly_report_id = #{weeklyReportId}
-    </update>
-
 	<!-- 一括確認 -->
     <update id="bulkConfirm">
         <foreach collection="weeklyReportList" item="w" separator=";">
@@ -346,6 +336,26 @@
             WHERE
                 weekly_report_id = #{w.weeklyReportId}
         </foreach>
+    </update>
+
+	<!-- 確認 -->
+    <update id="confirm">
+        UPDATE weekly_reports SET
+            status = '3',
+            updated_by = #{updatedBy},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE
+            weekly_report_id = #{weeklyReportId}
+    </update>
+
+	<!-- 既読 -->
+    <update id="readed">
+        UPDATE weekly_reports SET
+            readed_flg = '1',
+            updated_by = #{updatedBy},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE
+            weekly_report_id = #{weeklyReportId}
     </update>
 
 	<!-- 登録 -->
