@@ -54,11 +54,11 @@ public class WeeklyReportsController {
     @Autowired
     ProjectsService projectsService;
 
-    // 管理者
-    boolean isAdmin;
-
     // 営業
     boolean isSales;
+
+    // 上長（マネジャー・リーダー・チーフ）
+    boolean isBoss;
 
     // 確認済み
     boolean isConfirmed;
@@ -101,7 +101,8 @@ public class WeeklyReportsController {
         int myAffiliation = loginUser.getLoginUser().getAffiliation().getAffiliationId();
 
         // 週報一覧を取得
-    	if (isSales || isAdmin) {
+        isBoss = false;
+    	if (isSales || loginUser.getLoginUser().getRoleClass().equals(RoleClass.AFFAIRS.getCode())) {
     		// 営業・総務の場合、週報を全件取得
     		weeklyReportList = weeklyReportsService.findAll();
     	} else {
@@ -111,12 +112,14 @@ public class WeeklyReportsController {
     			loginUser.getLoginUser().getRoleClass().equals(RoleClass.LEADER.getCode())) {
         		// 所属長の場合、所属メンバーの週報を取得
         		weeklyReportList = weeklyReportsService.findMyAffiliation(myAffiliation);
+        		isBoss = true;
         	} else {
         		// その他の場合、自分の週報を取得
         		weeklyReportList = weeklyReportsService.findMine(loginUser.getLoginUser().getUserId());
         		searchWeeklyReportForm.setUserName(loginUser.getLoginUser().getUserName());
         	}
     	}
+    	model.addAttribute("isBoss", isBoss);
 
     	// 自分の一時保存データがある場合、メッセージを表示
 		if (weeklyReportList.stream()

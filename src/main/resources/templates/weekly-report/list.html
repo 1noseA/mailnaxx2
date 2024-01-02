@@ -138,7 +138,8 @@
                                 </thead>
                                 <tbody>
                                     <th:block th:each="weeklyReportList : ${weeklyReportList}">
-                                        <tr th:classappend="${weeklyReportList.status == '3'} ? 'bg-secondary' : ''">
+                                        <tr th:classappend="|${weeklyReportList.status == '3' ? 'bg-secondary' : ''}
+                                        ${isBoss && weeklyReportList.readedFlg == '0' ? 'fw-bold' : ''}|">
                                             <td>
                                                 <div class="form-check d-flex justify-content-center align-items-center">
                                                     <th:block th:if="${weeklyReportList.status != '3'}">
