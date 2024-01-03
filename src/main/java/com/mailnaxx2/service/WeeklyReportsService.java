@@ -131,9 +131,9 @@ public class WeeklyReportsService {
 
     // 更新処理
     @Transactional
-    public void update(WeeklyReports weeklyReport, WeeklyReportForm weeklyReportForm, @AuthenticationPrincipal LoginUserDetails loginUser) {
+    public void update(WeeklyReportForm weeklyReportForm, @AuthenticationPrincipal LoginUserDetails loginUser) {
         // 排他ロック
-    	weeklyReport = weeklyReportsMapper.forLockById(weeklyReport.getWeeklyReportId());
+    	WeeklyReports weeklyReport = weeklyReportsMapper.forLockById(weeklyReportForm.getWeeklyReportId());
 
         // 入力値をセットする
     	weeklyReport = setWeeklyReportForm(weeklyReport, weeklyReportForm);
@@ -198,6 +198,9 @@ public class WeeklyReportsService {
 
     	// 特記事項
     	weeklyReport.setRemarks(weeklyReportForm.getRemarks());
+
+    	// ステータス
+    	weeklyReport.setStatus(weeklyReportForm.getStatus());
 
         return weeklyReport;
     }

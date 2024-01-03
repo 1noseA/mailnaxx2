@@ -19,6 +19,12 @@ import lombok.Data;
 @Data
 public class WeeklyReportForm {
 
+	// 週報ID
+    private int weeklyReportId;
+
+    // ステータス
+    private String status;
+
     // 担当営業
 	@Positive(groups = ValidGroup1.class, message = "選択してください")
     private int salesUserId;

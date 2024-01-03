@@ -378,6 +378,7 @@
 			improvements,
             next_plan,
             remarks,
+			status,
             comment,
             created_by,
             created_at
@@ -400,6 +401,7 @@
             #{improvements},
             #{nextPlan},
             #{remarks},
+			#{status},
             #{comment},
             #{createdBy},
             CURRENT_TIMESTAMP
@@ -425,6 +427,7 @@
 			improvements = #{improvements},
             next_plan = #{nextPlan},
             remarks = #{remarks},
+			status = #{status},
             comment = #{comment},
             updated_by = #{updatedBy},
             updated_at = CURRENT_TIMESTAMP

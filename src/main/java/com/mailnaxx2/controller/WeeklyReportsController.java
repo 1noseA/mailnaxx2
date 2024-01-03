@@ -355,6 +355,8 @@ public class WeeklyReportsController {
             return create(weeklyReportForm, model, loginUser);
         }
 
+        // 一時保存
+        weeklyReportForm.setStatus("1");
         // 登録
         weeklyReportsService.insert(weeklyReportForm, loginUser);
 
@@ -395,29 +397,51 @@ public class WeeklyReportsController {
         return "weekly-report/create";
     }
 
-    // 更新処理
+    // 更新処理（ステータスは変えない）
     @Transactional
     @PostMapping("/weekly-report/update")
-    public String update(int weeklyReportId,
-    					@ModelAttribute @Validated(GroupOrder.class) WeeklyReportForm weeklyReportForm,
+    public String update(@ModelAttribute @Validated(GroupOrder.class) WeeklyReportForm weeklyReportForm,
     					BindingResult result,
     					Model model,
     					@AuthenticationPrincipal LoginUserDetails loginUser) {
+    	int weeklyReportId = weeklyReportForm.getWeeklyReportId();
         // 入力エラーチェック
         if (result.hasErrors()) {
         	return edit(weeklyReportId, weeklyReportForm, model, loginUser);
         }
 
-        WeeklyReports weeklyReport = new WeeklyReports();
-        weeklyReport.setWeeklyReportId(weeklyReportId);
-
         // 更新
-        weeklyReportsService.update(weeklyReport, weeklyReportForm, loginUser);
+        weeklyReportsService.update(weeklyReportForm, loginUser);
 
         return detail(weeklyReportId, model, loginUser);
     }
 
     // 提出処理（メール送信）
+    @PostMapping("/weekly-report/send")
+    public String send(@ModelAttribute @Validated(GroupOrder.class) WeeklyReportForm weeklyReportForm,
+    					BindingResult result,
+    					Model model,
+    					@AuthenticationPrincipal LoginUserDetails loginUser) {
+        // 入力エラーチェック
+        if (result.hasErrors()) {
+            return create(weeklyReportForm, model, loginUser);
+        }
+
+        // 提出済み
+        weeklyReportForm.setStatus("2");
+        if (weeklyReportForm.getWeeklyReportId() == 0) {
+        	// 登録
+            weeklyReportsService.insert(weeklyReportForm, loginUser);
+        } else {
+        	// 更新
+        	weeklyReportsService.update(weeklyReportForm, loginUser);
+        }
+
+        // メール送信処理
+
+        return "redirect:/weekly-report/list";
+    }
+
     // 一括物理削除処理
     @RequestMapping("/weekly-report/bulkDelete")
     public String bulkDelete(@ModelAttribute SelectForm selectForm,
@@ -468,6 +492,8 @@ public class WeeklyReportsController {
 
     // 入力フォームに設定
     private void setInputForm(WeeklyReports weeklyReportInfo, WeeklyReportForm weeklyReportForm) {
+    	weeklyReportForm.setWeeklyReportId(weeklyReportInfo.getWeeklyReportId());
+    	weeklyReportForm.setStatus(weeklyReportInfo.getStatus());
         weeklyReportForm.setSalesUserId(weeklyReportInfo.getProject().getSalesUser().getUserId());
         weeklyReportForm.setProjectId(weeklyReportInfo.getProject().getProjectId());
         weeklyReportForm.setReportDate(weeklyReportInfo.getReportDate());
