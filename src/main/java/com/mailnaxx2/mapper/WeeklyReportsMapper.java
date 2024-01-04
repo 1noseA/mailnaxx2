@@ -23,6 +23,9 @@ public interface WeeklyReportsMapper {
     // 検索
     public List<WeeklyReports> findBySearchForm(SearchWeeklyReportForm searchWeeklyReportForm);
 
+    // 検索（一般権限）
+    public List<WeeklyReports> findByMemberSearchForm(SearchWeeklyReportForm searchWeeklyReportForm);
+
     // 1件取得
     public WeeklyReports findById(int weeklyReportId);
 

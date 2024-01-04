@@ -20,19 +20,21 @@
                     </div>
 
                     <div class="row mb-3">
-                        <div class="col-md-3 text-md-end">
-                            <label for="affiliationId" class="col-form-label fw-bold">所属</label>
-                        </div>
-                        <div class="col-md-8">
-                            <select class="form-select w80" th:errorclass="is-invalid" name="affiliationId">
-                                <option value=0>全て</option>
-                                <option th:each="affiliation : ${affiliationList}"
-                                        th:value="${affiliation.affiliationId}"
-                                        th:text="${affiliation.affiliationName}"
-                                        th:selected="${affiliation.affiliationId == searchWeeklyReportForm.affiliationId}">
-                                </option>
-                            </select>
-                        </div>
+                    	<th:block th:if="${!isMember}">
+	                        <div class="col-md-3 text-md-end">
+	                            <label for="affiliationId" class="col-form-label fw-bold">所属</label>
+	                        </div>
+	                        <div class="col-md-8">
+	                            <select class="form-select w80" th:errorclass="is-invalid" name="affiliationId">
+	                                <option value=0>全て</option>
+	                                <option th:each="affiliation : ${affiliationList}"
+	                                        th:value="${affiliation.affiliationId}"
+	                                        th:text="${affiliation.affiliationName}"
+	                                        th:selected="${affiliation.affiliationId == searchWeeklyReportForm.affiliationId}">
+	                                </option>
+	                            </select>
+	                        </div>
+	                    </th:block>
                     </div>
 
                     <div class="row mb-3">
@@ -56,7 +58,7 @@
                             <label for="userName" class="col-form-label fw-bold">氏名</label>
                         </div>
                         <div class="col-md-8">
-                            <input type="text" class="form-control w80" placeholder="" name="userName" id="userName" th:value="*{userName}" th:field="*{userName}" />
+                           	<input type="text" class="form-control w80" name="userName" id="userName" th:value="*{userName}" th:field="*{userName}" th:readonly="${isMember}" />
                         </div>
                     </div>
 

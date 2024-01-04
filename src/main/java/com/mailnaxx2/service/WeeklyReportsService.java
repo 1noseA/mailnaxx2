@@ -54,6 +54,12 @@ public class WeeklyReportsService {
         return weeklyReportList;
     }
 
+    // 検索結果取得（一般権限）
+    public List<WeeklyReports> findByMemberSearchForm(SearchWeeklyReportForm searchWeeklyReportForm) {
+        weeklyReportList = weeklyReportsMapper.findByMemberSearchForm(searchWeeklyReportForm);
+        return weeklyReportList;
+    }
+
     // 一括確認処理
     @Transactional
     public void bulkConfirm(SelectForm selectForm, @AuthenticationPrincipal LoginUserDetails loginUser) {

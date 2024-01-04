@@ -59,6 +59,7 @@ public class LoginController {
     	session.removeAttribute("session_isAdmin");
     	session.removeAttribute("session_isSales");
     	session.removeAttribute("session_isBoss");
+    	session.removeAttribute("session_isMember");
     	session.removeAttribute("session_affiliationList");
     	session.removeAttribute("session_salesList");
     	session.removeAttribute("session_reportDateList");

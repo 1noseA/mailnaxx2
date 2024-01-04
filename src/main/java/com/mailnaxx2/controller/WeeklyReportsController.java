@@ -60,6 +60,9 @@ public class WeeklyReportsController {
     // 上長（マネジャー・リーダー・チーフ）
     boolean isBoss;
 
+    // 一般
+    boolean isMember;
+
     // 確認済み
     boolean isConfirmed;
 
@@ -102,6 +105,7 @@ public class WeeklyReportsController {
 
         // 週報一覧を取得
         isBoss = false;
+        isMember = false;
     	if (isSales || loginUser.getLoginUser().getRoleClass().equals(RoleClass.AFFAIRS.getCode())) {
     		// 営業・総務の場合、週報を全件取得
     		weeklyReportList = weeklyReportsService.findAll();
@@ -117,10 +121,13 @@ public class WeeklyReportsController {
         		// その他の場合、自分の週報を取得
         		weeklyReportList = weeklyReportsService.findMine(loginUser.getLoginUser().getUserId());
         		searchWeeklyReportForm.setUserName(loginUser.getLoginUser().getUserName());
+        		isMember = true;
         	}
     	}
     	session.setAttribute("session_isBoss", isBoss);
+    	session.setAttribute("session_isMember", isMember);
     	model.addAttribute("isBoss", isBoss);
+    	model.addAttribute("isMember", isMember);
 
     	// 自分の一時保存データがある場合、メッセージを表示
 		if (weeklyReportList.stream()
@@ -166,8 +173,24 @@ public class WeeklyReportsController {
     public String search(SearchWeeklyReportForm searchWeeklyReportForm,
     					Model model,
     					@AuthenticationPrincipal LoginUserDetails loginUser) {
+    	// 権限（営業のみ）
+        isSales = (boolean) session.getAttribute("session_isSales");
+        model.addAttribute("isSales", isSales);
+
+        // 上長
+        isBoss  = (boolean) session.getAttribute("session_isBoss");
+        model.addAttribute("isBoss", isBoss);
+
+        // 一般
+        isMember  = (boolean) session.getAttribute("session_isMember");
+        model.addAttribute("isMember", isMember);
+
     	// 週報一覧を取得
-        weeklyReportList = weeklyReportsService.findBySearchForm(searchWeeklyReportForm);
+        if (isMember) {
+        	weeklyReportList = weeklyReportsService.findByMemberSearchForm(searchWeeklyReportForm);
+        } else {
+        	weeklyReportList = weeklyReportsService.findBySearchForm(searchWeeklyReportForm);
+        }
 
         // 自分の一時保存データがある場合、メッセージを表示
  		if (weeklyReportList.stream()
@@ -192,13 +215,6 @@ public class WeeklyReportsController {
         reportDateList = (Set<LocalDate>) session.getAttribute("session_reportDateList");
         model.addAttribute("reportDateList", reportDateList);
 
-        // 権限（営業のみ）
-        isSales = (boolean) session.getAttribute("session_isSales");
-        model.addAttribute("isSales", isSales);
-
-        // 上長
-        isBoss  = (boolean) session.getAttribute("session_isBoss");
-        model.addAttribute("isBoss", isBoss);
         model.addAttribute("loginUserInfo", loginUser.getLoginUser());
         return "weekly-report/list";
     }
