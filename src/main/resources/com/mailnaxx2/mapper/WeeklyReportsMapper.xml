@@ -20,6 +20,7 @@
             ON w.project_id = p.project_id
         WHERE
             p.deleted_flg = '0'
+		AND w.status != '1'
         ORDER BY u.user_number, w.weekly_report_id, w.report_date DESC
     </select>
 
@@ -29,6 +30,7 @@
             w.weekly_report_id,
             w.report_date,
             w.status,
+			w.readed_flg,
             u.user_id AS my_user_id,
             u.user_number AS my_user_number,
             u.user_name AS my_user_name
@@ -41,6 +43,7 @@
             ON w.project_id = p.project_id
         WHERE
             p.deleted_flg = '0'
+		AND w.status != '1'
 		AND u.affiliation_id = #{affiliationId}
         ORDER BY u.user_number, w.weekly_report_id, w.report_date DESC
     </select>
@@ -71,6 +74,7 @@
             w.weekly_report_id,
             w.report_date,
             w.status,
+			w.readed_flg,
             u1.user_id AS my_user_id,
             u1.user_number AS my_user_number,
             u1.user_name AS my_user_name
@@ -99,7 +103,46 @@
             AND w.report_date &lt;= CAST(#{toReportDate} AS DATE)
         </if>
         <if test='status == "1"'>
-            AND w.status = '3'
+            AND w.status != '3'
+        </if>
+		AND w.status != '1'
+        ORDER BY u1.user_number, w.weekly_report_id
+    </select>
+
+	<!-- 検索 （一般権限）-->
+    <select id="findByMemberSearchForm" resultMap="weeklyReportMap">
+        SELECT
+            w.weekly_report_id,
+            w.report_date,
+            w.status,
+			w.readed_flg,
+            u1.user_id AS my_user_id,
+            u1.user_number AS my_user_number,
+            u1.user_name AS my_user_name
+        FROM weekly_reports w
+        INNER JOIN users u1
+            ON w.user_id = u1.user_id
+        INNER JOIN projects p
+            ON w.project_id = p.project_id
+        INNER JOIN users u2
+            ON p.sales_user_id = u2.user_id
+        WHERE
+            p.deleted_flg = '0'
+		AND u1.user_name = #{userName}
+        <if test='salesUserId != 0'>
+            AND u2.user_id = #{salesUserId}
+        </if>
+        <if test='userName != ""'>
+            AND u1.user_name LIKE '%' || #{userName} || '%'
+        </if>
+        <if test='fromReportDate != ""'>
+            AND w.report_date &gt;= CAST(#{fromReportDate} AS DATE)
+        </if>
+        <if test='toReportDate != ""'>
+            AND w.report_date &lt;= CAST(#{toReportDate} AS DATE)
+        </if>
+        <if test='status == "1"'>
+            AND w.status != '3'
         </if>
         ORDER BY u1.user_number, w.weekly_report_id
     </select>
@@ -131,6 +174,7 @@
             w.remarks,
             w.status,
             w.comment,
+			w.readed_flg,
             w.shared_flg
         FROM weekly_reports w
         INNER JOIN users u1
@@ -171,6 +215,7 @@
             w.remarks,
             w.status,
             w.comment,
+			w.readed_flg,
             w.shared_flg
         FROM weekly_reports w
         INNER JOIN users u1
@@ -210,6 +255,7 @@
             w.remarks,
             w.status,
             w.comment,
+			w.readed_flg,
             w.shared_flg
         FROM weekly_reports w
         INNER JOIN users u1
@@ -249,6 +295,7 @@
             w.remarks,
             w.status,
             w.comment,
+			w.readed_flg,
             w.shared_flg
         FROM weekly_reports w
         INNER JOIN users u1
@@ -286,6 +333,7 @@
         <result property="remarks" column="remarks" />
         <result property="status" column="status" />
         <result property="comment" column="comment" />
+		<result property="readedFlg" column="readed_flg" />
         <result property="sharedFlg" column="shared_flg" />
         <result property="createdBy" column="created_by" />
         <result property="createdAt" column="created_at" />
@@ -319,16 +367,6 @@
         <result property="userName" column="user_name" />
     </resultMap>
 
-	<!-- 確認 -->
-    <update id="confirm">
-        UPDATE weekly_reports SET
-            status = '3',
-            updated_by = #{updatedBy},
-            updated_at = CURRENT_TIMESTAMP
-        WHERE
-            weekly_report_id = #{weeklyReportId}
-    </update>
-
 	<!-- 一括確認 -->
     <update id="bulkConfirm">
         <foreach collection="weeklyReportList" item="w" separator=";">
@@ -339,6 +377,26 @@
             WHERE
                 weekly_report_id = #{w.weeklyReportId}
         </foreach>
+    </update>
+
+	<!-- 確認 -->
+    <update id="confirm">
+        UPDATE weekly_reports SET
+            status = '3',
+            updated_by = #{updatedBy},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE
+            weekly_report_id = #{weeklyReportId}
+    </update>
+
+	<!-- 既読 -->
+    <update id="readed">
+        UPDATE weekly_reports SET
+            readed_flg = '1',
+            updated_by = #{updatedBy},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE
+            weekly_report_id = #{weeklyReportId}
     </update>
 
 	<!-- 登録 -->
@@ -361,6 +419,7 @@
 			improvements,
             next_plan,
             remarks,
+			status,
             comment,
             created_by,
             created_at
@@ -383,6 +442,7 @@
             #{improvements},
             #{nextPlan},
             #{remarks},
+			#{status},
             #{comment},
             #{createdBy},
             CURRENT_TIMESTAMP
@@ -408,6 +468,7 @@
 			improvements = #{improvements},
             next_plan = #{nextPlan},
             remarks = #{remarks},
+			status = #{status},
             comment = #{comment},
             updated_by = #{updatedBy},
             updated_at = CURRENT_TIMESTAMP

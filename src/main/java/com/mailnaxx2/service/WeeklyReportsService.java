@@ -54,6 +54,12 @@ public class WeeklyReportsService {
         return weeklyReportList;
     }
 
+    // 検索結果取得（一般権限）
+    public List<WeeklyReports> findByMemberSearchForm(SearchWeeklyReportForm searchWeeklyReportForm) {
+        weeklyReportList = weeklyReportsMapper.findByMemberSearchForm(searchWeeklyReportForm);
+        return weeklyReportList;
+    }
+
     // 一括確認処理
     @Transactional
     public void bulkConfirm(SelectForm selectForm, @AuthenticationPrincipal LoginUserDetails loginUser) {
@@ -98,6 +104,19 @@ public class WeeklyReportsService {
         weeklyReportsMapper.confirm(weeklyReport);
     }
 
+    // 既読処理
+    @Transactional
+    public void readed(int weeklyReportId, @AuthenticationPrincipal LoginUserDetails loginUser) {
+        // 排他ロック
+        WeeklyReports weeklyReport = weeklyReportsMapper.forLockById(weeklyReportId);
+
+        // 更新者はセッションの社員番号
+        weeklyReport.setUpdatedBy(loginUser.getLoginUser().getUserNumber());
+
+        // 既読
+        weeklyReportsMapper.readed(weeklyReport);
+    }
+
     // 登録処理
     @Transactional
     public void insert(WeeklyReportForm weeklyReportForm, @AuthenticationPrincipal LoginUserDetails loginUser) {
@@ -118,9 +137,9 @@ public class WeeklyReportsService {
 
     // 更新処理
     @Transactional
-    public void update(WeeklyReports weeklyReport, WeeklyReportForm weeklyReportForm, @AuthenticationPrincipal LoginUserDetails loginUser) {
+    public void update(WeeklyReportForm weeklyReportForm, @AuthenticationPrincipal LoginUserDetails loginUser) {
         // 排他ロック
-    	weeklyReport = weeklyReportsMapper.forLockById(weeklyReport.getWeeklyReportId());
+    	WeeklyReports weeklyReport = weeklyReportsMapper.forLockById(weeklyReportForm.getWeeklyReportId());
 
         // 入力値をセットする
     	weeklyReport = setWeeklyReportForm(weeklyReport, weeklyReportForm);
@@ -185,6 +204,9 @@ public class WeeklyReportsService {
 
     	// 特記事項
     	weeklyReport.setRemarks(weeklyReportForm.getRemarks());
+
+    	// ステータス
+    	weeklyReport.setStatus(weeklyReportForm.getStatus());
 
         return weeklyReport;
     }

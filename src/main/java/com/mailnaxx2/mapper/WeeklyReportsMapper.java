@@ -23,6 +23,9 @@ public interface WeeklyReportsMapper {
     // 検索
     public List<WeeklyReports> findBySearchForm(SearchWeeklyReportForm searchWeeklyReportForm);
 
+    // 検索（一般権限）
+    public List<WeeklyReports> findByMemberSearchForm(SearchWeeklyReportForm searchWeeklyReportForm);
+
     // 1件取得
     public WeeklyReports findById(int weeklyReportId);
 
@@ -35,11 +38,14 @@ public interface WeeklyReportsMapper {
     // 複数件排他ロック
     public List<WeeklyReports> forLockByIdList(List<Integer> idList);
 
+    // 一括確認
+    public void bulkConfirm(List<WeeklyReports> weeklyReportList);
+
     // 確認
     public void confirm(WeeklyReports weeklyReport);
 
-    // 一括確認
-    public void bulkConfirm(List<WeeklyReports> weeklyReportList);
+    // 既読
+    public void readed(WeeklyReports weeklyReport);
 
     // 登録
     public void insert(WeeklyReports weeklyReport);

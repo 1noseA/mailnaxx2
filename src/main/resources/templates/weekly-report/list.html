@@ -12,27 +12,29 @@
             <div class="searchArea mx-auto my-5">
                 <form method="post" th:action="@{/weekly-report/search}" th:object="${searchWeeklyReportForm}">
                     <div class="row mb-3 align-items-center">
-                        <th:block th:if="${message != null}">
+                        <th:block th:if="${errorMessage != null}">
                             <div class="col-md-12 ms-3">
-                                <p class="text-danger" th:text="${message}"></p>
+                                <p class="text-danger" th:text="${errorMessage}"></p>
                             </div>
                         </th:block>
                     </div>
 
                     <div class="row mb-3">
-                        <div class="col-md-3 text-md-end">
-                            <label for="affiliationId" class="col-form-label fw-bold">所属</label>
-                        </div>
-                        <div class="col-md-8">
-                            <select class="form-select w80" th:errorclass="is-invalid" name="affiliationId">
-                                <option value=0>全て</option>
-                                <option th:each="affiliation : ${affiliationList}"
-                                        th:value="${affiliation.affiliationId}"
-                                        th:text="${affiliation.affiliationName}"
-                                        th:selected="${affiliation.affiliationId == searchWeeklyReportForm.affiliationId}">
-                                </option>
-                            </select>
-                        </div>
+                    	<th:block th:if="${!isMember}">
+	                        <div class="col-md-3 text-md-end">
+	                            <label for="affiliationId" class="col-form-label fw-bold">所属</label>
+	                        </div>
+	                        <div class="col-md-8">
+	                            <select class="form-select w80" th:errorclass="is-invalid" name="affiliationId">
+	                                <option value=0>全て</option>
+	                                <option th:each="affiliation : ${affiliationList}"
+	                                        th:value="${affiliation.affiliationId}"
+	                                        th:text="${affiliation.affiliationName}"
+	                                        th:selected="${affiliation.affiliationId == searchWeeklyReportForm.affiliationId}">
+	                                </option>
+	                            </select>
+	                        </div>
+	                    </th:block>
                     </div>
 
                     <div class="row mb-3">
@@ -56,7 +58,7 @@
                             <label for="userName" class="col-form-label fw-bold">氏名</label>
                         </div>
                         <div class="col-md-8">
-                            <input type="text" class="form-control w80" placeholder="" name="userName" id="userName" th:value="*{userName}" th:field="*{userName}" />
+                           	<input type="text" class="form-control w80" name="userName" id="userName" th:value="*{userName}" th:field="*{userName}" th:readonly="${isMember}" />
                         </div>
                     </div>
 
@@ -115,11 +117,15 @@
                             <th:block th:if="${isSales}">
                                 <input type="submit" class="btn btnDark" value="確認">
                             </th:block>
-                            <th:block th:if="${isDelete}">
-                                <button type="submit" class="btn btnDark" th:formaction="@{'/weekly-report/bulkDelete'}">削除</button>
-                            </th:block>
+                            <button type="submit" class="btn btnDark" th:formaction="@{'/weekly-report/bulkDelete'}">削除</button>
                         </div>
                     </div>
+
+                    <th:block th:if="${infoMessage != null}">
+                        <div class="col-md-12 ms-3">
+                            <p class="" th:text="${infoMessage}"></p>
+                        </div>
+                    </th:block>
 
                     <th:block th:if="${weeklyReportList.size() > 0}">
                         <div class="table-responsive">
@@ -127,14 +133,15 @@
                                 <thead>
                                     <tr class="border-bottom border-dark">
                                         <th scope="col" class="text-canter">選択</th>
+                                        <th scope="col">ステータス</th>
                                         <th scope="col">報告対象週</th>
-                                        <th scope="col">社員番号</th>
-                                        <th scope="col">氏名</th>
+                                        <th scope="col">社員番号：氏名</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <th:block th:each="weeklyReportList : ${weeklyReportList}">
-                                        <tr th:classappend="${weeklyReportList.status == '3'} ? 'bg-secondary' : ''">
+                                        <tr th:classappend="|${weeklyReportList.status == '3' ? 'bg-secondary' : ''}
+                                        ${isBoss && weeklyReportList.readedFlg == '0' ? 'fw-bold' : ''}|">
                                             <td>
                                                 <div class="form-check d-flex justify-content-center align-items-center">
                                                     <th:block th:if="${weeklyReportList.status != '3'}">
@@ -145,17 +152,17 @@
                                             </td>
                                             <td>
                                                 <a href="javascript:void(0);" th:onclick="|showDetail('${weeklyReportList.weeklyReportId}')|">
+                                                    <span th:text="${weeklyReportList.status}"></span>
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <a href="javascript:void(0);" th:onclick="|showDetail('${weeklyReportList.weeklyReportId}')|">
                                                     <span th:text="${#strings.replace(weeklyReportList.reportDate, '-', '/')}"></span>
                                                 </a>
                                             </td>
                                             <td>
                                                 <a href="javascript:void(0);" th:onclick="|showDetail('${weeklyReportList.weeklyReportId}')|">
-                                                    <span th:text="${weeklyReportList.user.userNumber}"></span>
-                                                </a>
-                                            </td>
-                                            <td>
-                                                <a href="javascript:void(0);" th:onclick="|showDetail('${weeklyReportList.weeklyReportId}')|">
-                                                    <span th:text="${weeklyReportList.user.userName}"></span>
+                                                    <span th:text="${weeklyReportList.user.userNumber} + '：' + ${weeklyReportList.user.userName}"></span>
                                                 </a>
                                             </td>
                                         </tr>

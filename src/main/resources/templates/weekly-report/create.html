@@ -231,13 +231,15 @@
                     <!-- モーダルここまで -->
 
                     <div class="text-center m-5">
+                    	<input type="hidden" th:field="*{weeklyReportId}" />
+                    	<input type="hidden" th:field="*{status}" />
                     	<th:block th:if="${weeklyReportId == 0}">
                         	<button type="submit" class="btn btnLight">一時保存</button>
                         </th:block>
                         <th:block th:unless="${weeklyReportId == 0}">
-                       		<button type="submit" class="btn btnMain" th:formaction="@{/weekly-report/update}" th:value="${weeklyReportId}" name="weeklyReportId">更新</button>
+                       		<button type="submit" class="btn btnMain" th:formaction="@{/weekly-report/update}">更新</button>
                         </th:block>
-                        <!-- <button type="submit" class="btn btnMain ms-3">提出</button> -->
+                        <button type="submit" class="btn btnMain" th:formaction="@{/weekly-report/send}">提出</button>
                     </div>
                 </form>
             </div>
