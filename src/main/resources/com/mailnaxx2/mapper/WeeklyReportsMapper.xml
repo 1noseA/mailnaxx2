@@ -389,6 +389,16 @@
             weekly_report_id = #{weeklyReportId}
     </update>
 
+	<!-- コメント -->
+    <update id="comment">
+        UPDATE weekly_reports SET
+            comment = #{comment},
+            updated_by = #{updatedBy},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE
+            weekly_report_id = #{weeklyReportId}
+    </update>
+
 	<!-- 既読 -->
     <update id="readed">
         UPDATE weekly_reports SET

@@ -44,6 +44,9 @@ public interface WeeklyReportsMapper {
     // 確認
     public void confirm(WeeklyReports weeklyReport);
 
+    // コメント
+    public void comment(WeeklyReports weeklyReport);
+
     // 既読
     public void readed(WeeklyReports weeklyReport);
 

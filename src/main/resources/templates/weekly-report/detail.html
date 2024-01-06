@@ -9,7 +9,7 @@
 
     <div class="contents">
         <div class="container">
-        	<form method="post" th:action="@{/weekly-report/delete}" th:object="${selectForm}">
+        	<form method="post" th:action="@{/weekly-report/comment}" th:object="${detailForm}">
 	            <div class="weeklyReportInfoArea mt-5">
 	                <div th:object="${weeklyReportInfo}">
 	                	<th:block th:if="${message != null}">
@@ -81,16 +81,15 @@
 	                            <td th:text="*{remarks}" colspan="6"></td>
 	                        </tr>
 	                        <tr>
-	                            <th>確認</th>
-	                            <td th:text="*{status}" colspan="6"></td>
-	                        </tr>
-	                        <tr>
 	                            <th>コメント</th>
-	                            <td th:text="*{comment}" colspan="6"></td>
-	                        </tr>
-	                        <tr>
-	                            <th>共有</th>
-	                            <td th:text="*{sharedFlg}" colspan="6"></td>
+	                            <td colspan="6">
+	                            	<th:block th:if="${isSales}">
+	                            		<textarea class="form-control" name="comment" id="comment" th:errorclass="is-invalid" th:field="*{comment}"></textarea>
+	                            	</th:block>
+	                            	<th:block th:unless="${isSales}">
+	                            		<span th:text="*{comment}"></span>
+	                            	</th:block>
+	                            </td>
 	                        </tr>
 	                    </table>
 	                </div>
@@ -99,22 +98,24 @@
 	            <div class="btn-toolbar justify-content-between mt-4 mb-5" role="toolbar">
 	                <div>
 	                	<th:block th:if="${isAuthenticated}">
-	                    	<button type="button" class="btn btnMain m-1" th:onclick="|edit('${weeklyReportInfo.weeklyReportId}')|">編集する</button>
+	                    	<button type="button" class="btn btnMain m-1" th:onclick="|edit('${weeklyReportInfo.weeklyReportId}')|">編集</button>
 	                    </th:block>
 	                    <th:block th:if="${isDelete}">
-	                    	<input type="hidden" name="selectWeeklyReportId" th:value="${weeklyReportInfo.weeklyReportId}">
-	                		<input type="hidden" name="selectUserId" th:value="${weeklyReportInfo.user.userId}">
-	                        <button type="submit" class="btn btnDark">削除</button>
+	                    	<input type="hidden" name="weeklyReportId" th:value="${weeklyReportInfo.weeklyReportId}">
+	                		<input type="hidden" name="userId" th:value="${weeklyReportInfo.user.userId}">
+	                        <button type="submit" class="btn btnDark" th:formaction="@{'/weekly-report/delete'}">削除</button>
 	                    </th:block>
 	                    <th:block th:if="${isSales}">
 		                    <th:block th:if="${!isConfirmed}">
-		                    	<button type="button" class="btn btnAccent m-1" th:onclick="|confirm('${weeklyReportInfo.weeklyReportId}')|">確認する</button>
+		                    	<button type="button" class="btn btnAccent m-1" th:onclick="|confirm('${weeklyReportInfo.weeklyReportId}')|">確認</button>
 		                   	</th:block>
 		                   	<th:block th:if="${isConfirmed}">
-		                   		<button type="button" class="btn btnAccent m-1" disabled>確認する</button>
+		                   		<button type="button" class="btn btnAccent m-1" disabled>確認</button>
 		                    </th:block>
+		                    <input type="hidden" name="weeklyReportId" th:value="${weeklyReportInfo.weeklyReportId}">
+	                    	<button type="submit" class="btn btnAccent m-1">コメント</button>
 	                    </th:block>
-	                    <button type="button" class="btn btnAccent m-1">共有する</button>
+	                    <button type="button" class="btn btnAccent m-1">共有</button>
 	                </div>
 	                <div>
 	                    <button type="button" class="btn btnBack m-1" th:onclick="location.href='/weekly-report/list'">戻る</button>

@@ -25,6 +25,7 @@ import com.mailnaxx2.entity.Affiliations;
 import com.mailnaxx2.entity.Projects;
 import com.mailnaxx2.entity.Users;
 import com.mailnaxx2.entity.WeeklyReports;
+import com.mailnaxx2.form.DetailForm;
 import com.mailnaxx2.form.SearchWeeklyReportForm;
 import com.mailnaxx2.form.SelectForm;
 import com.mailnaxx2.form.WeeklyReportForm;
@@ -308,6 +309,21 @@ public class WeeklyReportsController {
         return detail(weeklyReportId, model, loginUser);
     }
 
+    // コメント処理（営業のみ）
+    @PostMapping("/weekly-report/comment")
+    public String comment(@ModelAttribute DetailForm detailForm,
+    					Model model,
+    					@AuthenticationPrincipal LoginUserDetails loginUser) {
+        // 権限チェック
+        if (loginUser.getLoginUser().getSalesFlg().equals("1")) {
+            weeklyReportsService.comment(detailForm, loginUser);
+        } else {
+            // エラーメッセージを表示
+            model.addAttribute("errorMessage", "権限がありません。");
+        }
+        return detail(detailForm.getWeeklyReportId(), model, loginUser);
+    }
+
     // 作成画面初期表示
     @SuppressWarnings("unchecked")
 	@GetMapping("/weekly-report/create")
@@ -485,18 +501,18 @@ public class WeeklyReportsController {
 
     // 物理削除処理
     @RequestMapping("/weekly-report/delete")
-    public String delete(@ModelAttribute SelectForm selectForm,
+    public String delete(@ModelAttribute DetailForm detailForm,
     					Model model,
     					@AuthenticationPrincipal LoginUserDetails loginUser) {
         // 権限チェック（自分か総務のみ）
-        if (loginUser.getLoginUser().getUserId() == selectForm.getSelectUserId().get(0) ||
+        if (loginUser.getLoginUser().getUserId() == detailForm.getUserId() ||
         	loginUser.getLoginUser().getRoleClass().equals(RoleClass.AFFAIRS.getCode())) {
-        	weeklyReportsService.delete(selectForm.getSelectWeeklyReportId().get(0));
+        	weeklyReportsService.delete(detailForm.getWeeklyReportId());
             return "redirect:/weekly-report/list";
         } else {
             // エラーメッセージを表示
             model.addAttribute("errorMessage", "権限がありません。");
-            return detail(selectForm.getSelectWeeklyReportId().get(0), model, loginUser);
+            return detail(detailForm.getWeeklyReportId(), model, loginUser);
         }
     }
 
