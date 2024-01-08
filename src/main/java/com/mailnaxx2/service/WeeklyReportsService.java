@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.mailnaxx2.entity.Projects;
 import com.mailnaxx2.entity.Users;
 import com.mailnaxx2.entity.WeeklyReports;
+import com.mailnaxx2.form.DetailForm;
 import com.mailnaxx2.form.SearchWeeklyReportForm;
 import com.mailnaxx2.form.SelectForm;
 import com.mailnaxx2.form.WeeklyReportForm;
@@ -102,6 +103,21 @@ public class WeeklyReportsService {
 
         // 確認
         weeklyReportsMapper.confirm(weeklyReport);
+    }
+
+    // コメント処理
+    @Transactional
+    public void comment(DetailForm detailForm, @AuthenticationPrincipal LoginUserDetails loginUser) {
+        // 排他ロック
+        WeeklyReports weeklyReport = weeklyReportsMapper.forLockById(detailForm.getWeeklyReportId());
+
+        // 本文
+        weeklyReport.setComment(detailForm.getComment());
+        // 更新者はセッションの社員番号
+        weeklyReport.setUpdatedBy(loginUser.getLoginUser().getUserNumber());
+
+        // コメント
+        weeklyReportsMapper.comment(weeklyReport);
     }
 
     // 既読処理
