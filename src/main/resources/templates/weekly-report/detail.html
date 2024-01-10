@@ -12,9 +12,9 @@
         	<form method="post" th:action="@{/weekly-report/comment}" th:object="${detailForm}">
 	            <div class="weeklyReportInfoArea mt-5">
 	                <div th:object="${weeklyReportInfo}">
-	                	<th:block th:if="${message != null}">
+	                	<th:block th:if="${errorMessage != null}">
 	                        <div class="col-md-12 ms-3">
-	                            <p class="text-danger" th:text="${message}"></p>
+	                            <p class="text-danger" th:text="${errorMessage}"></p>
 	                        </div>
 	                    </th:block>
 	                    <table class="table table-bordered">
@@ -114,8 +114,8 @@
 		                    </th:block>
 		                    <input type="hidden" name="weeklyReportId" th:value="${weeklyReportInfo.weeklyReportId}">
 	                    	<button type="submit" class="btn btnAccent m-1">コメント</button>
+	                    	<button type="button" class="btn btnAccent m-1" th:onclick="|share('${weeklyReportInfo.weeklyReportId}')|">共有</button>
 	                    </th:block>
-	                    <button type="button" class="btn btnAccent m-1">共有</button>
 	                </div>
 	                <div>
 	                    <button type="button" class="btn btnBack m-1" th:onclick="location.href='/weekly-report/list'">戻る</button>
@@ -127,6 +127,8 @@
     <form method="post" th:action="@{/weekly-report/edit}" id="editForm">
     </form>
     <form method="post" th:action="@{/weekly-report/confirm}" id="confirmForm">
+    </form>
+    <form method="post" th:action="@{/weekly-report/share}" id="shareForm">
     </form>
 
     <div th:replace="common :: footer"></div>

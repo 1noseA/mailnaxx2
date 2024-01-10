@@ -324,6 +324,21 @@ public class WeeklyReportsController {
         return detail(detailForm.getWeeklyReportId(), model, loginUser);
     }
 
+    // 共有処理（営業のみ）
+    @PostMapping("/weekly-report/share")
+    public String share(int weeklyReportId,
+    					Model model,
+    					@AuthenticationPrincipal LoginUserDetails loginUser) {
+        // 権限チェック
+        if (loginUser.getLoginUser().getSalesFlg().equals("1")) {
+            weeklyReportsService.share(weeklyReportId, loginUser);
+        } else {
+            // エラーメッセージを表示
+            model.addAttribute("errorMessage", "権限がありません。");
+        }
+        return detail(weeklyReportId, model, loginUser);
+    }
+
     // 作成画面初期表示
     @SuppressWarnings("unchecked")
 	@GetMapping("/weekly-report/create")
