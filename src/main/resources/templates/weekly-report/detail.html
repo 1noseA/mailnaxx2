@@ -114,7 +114,12 @@
 		                    </th:block>
 		                    <input type="hidden" name="weeklyReportId" th:value="${weeklyReportInfo.weeklyReportId}">
 	                    	<button type="submit" class="btn btnAccent m-1">コメント</button>
-	                    	<button type="button" class="btn btnAccent m-1" th:onclick="|share('${weeklyReportInfo.weeklyReportId}')|">共有</button>
+	                    	<th:block th:if="${!isShared}">
+	                    		<button type="button" class="btn btnAccent m-1" th:onclick="|share('${weeklyReportInfo.weeklyReportId}')|">共有</button>
+	                    	</th:block>
+	                    	<th:block th:if="${isShared}">
+	                    		<button type="button" class="btn btnAccent m-1" disabled>共有</button>
+	                    	</th:block>
 	                    </th:block>
 	                </div>
 	                <div>

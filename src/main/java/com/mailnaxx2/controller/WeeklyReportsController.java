@@ -67,6 +67,9 @@ public class WeeklyReportsController {
     // 確認済み
     boolean isConfirmed;
 
+    // 共有済み
+    boolean isShared;
+
     // 削除権限
     boolean isDelete;
 
@@ -257,18 +260,6 @@ public class WeeklyReportsController {
     	weeklyReportInfo.setRelationship(WeeklyReportConstants.RADIO.get(weeklyReportInfo.getRelationship()));
     	model.addAttribute("weeklyReportInfo", weeklyReportInfo);
 
-        // 確認権限
-    	isSales = (boolean) session.getAttribute("session_isSales");
-    	if (isSales) {
-    		if (weeklyReportInfo.getStatus().equals("3")) {
-    			isConfirmed = true;  // 確認済み
-    		} else {
-    			isConfirmed = false; // 未確認
-    		}
-    	}
-    	model.addAttribute("isSales", isSales);
-        model.addAttribute("isConfirmed", isConfirmed);
-
         // 削除権限（総務・自分のみ）
         isDelete = false;
         if (loginUser.getLoginUser().getRoleClass().equals(RoleClass.AFFAIRS.getCode())) {
@@ -283,6 +274,25 @@ public class WeeklyReportsController {
         }
         model.addAttribute("isDelete", isDelete);
 		model.addAttribute("isAuthenticated", isAuthenticated);
+
+		// 確認権限
+    	isSales = (boolean) session.getAttribute("session_isSales");
+    	if (isSales) {
+    		if (weeklyReportInfo.getStatus().equals("3")) {
+    			isConfirmed = true;  // 確認済み
+    		} else {
+    			isConfirmed = false; // 未確認
+    		}
+    	}
+    	model.addAttribute("isSales", isSales);
+        model.addAttribute("isConfirmed", isConfirmed);
+
+        // 共有ボタン表示制御
+        isShared = false;
+        if (weeklyReportInfo.getSharedFlg().equals("1")) {
+        	isShared = true;
+        }
+        model.addAttribute("isShared", isShared);
 
 		// 既読処理
 		isBoss  = (boolean) session.getAttribute("session_isBoss");
