@@ -39,6 +39,12 @@ public class UsersService {
         return userList;
     }
 
+    // 現場社員取得
+    public List<Users> findColleague(String userNumber, int projectId) {
+        List<Users> userList = usersMapper.findColleague(userNumber, projectId);
+        return userList;
+    }
+
     // 詳細情報取得
     public Users findById(int userId) {
         Users userInfo = usersMapper.findById(userId);

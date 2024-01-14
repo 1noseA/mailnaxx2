@@ -18,13 +18,16 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.mailnaxx2.constants.WeeklyReportConstants;
 import com.mailnaxx2.entity.Affiliations;
 import com.mailnaxx2.entity.Projects;
 import com.mailnaxx2.entity.Users;
 import com.mailnaxx2.entity.WeeklyReports;
+import com.mailnaxx2.form.ColleagueForm;
 import com.mailnaxx2.form.DetailForm;
 import com.mailnaxx2.form.SearchWeeklyReportForm;
 import com.mailnaxx2.form.SelectForm;
@@ -87,6 +90,9 @@ public class WeeklyReportsController {
 
     // 報告対象週プルダウン
     Set<LocalDate> reportDateList;
+
+    // 現場社員プルダウン
+    List<Users> userList;
 
     // 週報詳細
     WeeklyReports weeklyReportInfo;
@@ -353,6 +359,7 @@ public class WeeklyReportsController {
     @SuppressWarnings("unchecked")
 	@GetMapping("/weekly-report/create")
     public String create(@ModelAttribute WeeklyReportForm weeklyReportForm,
+    					@ModelAttribute ColleagueForm colleagueForm,
     					Model model,
     					@AuthenticationPrincipal LoginUserDetails loginUser) {
         // 担当営業プルダウン
@@ -392,8 +399,8 @@ public class WeeklyReportsController {
     		weeklyReportForm.setPlan(lastWeekReportInfo.getNextPlan());
     	}
 
-        // 現場社員プルダウン
-        List<Users> userList = usersService.findAll();
+		// 現場社員プルダウン
+        userList = usersService.findAll();
         model.addAttribute("userList", userList);
 
         model.addAttribute("weeklyReportId", 0);
@@ -401,15 +408,25 @@ public class WeeklyReportsController {
         return "weekly-report/create";
     }
 
+    // 現場社員取得処理(ajax)
+    @PostMapping("/weekly-report/getColleague")
+    @ResponseBody
+    public List<Users> getColleague(String userNumber, int projectId) {
+    	// 現場社員プルダウン
+    	userList = usersService.findColleague(userNumber, projectId);
+        return userList;
+    }
+
     // 一時保存処理
     @PostMapping("/weekly-report/save")
     public String save(@ModelAttribute @Validated(GroupOrder.class) WeeklyReportForm weeklyReportForm,
+    					@ModelAttribute @Validated(GroupOrder.class) ColleagueForm colleagueForm,
     					BindingResult result,
     					Model model,
     					@AuthenticationPrincipal LoginUserDetails loginUser) {
         // 入力エラーチェック
         if (result.hasErrors()) {
-            return create(weeklyReportForm, model, loginUser);
+            return create(weeklyReportForm, colleagueForm, model, loginUser);
         }
 
         // 一時保存
@@ -476,12 +493,13 @@ public class WeeklyReportsController {
     // 提出処理（メール送信）
     @PostMapping("/weekly-report/send")
     public String send(@ModelAttribute @Validated(GroupOrder.class) WeeklyReportForm weeklyReportForm,
+    					@ModelAttribute @Validated(GroupOrder.class) ColleagueForm colleagueForm,
     					BindingResult result,
     					Model model,
     					@AuthenticationPrincipal LoginUserDetails loginUser) {
         // 入力エラーチェック
         if (result.hasErrors()) {
-            return create(weeklyReportForm, model, loginUser);
+            return create(weeklyReportForm, colleagueForm, model, loginUser);
         }
 
         // 提出済み

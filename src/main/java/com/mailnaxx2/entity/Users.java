@@ -79,4 +79,7 @@ public class Users {
 
     // レコード更新日
     private LocalDateTime updatedAt;
+
+    // 現場ID
+    private Projects project;
 }
