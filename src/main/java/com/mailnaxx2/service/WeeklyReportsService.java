@@ -148,20 +148,30 @@ public class WeeklyReportsService {
 
     // 登録処理
     @Transactional
-    public void insert(WeeklyReportForm weeklyReportForm, @AuthenticationPrincipal LoginUserDetails loginUser) {
+    public void insert(WeeklyReportForm weeklyReportForm,
+    				   //ColleagueForm colleagueForm,
+    				   @AuthenticationPrincipal LoginUserDetails loginUser) {
         // 入力値をセットする
         WeeklyReports weeklyReport = setWeeklyReportForm(new WeeklyReports(), weeklyReportForm);
+        //Colleagues colleague = setColleagueForm(new Colleagues(), colleagueForm);
 
-        // ユーザID
+        // 社員ID
         Users user = loginUser.getLoginUser();
         user.setUserId(loginUser.getLoginUser().getUserId());
         weeklyReport.setUser(user);
 
         // 作成者はセッションの社員番号
         weeklyReport.setCreatedBy(loginUser.getLoginUser().getUserNumber());
+        //colleague.setCreatedBy(loginUser.getLoginUser().getUserNumber());
 
-        // 登録
+        // 週報登録
         weeklyReportsMapper.insert(weeklyReport);
+
+        // 登録した週報IDをセットする
+        //colleague.setWeeklyReport(weeklyReport);
+
+        // 現場社員登録
+        //colleaguesMapper.insert(colleague);
     }
 
     // 更新処理
@@ -182,7 +192,7 @@ public class WeeklyReportsService {
 
     // メール送信処理
 
-    // 入力値をセットする
+    // 入力値をセットする（週報）
     private WeeklyReports setWeeklyReportForm(WeeklyReports weeklyReport, WeeklyReportForm weeklyReportForm) {
     	// 現場ID
     	Projects project = new Projects();

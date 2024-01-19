@@ -26,3 +26,33 @@ $(function() {
 	    })
 	});
 });
+
+/**
+ * 現場社員登録
+ */
+$(function() {
+	$('#saveColleague').click(function(){
+		let colleagueForm = {
+		    colleagueName : $('#colleagueName').val(),
+		    colleagueDifficulty : $('#colleagueDifficulty').val(),
+		    colleagueSchedule : $('#colleagueSchedule').val(),
+			colleagueImpression : $('#colleagueImpression').val()
+		};
+	    $.ajax({
+	        url: '/weekly-report/saveColleague',
+	        type: 'POST',
+	        data: JSON.stringify(colleagueForm),
+			contentType : 'application/json'
+	    })
+	    .done(function(data) {
+			alert('登録完了しました');
+	    })
+	    .fail(function(jqXHR, textStatus, errorThrown) {
+	    	alert('送信に失敗しました');
+			console.log("jqXHR          : " + jqXHR.status); // HTTPステータスが取得
+            console.log("textStatus     : " + textStatus);    // タイムアウト、パースエラー
+            console.log("errorThrown    : " + errorThrown.message); // 例外情報
+	    })
+	});
+});
+

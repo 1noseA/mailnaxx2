@@ -34,6 +34,7 @@ import com.mailnaxx2.form.SelectForm;
 import com.mailnaxx2.form.WeeklyReportForm;
 import com.mailnaxx2.security.LoginUserDetails;
 import com.mailnaxx2.service.AffiliationsService;
+import com.mailnaxx2.service.ColleaguesService;
 import com.mailnaxx2.service.ProjectsService;
 import com.mailnaxx2.service.UsersService;
 import com.mailnaxx2.service.WeeklyReportsService;
@@ -57,6 +58,9 @@ public class WeeklyReportsController {
 
     @Autowired
     ProjectsService projectsService;
+
+    @Autowired
+    ColleaguesService colleaguesService;
 
     // 営業
     boolean isSales;
@@ -359,9 +363,9 @@ public class WeeklyReportsController {
     @SuppressWarnings("unchecked")
 	@GetMapping("/weekly-report/create")
     public String create(@ModelAttribute WeeklyReportForm weeklyReportForm,
-    					@ModelAttribute ColleagueForm colleagueForm,
-    					Model model,
-    					@AuthenticationPrincipal LoginUserDetails loginUser) {
+    					 @ModelAttribute ColleagueForm colleagueForm,
+    					 Model model,
+    					 @AuthenticationPrincipal LoginUserDetails loginUser) {
         // 担当営業プルダウン
     	salesList = (Set<Users>) session.getAttribute("session_salesList");
         model.addAttribute("salesList", salesList);
@@ -417,13 +421,22 @@ public class WeeklyReportsController {
         return userList;
     }
 
+    // 現場社員登録処理(ajax)
+    @PostMapping("/weekly-report/saveColleague")
+    @ResponseBody
+    public ColleagueForm saveColleague(@RequestBody ColleagueForm colleagueForm) {
+    	// 登録
+        colleaguesService.insert(colleagueForm);
+        return colleagueForm;
+    }
+
     // 一時保存処理
     @PostMapping("/weekly-report/save")
     public String save(@ModelAttribute @Validated(GroupOrder.class) WeeklyReportForm weeklyReportForm,
-    					@ModelAttribute @Validated(GroupOrder.class) ColleagueForm colleagueForm,
-    					BindingResult result,
-    					Model model,
-    					@AuthenticationPrincipal LoginUserDetails loginUser) {
+    				   @ModelAttribute @Validated(GroupOrder.class) ColleagueForm colleagueForm,
+    				   BindingResult result,
+    				   Model model,
+    				   @AuthenticationPrincipal LoginUserDetails loginUser) {
         // 入力エラーチェック
         if (result.hasErrors()) {
             return create(weeklyReportForm, colleagueForm, model, loginUser);
@@ -493,10 +506,10 @@ public class WeeklyReportsController {
     // 提出処理（メール送信）
     @PostMapping("/weekly-report/send")
     public String send(@ModelAttribute @Validated(GroupOrder.class) WeeklyReportForm weeklyReportForm,
-    					@ModelAttribute @Validated(GroupOrder.class) ColleagueForm colleagueForm,
-    					BindingResult result,
-    					Model model,
-    					@AuthenticationPrincipal LoginUserDetails loginUser) {
+    				   @ModelAttribute @Validated(GroupOrder.class) ColleagueForm colleagueForm,
+    				   BindingResult result,
+    				   Model model,
+    				   @AuthenticationPrincipal LoginUserDetails loginUser) {
         // 入力エラーチェック
         if (result.hasErrors()) {
             return create(weeklyReportForm, colleagueForm, model, loginUser);

@@ -209,7 +209,7 @@
     </div>
 
     <!-- モーダルここから -->
-    <form method="POST" th:action="@{/weekly-report/colleague}" th:object="${colleagueForm}">
+    <form method="POST" th:action="@{/weekly-report/saveColleague}" th:object="${colleagueForm}" id="colleagueForm">
 	    <div class="modal fade" id="colleagueModal" tabindex="-1" aria-labelledby="ecolleagueModalLabel" aria-hidden="true">
 	        <div class="modal-dialog">
 	            <div class="modal-content">
@@ -223,7 +223,7 @@
 	                                <label for="colleagueName" class="col-form-label">社員名
 	                                    <span class="badge bg-secondary ms-1">必須</span>
 	                                </label>
-	                                <select class="form-select" name="colleagueName" id="colleagueName" th:errorclass="is-invalid">
+	                                <select class="form-select" name="colleagueName" id="colleagueName" th:errorclass="is-invalid" th:field="${colleagueForm.colleagueName}">
 					                    <option value=0>選択してください</option>
 					                    <option th:each="colleague : ${colleagueList}"
 					                            th:value="${colleague.userId}"
@@ -239,13 +239,13 @@
 	                                <label for="colleagueDifficulty" class="col-form-label">難易度
 	                                    <span class="badge bg-secondary ms-1">必須</span>
 	                                </label>
-	                                <input type="text" class="form-control" placeholder="基準：100" name="colleagueDifficulty" id="colleagueDifficulty" />
+	                                <input type="text" class="form-control" placeholder="基準：100" name="colleagueDifficulty" id="colleagueDifficulty" th:field="${colleagueForm.colleagueDifficulty}" />
 	                            </div>
 	                            <div class="col-6">
 	                                <label for="colleagueSchedule" class="col-form-label">スケジュール感
 	                                    <span class="badge bg-secondary ms-1">必須</span>
 	                                </label>
-	                                <input type="text" class="form-control" placeholder="基準：100" name="colleagueSchedule" id="colleagueSchedule" />
+	                                <input type="text" class="form-control" placeholder="基準：100" name="colleagueSchedule" id="colleagueSchedule" th:field="${colleagueForm.colleagueSchedule}" />
 	                            </div>
 	                        </div>
 
@@ -254,14 +254,14 @@
 	                                <label for="colleagueImpression" class="col-form-label">状況
 	                                    <span class="badge bg-secondary ms-1">必須</span>
 	                                </label>
-	                                <textarea class="form-control" placeholder="" name="colleagueImpression" id="colleagueImpression"></textarea>
+	                                <textarea class="form-control" placeholder="" name="colleagueImpression" id="colleagueImpression" th:field="${colleagueForm.colleagueImpression}"></textarea>
 	                            </div>
 	                        </div>
 	                    </div>
 	                </div>
 	                <div class="modal-footer">
+	                	<button type="button" class="btn btn-primary" id="saveColleague">変更を保存</button>
 	                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
-	                    <button type="button" class="btn btn-primary">変更を保存</button>
 	                </div>
 	            </div>
 	        </div>

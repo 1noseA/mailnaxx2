@@ -2,22 +2,22 @@ package com.mailnaxx2.entity;
 
 import java.time.LocalDateTime;
 
-import lombok.Getter;
+import lombok.Data;
 
 /**
  * 現場社員状況
  */
-@Getter
+@Data
 public class Colleagues {
 
     // 現場社員状況ID
-    private int colleague_id;
+    private int colleagueId;
 
     // 週報ID
-    private int weekly_report_id;
+    private WeeklyReports weeklyReport;
 
-    // ユーザID
-    private int user_id;
+    // 社員ID
+    private Users user;
 
     // 難易度
     private int difficulty;
@@ -29,14 +29,14 @@ public class Colleagues {
     private String impression;
 
     // レコード登録者
-    private String created_by;
+    private String createdBy;
 
     // レコード登録日
-    private LocalDateTime created_at;
+    private LocalDateTime createdAt;
 
     // レコード更新者
-    private String updated_by;
+    private String updatedBy;
 
     // レコード更新日
-    private LocalDateTime updated_at;
+    private LocalDateTime updatedAt;
 }
