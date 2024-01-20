@@ -15,10 +15,10 @@ $(function() {
 	    })
 	    .done(function(data) {
 			// 現場社員プルダウン作成
-			$('#colleagueName').empty();
-		    $('#colleagueName').append($('<option>').val(0).text('選択してください'));
+			$('#colleagueUserId').empty();
+		    $('#colleagueUserId').append($('<option>').val(0).text('選択してください'));
 		    for (let i = 0; i < data.length; i++) {
-		        $('#colleagueName').append($('<option>').val(data[i].userId).text(data[i].userName));
+		        $('#colleagueUserId').append($('<option>').val(data[i].userId).text(data[i].userName));
 		    }
 	    })
 	    .fail(function() {
@@ -32,17 +32,17 @@ $(function() {
  */
 $(function() {
 	$('#saveColleague').click(function(){
-		let colleagueForm = {
-		    colleagueName : $('#colleagueName').val(),
-		    colleagueDifficulty : $('#colleagueDifficulty').val(),
-		    colleagueSchedule : $('#colleagueSchedule').val(),
-			colleagueImpression : $('#colleagueImpression').val()
-		};
 	    $.ajax({
 	        url: '/weekly-report/saveColleague',
 	        type: 'POST',
-	        data: JSON.stringify(colleagueForm),
-			contentType : 'application/json'
+			data : {
+				colleagueUserId: $('#colleagueUserId').val(),
+			    colleagueDifficulty: $('#colleagueDifficulty').val(),
+			    colleagueSchedule: $('#colleagueSchedule').val(),
+				colleagueImpression: $('#colleagueImpression').val(),
+				_csrf: $('*[name=_csrf]').val()
+			},
+			dataType: 'json',
 	    })
 	    .done(function(data) {
 			alert('登録完了しました');

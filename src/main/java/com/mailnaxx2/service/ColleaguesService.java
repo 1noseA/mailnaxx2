@@ -24,29 +24,21 @@ public class ColleaguesService {
     // 週報詳細
     WeeklyReports weeklyReportInfo;
 
-    // 登録処理
+    // 仮登録処理
     @Transactional
-    public void insert(ColleagueForm colleagueForm) {
+    public void tempInsert(ColleagueForm colleagueForm) {
         // 入力値をセットする
         Colleagues colleague = setColleagueForm(new Colleagues(), colleagueForm);
 
-        // 作成者はセッションの社員番号
-        //colleague.setCreatedBy(loginUser.getLoginUser().getUserNumber());
-
-        // 仮の週報IDをセットする
-        WeeklyReports weeklyReport = new WeeklyReports();
-        weeklyReport.setWeeklyReportId(0);
-        colleague.setWeeklyReport(weeklyReport);
-
-        // 現場社員登録
-        colleaguesMapper.insert(colleague);
+        // 現場社員仮登録
+        colleaguesMapper.tempInsert(colleague);
     }
 
-    // 入力値をセットする（現場社員）
+    // 入力値をセットする
     private Colleagues setColleagueForm(Colleagues colleague, ColleagueForm colleagueForm) {
-    	// 社員ID
+    	// 現場社員ID
     	Users user = new Users();
-    	user.setUserId(colleagueForm.getUserId());
+    	user.setUserId(colleagueForm.getColleagueUserId());
     	colleague.setUser(user);
 
     	// 難易度

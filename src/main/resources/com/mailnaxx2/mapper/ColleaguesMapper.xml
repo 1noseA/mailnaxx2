@@ -10,11 +10,10 @@
         WHERE weekly_report_id = #{weeklyReportId}
     </select>
 
-	<!-- 登録 -->
-    <insert id="insert">
+	<!-- 仮登録 -->
+    <insert id="tempInsert">
         INSERT INTO colleagues
         (
-			weekly_report_id,
            	user_id,
             difficulty,
             schedule,
@@ -24,7 +23,6 @@
         )
         VALUES
         (
-			#{weeklyReportId},
             #{user.userId},
             #{difficulty},
             #{schedule},

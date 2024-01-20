@@ -152,7 +152,7 @@ public class WeeklyReportsService {
     				   //ColleagueForm colleagueForm,
     				   @AuthenticationPrincipal LoginUserDetails loginUser) {
         // 入力値をセットする
-        WeeklyReports weeklyReport = setWeeklyReportForm(new WeeklyReports(), weeklyReportForm);
+        WeeklyReports weeklyReport = setWeeklyReport(new WeeklyReports(), weeklyReportForm);
         //Colleagues colleague = setColleagueForm(new Colleagues(), colleagueForm);
 
         // 社員ID
@@ -181,7 +181,7 @@ public class WeeklyReportsService {
     	WeeklyReports weeklyReport = weeklyReportsMapper.forLockById(weeklyReportForm.getWeeklyReportId());
 
         // 入力値をセットする
-    	weeklyReport = setWeeklyReportForm(weeklyReport, weeklyReportForm);
+    	weeklyReport = setWeeklyReport(weeklyReport, weeklyReportForm);
 
         // 更新者はセッションの社員番号
     	weeklyReport.setUpdatedBy(loginUser.getLoginUser().getUserNumber());
@@ -192,8 +192,8 @@ public class WeeklyReportsService {
 
     // メール送信処理
 
-    // 入力値をセットする（週報）
-    private WeeklyReports setWeeklyReportForm(WeeklyReports weeklyReport, WeeklyReportForm weeklyReportForm) {
+    // 入力値をセットする
+    private WeeklyReports setWeeklyReport(WeeklyReports weeklyReport, WeeklyReportForm weeklyReportForm) {
     	// 現場ID
     	Projects project = new Projects();
     	project.setProjectId(weeklyReportForm.getProjectId());

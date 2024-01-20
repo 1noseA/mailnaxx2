@@ -11,7 +11,7 @@ import jakarta.validation.constraints.Positive;
 import lombok.Data;
 
 /**
- * 週報情報
+ * 現場社員情報
  */
 @Data
 public class ColleagueForm {
@@ -19,13 +19,9 @@ public class ColleagueForm {
 	// 週報ID
     private int weeklyReportId;
 
-    // 社員ID
+	// 現場社員ID
 	@Positive(groups = ValidGroup1.class, message = "選択してください")
-    private int userId;
-
-	// 現場社員名
-	@Positive(groups = ValidGroup1.class, message = "選択してください")
-    private String colleagueName;
+    private Integer colleagueUserId;
 
     // 難易度
     @NotNull(groups = ValidGroup1.class, message = "入力してください")

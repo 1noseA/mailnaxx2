@@ -7,6 +7,6 @@ import com.mailnaxx2.entity.Colleagues;
 @Mapper
 public interface ColleaguesMapper {
 
-    // 登録
-    public void insert(Colleagues Colleague);
+    // 仮登録
+    public void tempInsert(Colleagues Colleague);
 }

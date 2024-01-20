@@ -18,7 +18,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -421,12 +420,18 @@ public class WeeklyReportsController {
         return userList;
     }
 
-    // 現場社員登録処理(ajax)
+    // 現場社員仮登録処理(ajax)
     @PostMapping("/weekly-report/saveColleague")
     @ResponseBody
-    public ColleagueForm saveColleague(@RequestBody ColleagueForm colleagueForm) {
-    	// 登録
-        colleaguesService.insert(colleagueForm);
+    public ColleagueForm saveColleague(int colleagueUserId, int colleagueDifficulty, int colleagueSchedule, String colleagueImpression) {
+    	// TODO：Formごと送信できるようにしたい
+    	ColleagueForm colleagueForm = new ColleagueForm();
+    	colleagueForm.setColleagueUserId(colleagueUserId);
+    	colleagueForm.setColleagueDifficulty(colleagueDifficulty);
+    	colleagueForm.setColleagueSchedule(colleagueSchedule);
+    	colleagueForm.setColleagueImpression(colleagueImpression);
+    	// 仮登録
+        colleaguesService.tempInsert(colleagueForm);
         return colleagueForm;
     }
 
