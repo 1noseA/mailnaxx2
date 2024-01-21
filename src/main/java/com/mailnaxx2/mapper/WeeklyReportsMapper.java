@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Options;
 
 import com.mailnaxx2.entity.WeeklyReports;
 import com.mailnaxx2.form.SearchWeeklyReportForm;
@@ -55,8 +54,7 @@ public interface WeeklyReportsMapper {
     public void readed(WeeklyReports weeklyReport);
 
     // 登録
-    @Options(useGeneratedKeys = true, keyProperty = "weeklyReportId")
-    public void insert(WeeklyReports weeklyReport);
+    public int insert(WeeklyReports weeklyReport);
 
     // 更新
     public void update(WeeklyReports weeklyReport);

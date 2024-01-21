@@ -36,6 +36,7 @@ $(function() {
 	        url: '/weekly-report/saveColleague',
 	        type: 'POST',
 			data : {
+				colleagueId: $('#colleagueId').val(),
 				colleagueUserId: $('#colleagueUserId').val(),
 			    colleagueDifficulty: $('#colleagueDifficulty').val(),
 			    colleagueSchedule: $('#colleagueSchedule').val(),
@@ -45,6 +46,7 @@ $(function() {
 			dataType: 'json',
 	    })
 	    .done(function(data) {
+			$('#colleagueId').val(data.colleagueId);
 			alert('登録完了しました');
 	    })
 	    .fail(function(jqXHR, textStatus, errorThrown) {

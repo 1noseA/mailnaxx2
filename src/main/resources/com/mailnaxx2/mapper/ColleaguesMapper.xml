@@ -10,8 +10,8 @@
         WHERE weekly_report_id = #{weeklyReportId}
     </select>
 
-	<!-- 仮登録 -->
-    <insert id="tempInsert">
+	<!-- 登録 -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="colleagueId">
         INSERT INTO colleagues
         (
            	user_id,
@@ -31,4 +31,13 @@
             CURRENT_TIMESTAMP
         )
     </insert>
+
+	<!-- 週報ID追加 -->
+	<update id="addWeeklyReportId">
+        UPDATE colleagues SET
+            weekly_report_id = #{weeklyReportId},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE
+            colleague_id = #{colleagueId}
+    </update>
 </mapper>

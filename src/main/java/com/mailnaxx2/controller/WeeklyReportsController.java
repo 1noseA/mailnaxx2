@@ -420,7 +420,7 @@ public class WeeklyReportsController {
         return userList;
     }
 
-    // 現場社員仮登録処理(ajax)
+    // 現場社員登録処理(ajax)
     @PostMapping("/weekly-report/saveColleague")
     @ResponseBody
     public ColleagueForm saveColleague(int colleagueUserId, int colleagueDifficulty, int colleagueSchedule, String colleagueImpression) {
@@ -430,15 +430,17 @@ public class WeeklyReportsController {
     	colleagueForm.setColleagueDifficulty(colleagueDifficulty);
     	colleagueForm.setColleagueSchedule(colleagueSchedule);
     	colleagueForm.setColleagueImpression(colleagueImpression);
-    	// 仮登録
-        colleaguesService.tempInsert(colleagueForm);
+
+    	// 登録
+        int colleagueId = colleaguesService.insert(colleagueForm);
+        colleagueForm.setColleagueId(colleagueId);
         return colleagueForm;
     }
 
     // 一時保存処理
     @PostMapping("/weekly-report/save")
     public String save(@ModelAttribute @Validated(GroupOrder.class) WeeklyReportForm weeklyReportForm,
-    				   @ModelAttribute @Validated(GroupOrder.class) ColleagueForm colleagueForm,
+    				   @ModelAttribute ColleagueForm colleagueForm,
     				   BindingResult result,
     				   Model model,
     				   @AuthenticationPrincipal LoginUserDetails loginUser) {
@@ -449,7 +451,7 @@ public class WeeklyReportsController {
 
         // 一時保存
         weeklyReportForm.setStatus("1");
-        // 登録
+        // 週報登録
         weeklyReportsService.insert(weeklyReportForm, loginUser);
 
         return "redirect:/weekly-report/list";
@@ -511,7 +513,7 @@ public class WeeklyReportsController {
     // 提出処理（メール送信）
     @PostMapping("/weekly-report/send")
     public String send(@ModelAttribute @Validated(GroupOrder.class) WeeklyReportForm weeklyReportForm,
-    				   @ModelAttribute @Validated(GroupOrder.class) ColleagueForm colleagueForm,
+    				   @ModelAttribute ColleagueForm colleagueForm,
     				   BindingResult result,
     				   Model model,
     				   @AuthenticationPrincipal LoginUserDetails loginUser) {

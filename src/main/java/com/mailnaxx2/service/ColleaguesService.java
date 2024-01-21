@@ -24,14 +24,18 @@ public class ColleaguesService {
     // 週報詳細
     WeeklyReports weeklyReportInfo;
 
-    // 仮登録処理
+    // 登録処理
     @Transactional
-    public void tempInsert(ColleagueForm colleagueForm) {
+    public int insert(ColleagueForm colleagueForm) {
         // 入力値をセットする
         Colleagues colleague = setColleagueForm(new Colleagues(), colleagueForm);
 
-        // 現場社員仮登録
-        colleaguesMapper.tempInsert(colleague);
+        // 現場社員登録
+        colleaguesMapper.insert(colleague);
+
+        // 登録した現場社員IDを取得
+        int colleagueId = colleague.getColleagueId();
+        return colleagueId;
     }
 
     // 入力値をセットする

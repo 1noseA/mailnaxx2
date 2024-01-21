@@ -16,6 +16,7 @@ import com.mailnaxx2.form.DetailForm;
 import com.mailnaxx2.form.SearchWeeklyReportForm;
 import com.mailnaxx2.form.SelectForm;
 import com.mailnaxx2.form.WeeklyReportForm;
+import com.mailnaxx2.mapper.ColleaguesMapper;
 import com.mailnaxx2.mapper.WeeklyReportsMapper;
 import com.mailnaxx2.security.LoginUserDetails;
 
@@ -24,6 +25,9 @@ public class WeeklyReportsService {
 
     @Autowired
     WeeklyReportsMapper weeklyReportsMapper;
+
+    @Autowired
+    ColleaguesMapper colleaguesMapper;
 
     // 週報一覧
     List<WeeklyReports> weeklyReportList;
@@ -149,11 +153,9 @@ public class WeeklyReportsService {
     // 登録処理
     @Transactional
     public void insert(WeeklyReportForm weeklyReportForm,
-    				   //ColleagueForm colleagueForm,
     				   @AuthenticationPrincipal LoginUserDetails loginUser) {
         // 入力値をセットする
         WeeklyReports weeklyReport = setWeeklyReport(new WeeklyReports(), weeklyReportForm);
-        //Colleagues colleague = setColleagueForm(new Colleagues(), colleagueForm);
 
         // 社員ID
         Users user = loginUser.getLoginUser();
@@ -162,16 +164,17 @@ public class WeeklyReportsService {
 
         // 作成者はセッションの社員番号
         weeklyReport.setCreatedBy(loginUser.getLoginUser().getUserNumber());
-        //colleague.setCreatedBy(loginUser.getLoginUser().getUserNumber());
 
         // 週報登録
         weeklyReportsMapper.insert(weeklyReport);
 
-        // 登録した週報IDをセットする
-        //colleague.setWeeklyReport(weeklyReport);
-
-        // 現場社員登録
-        //colleaguesMapper.insert(colleague);
+        // 現場社員が存在する場合
+        if (weeklyReportForm.getColleagueId() != 0) {
+        	// 登録した週報IDを取得
+            int weeklyReportId = weeklyReport.getWeeklyReportId();
+            // 現場社員に週報IDを追加
+            colleaguesMapper.addWeeklyReportId(weeklyReportForm.getColleagueId(), weeklyReportId);
+        }
     }
 
     // 更新処理

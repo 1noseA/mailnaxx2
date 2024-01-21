@@ -183,6 +183,7 @@
                     <div class="text-center m-5">
                     	<input type="hidden" th:field="*{weeklyReportId}" />
                     	<input type="hidden" th:field="*{status}" />
+                    	<input type="hidden" name="colleagueId" id="colleagueId" />
                     	<th:block th:if="${weeklyReportId == 0}">
                         	<button type="submit" class="btn btnLight">一時保存</button>
                         </th:block>
@@ -260,7 +261,7 @@
 	                    </div>
 	                </div>
 	                <div class="modal-footer">
-	                	<button type="button" class="btn btn-primary" id="saveColleague">変更を保存</button>
+	                	<button type="button" class="btn btn-primary" id="saveColleague">保存</button>
 	                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
 	                </div>
 	            </div>
