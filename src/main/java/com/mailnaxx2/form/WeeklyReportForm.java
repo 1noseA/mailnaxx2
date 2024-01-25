@@ -88,4 +88,7 @@ public class WeeklyReportForm {
 
     // 特記事項
     private String remarks;
+
+    // 現場社員IDリスト（TODO：リストにする予定）
+    private int colleagueId;
 }

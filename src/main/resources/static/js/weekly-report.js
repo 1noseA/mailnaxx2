@@ -37,3 +37,15 @@ function confirm(id) {
     form.submit();
 }
 
+/**
+ * 共有処理
+ */
+function share(id) {
+    let form = $('#shareForm');
+    $('<input>').attr({
+        type: 'hidden',
+        name: 'weeklyReportId',
+        value: id
+    }).appendTo(form);
+    form.submit();
+}

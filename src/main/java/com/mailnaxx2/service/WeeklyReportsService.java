@@ -16,6 +16,7 @@ import com.mailnaxx2.form.DetailForm;
 import com.mailnaxx2.form.SearchWeeklyReportForm;
 import com.mailnaxx2.form.SelectForm;
 import com.mailnaxx2.form.WeeklyReportForm;
+import com.mailnaxx2.mapper.ColleaguesMapper;
 import com.mailnaxx2.mapper.WeeklyReportsMapper;
 import com.mailnaxx2.security.LoginUserDetails;
 
@@ -24,6 +25,9 @@ public class WeeklyReportsService {
 
     @Autowired
     WeeklyReportsMapper weeklyReportsMapper;
+
+    @Autowired
+    ColleaguesMapper colleaguesMapper;
 
     // 週報一覧
     List<WeeklyReports> weeklyReportList;
@@ -120,6 +124,19 @@ public class WeeklyReportsService {
         weeklyReportsMapper.comment(weeklyReport);
     }
 
+    // 共有処理
+    @Transactional
+    public void share(int weeklyReportId, @AuthenticationPrincipal LoginUserDetails loginUser) {
+        // 排他ロック
+        WeeklyReports weeklyReport = weeklyReportsMapper.forLockById(weeklyReportId);
+
+        // 更新者はセッションの社員番号
+        weeklyReport.setUpdatedBy(loginUser.getLoginUser().getUserNumber());
+
+        // 共有
+        weeklyReportsMapper.share(weeklyReport);
+    }
+
     // 既読処理
     @Transactional
     public void readed(int weeklyReportId, @AuthenticationPrincipal LoginUserDetails loginUser) {
@@ -135,11 +152,12 @@ public class WeeklyReportsService {
 
     // 登録処理
     @Transactional
-    public void insert(WeeklyReportForm weeklyReportForm, @AuthenticationPrincipal LoginUserDetails loginUser) {
+    public void insert(WeeklyReportForm weeklyReportForm,
+    				   @AuthenticationPrincipal LoginUserDetails loginUser) {
         // 入力値をセットする
-        WeeklyReports weeklyReport = setWeeklyReportForm(new WeeklyReports(), weeklyReportForm);
+        WeeklyReports weeklyReport = setWeeklyReport(new WeeklyReports(), weeklyReportForm);
 
-        // ユーザID
+        // 社員ID
         Users user = loginUser.getLoginUser();
         user.setUserId(loginUser.getLoginUser().getUserId());
         weeklyReport.setUser(user);
@@ -147,8 +165,16 @@ public class WeeklyReportsService {
         // 作成者はセッションの社員番号
         weeklyReport.setCreatedBy(loginUser.getLoginUser().getUserNumber());
 
-        // 登録
+        // 週報登録
         weeklyReportsMapper.insert(weeklyReport);
+
+        // 現場社員が存在する場合
+        if (weeklyReportForm.getColleagueId() != 0) {
+        	// 登録した週報IDを取得
+            int weeklyReportId = weeklyReport.getWeeklyReportId();
+            // 現場社員に週報IDを追加
+            colleaguesMapper.addWeeklyReportId(weeklyReportForm.getColleagueId(), weeklyReportId);
+        }
     }
 
     // 更新処理
@@ -158,7 +184,7 @@ public class WeeklyReportsService {
     	WeeklyReports weeklyReport = weeklyReportsMapper.forLockById(weeklyReportForm.getWeeklyReportId());
 
         // 入力値をセットする
-    	weeklyReport = setWeeklyReportForm(weeklyReport, weeklyReportForm);
+    	weeklyReport = setWeeklyReport(weeklyReport, weeklyReportForm);
 
         // 更新者はセッションの社員番号
     	weeklyReport.setUpdatedBy(loginUser.getLoginUser().getUserNumber());
@@ -170,7 +196,7 @@ public class WeeklyReportsService {
     // メール送信処理
 
     // 入力値をセットする
-    private WeeklyReports setWeeklyReportForm(WeeklyReports weeklyReport, WeeklyReportForm weeklyReportForm) {
+    private WeeklyReports setWeeklyReport(WeeklyReports weeklyReport, WeeklyReportForm weeklyReportForm) {
     	// 現場ID
     	Projects project = new Projects();
     	project.setProjectId(weeklyReportForm.getProjectId());

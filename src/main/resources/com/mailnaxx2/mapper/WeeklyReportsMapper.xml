@@ -399,6 +399,16 @@
             weekly_report_id = #{weeklyReportId}
     </update>
 
+	<!-- 共有 -->
+    <update id="share">
+        UPDATE weekly_reports SET
+            shared_flg = '1',
+            updated_by = #{updatedBy},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE
+            weekly_report_id = #{weeklyReportId}
+    </update>
+
 	<!-- 既読 -->
     <update id="readed">
         UPDATE weekly_reports SET

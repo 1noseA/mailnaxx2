@@ -19,18 +19,21 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.mailnaxx2.constants.WeeklyReportConstants;
 import com.mailnaxx2.entity.Affiliations;
 import com.mailnaxx2.entity.Projects;
 import com.mailnaxx2.entity.Users;
 import com.mailnaxx2.entity.WeeklyReports;
+import com.mailnaxx2.form.ColleagueForm;
 import com.mailnaxx2.form.DetailForm;
 import com.mailnaxx2.form.SearchWeeklyReportForm;
 import com.mailnaxx2.form.SelectForm;
 import com.mailnaxx2.form.WeeklyReportForm;
 import com.mailnaxx2.security.LoginUserDetails;
 import com.mailnaxx2.service.AffiliationsService;
+import com.mailnaxx2.service.ColleaguesService;
 import com.mailnaxx2.service.ProjectsService;
 import com.mailnaxx2.service.UsersService;
 import com.mailnaxx2.service.WeeklyReportsService;
@@ -55,6 +58,9 @@ public class WeeklyReportsController {
     @Autowired
     ProjectsService projectsService;
 
+    @Autowired
+    ColleaguesService colleaguesService;
+
     // 営業
     boolean isSales;
 
@@ -66,6 +72,9 @@ public class WeeklyReportsController {
 
     // 確認済み
     boolean isConfirmed;
+
+    // 共有済み
+    boolean isShared;
 
     // 削除権限
     boolean isDelete;
@@ -84,6 +93,9 @@ public class WeeklyReportsController {
 
     // 報告対象週プルダウン
     Set<LocalDate> reportDateList;
+
+    // 現場社員プルダウン
+    List<Users> userList;
 
     // 週報詳細
     WeeklyReports weeklyReportInfo;
@@ -257,18 +269,6 @@ public class WeeklyReportsController {
     	weeklyReportInfo.setRelationship(WeeklyReportConstants.RADIO.get(weeklyReportInfo.getRelationship()));
     	model.addAttribute("weeklyReportInfo", weeklyReportInfo);
 
-        // 確認権限
-    	isSales = (boolean) session.getAttribute("session_isSales");
-    	if (isSales) {
-    		if (weeklyReportInfo.getStatus().equals("3")) {
-    			isConfirmed = true;  // 確認済み
-    		} else {
-    			isConfirmed = false; // 未確認
-    		}
-    	}
-    	model.addAttribute("isSales", isSales);
-        model.addAttribute("isConfirmed", isConfirmed);
-
         // 削除権限（総務・自分のみ）
         isDelete = false;
         if (loginUser.getLoginUser().getRoleClass().equals(RoleClass.AFFAIRS.getCode())) {
@@ -283,6 +283,25 @@ public class WeeklyReportsController {
         }
         model.addAttribute("isDelete", isDelete);
 		model.addAttribute("isAuthenticated", isAuthenticated);
+
+		// 確認権限
+    	isSales = (boolean) session.getAttribute("session_isSales");
+    	if (isSales) {
+    		if (weeklyReportInfo.getStatus().equals("3")) {
+    			isConfirmed = true;  // 確認済み
+    		} else {
+    			isConfirmed = false; // 未確認
+    		}
+    	}
+    	model.addAttribute("isSales", isSales);
+        model.addAttribute("isConfirmed", isConfirmed);
+
+        // 共有ボタン表示制御
+        isShared = false;
+        if (weeklyReportInfo.getSharedFlg().equals("1")) {
+        	isShared = true;
+        }
+        model.addAttribute("isShared", isShared);
 
 		// 既読処理
 		isBoss  = (boolean) session.getAttribute("session_isBoss");
@@ -324,12 +343,28 @@ public class WeeklyReportsController {
         return detail(detailForm.getWeeklyReportId(), model, loginUser);
     }
 
+    // 共有処理（営業のみ）
+    @PostMapping("/weekly-report/share")
+    public String share(int weeklyReportId,
+    					Model model,
+    					@AuthenticationPrincipal LoginUserDetails loginUser) {
+        // 権限チェック
+        if (loginUser.getLoginUser().getSalesFlg().equals("1")) {
+            weeklyReportsService.share(weeklyReportId, loginUser);
+        } else {
+            // エラーメッセージを表示
+            model.addAttribute("errorMessage", "権限がありません。");
+        }
+        return detail(weeklyReportId, model, loginUser);
+    }
+
     // 作成画面初期表示
     @SuppressWarnings("unchecked")
 	@GetMapping("/weekly-report/create")
     public String create(@ModelAttribute WeeklyReportForm weeklyReportForm,
-    					Model model,
-    					@AuthenticationPrincipal LoginUserDetails loginUser) {
+    					 @ModelAttribute ColleagueForm colleagueForm,
+    					 Model model,
+    					 @AuthenticationPrincipal LoginUserDetails loginUser) {
         // 担当営業プルダウン
     	salesList = (Set<Users>) session.getAttribute("session_salesList");
         model.addAttribute("salesList", salesList);
@@ -367,8 +402,8 @@ public class WeeklyReportsController {
     		weeklyReportForm.setPlan(lastWeekReportInfo.getNextPlan());
     	}
 
-        // 現場社員プルダウン
-        List<Users> userList = usersService.findAll();
+		// 現場社員プルダウン
+        userList = usersService.findAll();
         model.addAttribute("userList", userList);
 
         model.addAttribute("weeklyReportId", 0);
@@ -376,20 +411,47 @@ public class WeeklyReportsController {
         return "weekly-report/create";
     }
 
+    // 現場社員取得処理(ajax)
+    @PostMapping("/weekly-report/getColleague")
+    @ResponseBody
+    public List<Users> getColleague(String userNumber, int projectId) {
+    	// 現場社員プルダウン
+    	userList = usersService.findColleague(userNumber, projectId);
+        return userList;
+    }
+
+    // 現場社員登録処理(ajax)
+    @PostMapping("/weekly-report/saveColleague")
+    @ResponseBody
+    public ColleagueForm saveColleague(int colleagueUserId, int colleagueDifficulty, int colleagueSchedule, String colleagueImpression) {
+    	// TODO：Formごと送信できるようにしたい
+    	ColleagueForm colleagueForm = new ColleagueForm();
+    	colleagueForm.setColleagueUserId(colleagueUserId);
+    	colleagueForm.setColleagueDifficulty(colleagueDifficulty);
+    	colleagueForm.setColleagueSchedule(colleagueSchedule);
+    	colleagueForm.setColleagueImpression(colleagueImpression);
+
+    	// 登録
+        int colleagueId = colleaguesService.insert(colleagueForm);
+        colleagueForm.setColleagueId(colleagueId);
+        return colleagueForm;
+    }
+
     // 一時保存処理
     @PostMapping("/weekly-report/save")
     public String save(@ModelAttribute @Validated(GroupOrder.class) WeeklyReportForm weeklyReportForm,
-    					BindingResult result,
-    					Model model,
-    					@AuthenticationPrincipal LoginUserDetails loginUser) {
+    				   @ModelAttribute ColleagueForm colleagueForm,
+    				   BindingResult result,
+    				   Model model,
+    				   @AuthenticationPrincipal LoginUserDetails loginUser) {
         // 入力エラーチェック
         if (result.hasErrors()) {
-            return create(weeklyReportForm, model, loginUser);
+            return create(weeklyReportForm, colleagueForm, model, loginUser);
         }
 
         // 一時保存
         weeklyReportForm.setStatus("1");
-        // 登録
+        // 週報登録
         weeklyReportsService.insert(weeklyReportForm, loginUser);
 
         return "redirect:/weekly-report/list";
@@ -451,12 +513,13 @@ public class WeeklyReportsController {
     // 提出処理（メール送信）
     @PostMapping("/weekly-report/send")
     public String send(@ModelAttribute @Validated(GroupOrder.class) WeeklyReportForm weeklyReportForm,
-    					BindingResult result,
-    					Model model,
-    					@AuthenticationPrincipal LoginUserDetails loginUser) {
+    				   @ModelAttribute ColleagueForm colleagueForm,
+    				   BindingResult result,
+    				   Model model,
+    				   @AuthenticationPrincipal LoginUserDetails loginUser) {
         // 入力エラーチェック
         if (result.hasErrors()) {
-            return create(weeklyReportForm, model, loginUser);
+            return create(weeklyReportForm, colleagueForm, model, loginUser);
         }
 
         // 提出済み

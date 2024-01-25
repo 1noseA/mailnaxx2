@@ -83,6 +83,20 @@
         ORDER BY u.user_number
     </select>
 
+	<!-- 現場社員取得 -->
+    <select id="findColleague" resultMap="userMap">
+        SELECT
+            u.user_id,
+            u.user_number,
+            u.user_name
+        FROM users u
+        WHERE
+			u.user_number != #{userNumber}
+        AND u.deleted_flg = '0'
+		AND u.project_id = #{projectId}
+        ORDER BY u.user_number
+    </select>
+
     <!-- 1件取得 -->
     <select id="findById" resultMap="userMap">
         SELECT
@@ -188,11 +202,16 @@
         <result property="updatedBy" column="updated_by" />
         <result property="updatedAt" column="updated_at" />
         <association property="affiliation" resultMap="affiliationResult"/>
+		<association property="project" resultMap="ProjectResult"/>
     </resultMap>
 
     <resultMap id="affiliationResult" type="com.mailnaxx2.entity.Affiliations">
         <result property="affiliationId" column="affiliation_id" />
         <result property="affiliationName" column="affiliation_name" />
+    </resultMap>
+
+	<resultMap id="ProjectResult" type="com.mailnaxx2.entity.Projects">
+        <result property="projectId" column="project_id" />
     </resultMap>
 
     <!-- 営業担当取得 -->

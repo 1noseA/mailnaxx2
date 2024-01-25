@@ -26,6 +26,9 @@ public interface UsersMapper {
     // 検索
     public List<Users> findBySearchForm(SearchUsersForm searchUsersForm);
 
+    // 現場社員取得
+    public List<Users> findColleague(String userNumber, int projectId);
+
     // 1件取得
     public Users findById(int userId);
 

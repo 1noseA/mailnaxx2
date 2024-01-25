@@ -47,11 +47,14 @@ public interface WeeklyReportsMapper {
     // コメント
     public void comment(WeeklyReports weeklyReport);
 
+    // 共有
+    public void share(WeeklyReports weeklyReport);
+
     // 既読
     public void readed(WeeklyReports weeklyReport);
 
     // 登録
-    public void insert(WeeklyReports weeklyReport);
+    public int insert(WeeklyReports weeklyReport);
 
     // 更新
     public void update(WeeklyReports weeklyReport);
