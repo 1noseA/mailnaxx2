@@ -7,6 +7,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.client.RestTemplate;
 
 import com.mailnaxx2.jackson.Manuals;
@@ -22,20 +23,39 @@ public class ManualsController {
         this.restTemplate = restTemplate;
     }
 
-    // マニュアルAPI 一覧取得URL
-    private static final String GET_LIST_URL = "http://localhost:8081/manual-api";
+    // マニュアル一覧
+    List<Manuals> manualList;
+
+     // マニュアル詳細
+    Manuals manualInfo;
+
+    // マニュアルAPI 情報取得URL
+    private static final String GET_URL = "http://localhost:8081/manual-api";
 
     // 一覧画面初期表示
     @GetMapping("/manual/list")
     public String index(Model model,
                         @AuthenticationPrincipal LoginUserDetails loginUser) {
         // マニュアル一覧を取得
-        Manuals[] manualArray = restTemplate.getForObject(GET_LIST_URL, Manuals[].class);
-        List<Manuals> manualList = Arrays.asList(manualArray);
+        Manuals[] manualArray = restTemplate.getForObject(GET_URL, Manuals[].class);
+        manualList = Arrays.asList(manualArray);
         System.out.println(manualList.toString());
         model.addAttribute("manualList", manualList);
 
         model.addAttribute("loginUserInfo", loginUser.getLoginUser());
         return "manual/list";
     }
+
+    // 詳細画面初期表示
+    @PostMapping("/manual/detail")
+    public String detail(int manualId,
+                        Model model,
+                        @AuthenticationPrincipal LoginUserDetails loginUser) {
+        // 詳細情報を取得
+        manualInfo = restTemplate.getForObject(GET_URL + "/" + manualId, Manuals.class);
+        model.addAttribute("manualInfo", manualInfo);
+        model.addAttribute("loginUserInfo", loginUser.getLoginUser());
+        return "manual/detail";
+    }
+
 }

@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="common :: meta_header('マニュアル一覧',~{::link},~{::script})">
 <link rel="stylesheet" th:href="@{/css/user/list.css}" />
+<script th:src="@{/js/manual.js}"></script>
 </head>
 <body>
     <div th:replace="common :: header"></div>
@@ -15,9 +16,9 @@
                             <thead>
                                 <tr class="border-bottom border-dark">
                                     <th scope="col" class="text-canter"></th>
-                                    <th scope="col">タイトル</th>
-                                    <th scope="col">掲載開始日</th>
-                                    <th scope="col">内容</th>
+                                    <th scope="col" class="w-25">タイトル</th>
+                                    <th scope="col" class="w-25">掲載期間</th>
+                                    <th scope="col" class="w-50">内容</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -26,14 +27,14 @@
                                         <td>
                                         </td>
                                         <td>
-                                            <!-- <a href="javascript:void(0);" th:onclick="|showDetail('${manualList.manualId}')|"> -->
+                                            <a href="javascript:void(0);" th:onclick="|showDetail('${manualList.manualId}')|">
                                                 <span th:text="${manualList.title}"></span>
-                                            <!-- </a> -->
+                                            </a>
                                         </td>
                                         <td>
-                                            <!-- <a href="javascript:void(0);" th:onclick="|showDetail('${manualList.manualId}')|"> -->
-                                                <span th:text="${#strings.replace(manualList.startDate, '-', '/')}"></span>
-                                            <!-- </a> -->
+                                            <a href="javascript:void(0);" th:onclick="|showDetail('${manualList.manualId}')|">
+                                                <span th:text="${#strings.replace(manualList.startDate, '-', '/') + '〜' + #strings.replace(manualList.endDate, '-', '/')}"></span>
+                                            </a>
                                         </td>
                                         <td>
                                             <a href="javascript:void(0);" th:onclick="|showDetail('${manualList.manualId}')|">
