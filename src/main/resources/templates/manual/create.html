@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common :: meta_header('マニュアルフォーム',~{::link},~{::script})">
+<link rel="stylesheet" th:href="@{/css/user/create.css}" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script th:src="@{/js/common.js}"></script>
+<script th:src="@{/js/manual-create.js}"></script>
+</head>
+<body>
+    <div th:replace="common :: header"></div>
+
+    <div class="contents">
+        <div class="container">
+            <div class="title text-center mt-5 p-3" th:text="${manualId == 0} ? 'マニュアル作成' : 'マニュアル編集'"></div>
+            <div class="formArea mx-auto mb-5">
+
+                <form method="POST" th:action="@{/manual/create}" th:object="${manualsForm}" id="form">
+                    <div class="row mb-3">
+                        <div class="col-12 col-md-3 text-md-end">
+                            <label for="displayOrder" class="col-form-label">表示順
+                                <span class="badge bg-secondary ms-1">必須</span>
+                            </label>
+                        </div>
+                        <div class="col-12 col-md-8 d-flex justify-content-md-center">
+                            <div class="input-group has-validation">
+                                <input type="text" class="form-control" th:errorclass="is-invalid" th:field="*{displayOrder}" />
+                                <span class="invalid-feedback" th:if="${#fields.hasErrors('displayOrder')}" th:errors="*{displayOrder}"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-12 col-md-3 text-md-end">
+                            <label for="title" class="col-form-label">タイトル
+                                <span class="badge bg-secondary ms-1">必須</span>
+                            </label>
+                        </div>
+                        <div class="col-12 col-md-8 d-flex justify-content-md-center">
+                            <div class="input-group has-validation">
+                                <input type="text" class="form-control" th:errorclass="is-invalid" th:field="*{title}" />
+                                <span class="invalid-feedback" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-12 col-md-3 text-md-end">
+                            <label for="startDate" class="col-form-label">掲載開始日</label>
+                        </div>
+
+                        <div class="col-12 col-md-8 d-flex align-items-center">
+                            <select class="form-select" th:errorclass="is-invalid" name="startYear" id="startYearList">
+                                <option th:value="${manualsForm.startYear}">
+                            </select>
+                            <span class="p-2">年</span>
+
+                            <div class="input-group has-validation">
+                                <select class="form-select w20 monthList" th:errorclass="is-invalid" name="startMonth" id="startMonthList">
+                                    <option th:value="${manualsForm.startMonth}">
+                                </select>
+                                <span class="invalid-feedback" th:if="${#fields.hasErrors('startMonth')}" th:errors="*{startMonth}"></span>
+                            </div>
+                            <span class="p-2">月</span>
+
+                            <div class="input-group has-validation">
+                                <select class="form-select w20" th:errorclass="is-invalid" name="startDay" id="startDayList">
+                                    <option th:value="${manualsForm.startDay}">
+                                </select>
+                                <span class="invalid-feedback" th:if="${#fields.hasErrors('startDay')}" th:errors="*{startDay}"></span>
+                            </div>
+                            <span class="p-2">日</span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-12 col-md-3 text-md-end">
+                            <label for="endDate" class="col-form-label">掲載終了日</label>
+                        </div>
+
+                        <div class="col-12 col-md-8 d-flex align-items-center">
+                            <select class="form-select" th:errorclass="is-invalid" name="endYear" id="endYearList">
+                                <option th:value="${manualsForm.endYear}">
+                            </select>
+                            <span class="p-2">年</span>
+
+                            <div class="input-group has-validation">
+                                <select class="form-select w20 monthList" th:errorclass="is-invalid" name="endMonth" id="endMonthList">
+                                    <option th:value="${manualsForm.endMonth}">
+                                </select>
+                                <span class="invalid-feedback" th:if="${#fields.hasErrors('endMonth')}" th:errors="*{endMonth}"></span>
+                            </div>
+                            <span class="p-2">月</span>
+
+                            <div class="input-group has-validation">
+                                <select class="form-select w20" th:errorclass="is-invalid" name="endDay" id="endDayList">
+                                    <option th:value="${manualsForm.endDay}">
+                                </select>
+                                <span class="invalid-feedback" th:if="${#fields.hasErrors('endDay')}" th:errors="*{endDay}"></span>
+                            </div>
+                            <span class="p-2">日</span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-12 col-md-3 text-md-end">
+                            <label for="content" class="col-form-label">内容
+                                <span class="badge bg-secondary ms-1">必須</span>
+                            </label>
+                        </div>
+                        <div class="col-12 col-md-8">
+                            <div class="input-group has-validation">
+                                <textarea class="form-control" th:errorclass="is-invalid" th:field="*{content}"></textarea>
+                                <span class="invalid-feedback" th:if="${#fields.hasErrors('content')}" th:errors="*{content}"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-12 col-md-3 text-md-end">
+                            <label for="link" class="col-form-label">リンク</label>
+                        </div>
+                        <div class="col-12 col-md-8">
+                            <div class="input-group has-validation">
+                                <input type="text" class="form-control" th:errorclass="is-invalid" th:field="*{link}" />
+                                <span class="invalid-feedback" th:if="${#fields.hasErrors('link')}" th:errors="*{link}"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center m-5">
+                        <th:block th:if="${manualId == 0}">
+                            <button type="submit" class="btn btnMain">登録</button>
+                        </th:block>
+                        <th:block th:unless="${manualId == 0}">
+                            <button type="submit" class="btn btnMain" th:formaction="@{/manual/update}" th:value="${manualId}" name="manualId">更新</button>
+                        </th:block>
+                    </div>
+                </form>
+            </div>
+            <div class="row mb-5">
+                <div class="col-auto">
+                    <button type="button" class="btn btnBack" th:onclick="location.href='/manual/list'">戻る</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="common :: footer"></div>
+</body>
+</html>

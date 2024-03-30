@@ -7,9 +7,11 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.client.RestTemplate;
 
+import com.mailnaxx2.form.ManualsForm;
 import com.mailnaxx2.jackson.Manuals;
 import com.mailnaxx2.security.LoginUserDetails;
 
@@ -58,4 +60,13 @@ public class ManualsController {
         return "manual/detail";
     }
 
+    // 登録画面初期表示
+    @GetMapping("/manual/create")
+    public String create(@ModelAttribute ManualsForm manualsForm,
+                        Model model,
+                        @AuthenticationPrincipal LoginUserDetails loginUser) {
+        model.addAttribute("manualId", 0);
+        model.addAttribute("loginUserInfo", loginUser.getLoginUser());
+        return "manual/create";
+    }
 }
