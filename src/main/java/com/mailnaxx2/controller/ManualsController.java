@@ -6,6 +6,8 @@ import java.util.List;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,6 +16,7 @@ import org.springframework.web.client.RestTemplate;
 import com.mailnaxx2.form.ManualsForm;
 import com.mailnaxx2.jackson.Manuals;
 import com.mailnaxx2.security.LoginUserDetails;
+import com.mailnaxx2.validation.All;
 
 @Controller
 public class ManualsController {
@@ -33,6 +36,9 @@ public class ManualsController {
 
     // マニュアルAPI 情報取得URL
     private static final String GET_URL = "http://localhost:8081/manual-api";
+
+    // マニュアルAPI 新規作成URL
+    private static final String POST_URL ="http://localhost:8081/manual-api";
 
     // 一覧画面初期表示
     @GetMapping("/manual/list")
@@ -66,7 +72,25 @@ public class ManualsController {
                         Model model,
                         @AuthenticationPrincipal LoginUserDetails loginUser) {
         model.addAttribute("manualId", 0);
+        model.addAttribute("userId", loginUser.getLoginUser().getUserId());
         model.addAttribute("loginUserInfo", loginUser.getLoginUser());
         return "manual/create";
+    }
+
+    // 登録処理
+    @PostMapping("/manual/create")
+    public String create(@ModelAttribute @Validated(All.class) ManualsForm manualsForm,
+                        BindingResult result,
+                        Model model,
+                        @AuthenticationPrincipal LoginUserDetails loginUser) {
+        // 入力エラーチェック
+        if (result.hasErrors()) {
+            return create(manualsForm, model, loginUser);
+        }
+
+        // 登録
+        restTemplate.postForObject(POST_URL, manualsForm, Manuals.class);
+
+        return "redirect:/manual/list";
     }
 }
