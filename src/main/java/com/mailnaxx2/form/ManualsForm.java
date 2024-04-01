@@ -27,27 +27,21 @@ public class ManualsForm {
     private String title;
 
     // 掲載開始日_年
-    @NotBlank(groups = ValidGroup1.class, message = "選択してください")
     private String startYear;
 
     // 掲載開始日_月
-    @NotBlank(groups = ValidGroup1.class, message = "選択してください")
     private String startMonth;
 
     // 掲載開始日_日
-    @NotBlank(groups = ValidGroup1.class, message = "選択してください")
     private String startDay;
 
     // 掲載終了日_年
-    @NotBlank(groups = ValidGroup1.class, message = "選択してください")
     private String endYear;
 
     // 掲載終了日_月
-    @NotBlank(groups = ValidGroup1.class, message = "選択してください")
     private String endMonth;
 
     // 掲載終了日_日
-    @NotBlank(groups = ValidGroup1.class, message = "選択してください")
     private String endDay;
 
     // 内容

@@ -89,7 +89,7 @@ public class ManualsController {
         }
 
         // 登録
-        restTemplate.postForObject(POST_URL, manualsForm, Manuals.class);
+        manualInfo = restTemplate.postForObject(POST_URL, manualsForm, Manuals.class);
 
         return "redirect:/manual/list";
     }
