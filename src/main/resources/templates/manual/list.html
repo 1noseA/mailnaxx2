@@ -45,7 +45,9 @@
                                             </td>
                                             <td>
                                                 <a href="javascript:void(0);" th:onclick="|showDetail('${manualList.manualId}')|">
-                                                    <span th:text="${#strings.replace(manualList.startDate, '-', '/') + '〜' + #strings.replace(manualList.endDate, '-', '/')}"></span>
+                                                    <span th:text="${manualList.startDate != null ? #strings.replace(manualList.startDate, '-', '/') : ''}"></span>
+                                                    <span>〜</span>
+                                                    <span th:text="${manualList.endDate != null ? #strings.replace(manualList.endDate, '-', '/') : ''}"></span>
                                                 </a>
                                             </td>
                                             <td>
