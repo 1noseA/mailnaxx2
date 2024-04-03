@@ -32,9 +32,18 @@ function setYearList(id, val) {
 
 // 掲載日_月プルダウン設定
 function setMonthList(id, val) {
-    createMonthList();
+    createMonthList2(id);
     if (val != '') {
         $(id).val(val);
+    }
+}
+
+// 掲載日_月プルダウン作成
+function createMonthList2(id) {
+    $(id).empty();
+    $(id).append($('<option>').val('').text(''));
+    for (let i = 1; i <= 12; i++) {
+        $('.monthList').append($('<option>').val(i).text(i));
     }
 }
 
