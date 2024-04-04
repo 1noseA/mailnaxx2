@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -18,6 +19,7 @@ import com.mailnaxx2.form.ManualsForm;
 import com.mailnaxx2.jackson.Manuals;
 import com.mailnaxx2.security.LoginUserDetails;
 import com.mailnaxx2.validation.All;
+import com.mailnaxx2.validation.GroupOrder;
 
 @Controller
 public class ManualsController {
@@ -106,9 +108,29 @@ public class ManualsController {
         // 入力フォームに設定
         setInputForm(manualInfo, manualsForm);
 
+        model.addAttribute("userId", manualsForm.getUserId());
         model.addAttribute("manualId", manualId);
         model.addAttribute("loginUserInfo", loginUser.getLoginUser());
         return "manual/create";
+    }
+
+    // 更新処理
+    @Transactional
+    @PostMapping("/manual/update")
+    public String update(int manualId,
+                        @ModelAttribute @Validated(GroupOrder.class) ManualsForm manualsForm,
+                        BindingResult result,
+                        Model model,
+                        @AuthenticationPrincipal LoginUserDetails loginUser) {
+        // 入力エラーチェック
+        if (result.hasErrors()) {
+            return edit(manualId, manualsForm, model, loginUser);
+        }
+
+        // 更新
+        manualInfo = restTemplate.patchForObject(POST_URL + "/" + manualId, manualsForm, Manuals.class);
+
+        return "redirect:/manual/list";
     }
 
     // 入力フォームに設定
