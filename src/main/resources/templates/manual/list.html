@@ -10,15 +10,13 @@
     <div class="contents">
         <div class="container">
             <div class="listArea mx-auto">
-                <!-- <form method="post" th:action="@{/manual/delete}" th:object="${selectUsersForm}"> -->
+                <form method="post" th:action="@{/manual/delete}" th:object="${selectForm}">
                     <div class="btn-toolbar justify-content-between" role="toolbar">
                         <div class="mb-4">
                             <button type="button" class="btn btnLight" onclick="location.href='/manual/create'">新規登録</button>
                         </div>
                         <div class="mb-4" role="group">
-                            <!-- <th:block th:if="${isAdmin}">
-                                <button type="submit" class="btn btnDark">削除</button>
-                            </th:block> -->
+                            <button type="submit" class="btn btnDark" th:formaction="@{'/manual/delete'}">削除</button>
                         </div>
                     </div>
 
@@ -37,6 +35,9 @@
                                     <th:block th:each="manualList : ${manualList}">
                                         <tr>
                                             <td>
+                                                <div class="form-check d-flex justify-content-center align-items-center">
+                                                    <input class="form-check-input" type="checkbox" name="selectManual['key']" value="${manualList.manualId + ',' + manualList.userId}">
+                                                </div>
                                             </td>
                                             <td>
                                                 <a href="javascript:void(0);" th:onclick="|showDetail('${manualList.manualId}')|">
@@ -64,7 +65,7 @@
                     <th:block th:if="${manualList.size() == 0}">
                         検索結果0件です
                     </th:block>
-                <!-- </form> -->
+                </form>
                 <div class="my-5">
                     <button type="button" class="btn btnBack" th:onclick="location.href='/top'">戻る</button>
                 </div>

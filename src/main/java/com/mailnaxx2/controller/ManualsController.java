@@ -2,6 +2,7 @@ package com.mailnaxx2.controller;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -12,14 +13,17 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.client.RestTemplate;
 
 import com.mailnaxx2.constants.CommonConstants;
 import com.mailnaxx2.form.ManualsForm;
+import com.mailnaxx2.form.SelectForm;
 import com.mailnaxx2.jackson.Manuals;
 import com.mailnaxx2.security.LoginUserDetails;
 import com.mailnaxx2.validation.All;
 import com.mailnaxx2.validation.GroupOrder;
+import com.mailnaxx2.values.RoleClass;
 
 @Controller
 public class ManualsController {
@@ -37,18 +41,15 @@ public class ManualsController {
      // マニュアル詳細
     Manuals manualInfo;
 
-    // マニュアルAPI 情報取得URL
-    private static final String GET_URL = "http://localhost:8081/manual-api";
-
-    // マニュアルAPI 新規作成URL
-    private static final String POST_URL ="http://localhost:8081/manual-api";
+    // マニュアルAPI URL
+    private static final String API_URL = "http://localhost:8081/manual-api";
 
     // 一覧画面初期表示
     @GetMapping("/manual/list")
     public String index(Model model,
                         @AuthenticationPrincipal LoginUserDetails loginUser) {
         // マニュアル一覧を取得
-        Manuals[] manualArray = restTemplate.getForObject(GET_URL, Manuals[].class);
+        Manuals[] manualArray = restTemplate.getForObject(API_URL, Manuals[].class);
         manualList = Arrays.asList(manualArray);
         System.out.println(manualList.toString());
         model.addAttribute("manualList", manualList);
@@ -57,13 +58,44 @@ public class ManualsController {
         return "manual/list";
     }
 
+    // 物理削除処理
+    @RequestMapping("/manual/delete")
+    public String delete(@ModelAttribute SelectForm selectForm,
+                        Model model,
+                        @AuthenticationPrincipal LoginUserDetails loginUser) {
+        // 入力チェック
+        if (selectForm.getSelectManual() == null) {
+            // エラーメッセージを表示
+            model.addAttribute("message", "対象を選択してください。");
+            return index(model, loginUser);
+        }
+
+        // 権限チェック（自分か総務のみ）
+        int manualId = 0;
+        int userId = 0;
+        if (loginUser.getLoginUser().getRoleClass().equals(RoleClass.AFFAIRS.getCode())) {
+            for (Map.Entry<String, String> selectManual : selectForm.getSelectManual().entrySet()) {
+                manualId = Integer.parseInt(selectManual.getValue());
+                userId = Integer.parseInt(selectManual.getValue());
+                if (userId == loginUser.getLoginUser().getUserId()) {
+                    restTemplate.delete(API_URL + "/" + manualId, manualId);
+                }
+            }
+            return "redirect:/manual/list";
+        } else {
+            // エラーメッセージを表示
+            model.addAttribute("message", "権限がありません。");
+            return index(model, loginUser);
+        }
+    }
+
     // 詳細画面初期表示
     @PostMapping("/manual/detail")
     public String detail(int manualId,
                         Model model,
                         @AuthenticationPrincipal LoginUserDetails loginUser) {
         // 詳細情報を取得
-        manualInfo = restTemplate.getForObject(GET_URL + "/" + manualId, Manuals.class);
+        manualInfo = restTemplate.getForObject(API_URL + "/" + manualId, Manuals.class);
         model.addAttribute("manualInfo", manualInfo);
         model.addAttribute("loginUserInfo", loginUser.getLoginUser());
         return "manual/detail";
@@ -92,7 +124,7 @@ public class ManualsController {
         }
 
         // 登録
-        manualInfo = restTemplate.postForObject(POST_URL, manualsForm, Manuals.class);
+        manualInfo = restTemplate.postForObject(API_URL, manualsForm, Manuals.class);
 
         return "redirect:/manual/list";
     }
@@ -104,7 +136,7 @@ public class ManualsController {
                         Model model,
                         @AuthenticationPrincipal LoginUserDetails loginUser) {
         // 詳細情報を取得
-        manualInfo = restTemplate.getForObject(GET_URL + "/" + manualId, Manuals.class);
+        manualInfo = restTemplate.getForObject(API_URL + "/" + manualId, Manuals.class);
         // 入力フォームに設定
         setInputForm(manualInfo, manualsForm);
 
@@ -128,7 +160,7 @@ public class ManualsController {
         }
 
         // 更新
-        manualInfo = restTemplate.patchForObject(POST_URL + "/" + manualId, manualsForm, Manuals.class);
+        manualInfo = restTemplate.patchForObject(API_URL + "/" + manualId, manualsForm, Manuals.class);
 
         return "redirect:/manual/list";
     }
