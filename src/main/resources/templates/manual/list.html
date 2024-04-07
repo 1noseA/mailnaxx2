@@ -32,28 +32,28 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <th:block th:each="manualList : ${manualList}">
+                                    <th:block th:each="manual : ${manualList}">
                                         <tr>
                                             <td>
                                                 <div class="form-check d-flex justify-content-center align-items-center">
-                                                    <input class="form-check-input" type="checkbox" name="selectManual['key']" value="${manualList.manualId + ',' + manualList.userId}">
+                                                    <input class="form-check-input" type="checkbox" name="selectManualId" th:value="${manual.manualId}">
                                                 </div>
                                             </td>
                                             <td>
-                                                <a href="javascript:void(0);" th:onclick="|showDetail('${manualList.manualId}')|">
-                                                    <span th:text="${manualList.title}"></span>
+                                                <a href="javascript:void(0);" th:onclick="|showDetail('${manual.manualId}')|">
+                                                    <span th:text="${manual.title}"></span>
                                                 </a>
                                             </td>
                                             <td>
-                                                <a href="javascript:void(0);" th:onclick="|showDetail('${manualList.manualId}')|">
-                                                    <span th:text="${manualList.startDate != null ? #strings.replace(manualList.startDate, '-', '/') : ''}"></span>
+                                                <a href="javascript:void(0);" th:onclick="|showDetail('${manual.manualId}')|">
+                                                    <span th:text="${manual.startDate != null ? #strings.replace(manual.startDate, '-', '/') : ''}"></span>
                                                     <span>〜</span>
-                                                    <span th:text="${manualList.endDate != null ? #strings.replace(manualList.endDate, '-', '/') : ''}"></span>
+                                                    <span th:text="${manual.endDate != null ? #strings.replace(manual.endDate, '-', '/') : ''}"></span>
                                                 </a>
                                             </td>
                                             <td>
-                                                <a href="javascript:void(0);" th:onclick="|showDetail('${manualList.manualId}')|">
-                                                    <span th:text="${manualList.content}"></span>
+                                                <a href="javascript:void(0);" th:onclick="|showDetail('${manual.manualId}')|">
+                                                    <span th:text="${manual.content}"></span>
                                                 </a>
                                             </td>
                                         </tr>

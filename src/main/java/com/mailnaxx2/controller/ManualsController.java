@@ -2,8 +2,9 @@ package com.mailnaxx2.controller;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +26,8 @@ import com.mailnaxx2.validation.All;
 import com.mailnaxx2.validation.GroupOrder;
 import com.mailnaxx2.values.RoleClass;
 
+import jakarta.servlet.http.HttpSession;
+
 @Controller
 public class ManualsController {
 
@@ -34,6 +37,9 @@ public class ManualsController {
     public ManualsController(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
+
+    @Autowired
+    HttpSession session;
 
     // マニュアル一覧
     List<Manuals> manualList;
@@ -52,6 +58,7 @@ public class ManualsController {
         Manuals[] manualArray = restTemplate.getForObject(API_URL, Manuals[].class);
         manualList = Arrays.asList(manualArray);
         System.out.println(manualList.toString());
+        session.setAttribute("session_manualList", manualList);
         model.addAttribute("manualList", manualList);
 
         model.addAttribute("loginUserInfo", loginUser.getLoginUser());
@@ -59,28 +66,36 @@ public class ManualsController {
     }
 
     // 物理削除処理
+    @SuppressWarnings("unchecked")
     @RequestMapping("/manual/delete")
     public String delete(@ModelAttribute SelectForm selectForm,
                         Model model,
                         @AuthenticationPrincipal LoginUserDetails loginUser) {
         // 入力チェック
-        if (selectForm.getSelectManual() == null) {
+        if (selectForm.getSelectManualId() == null) {
             // エラーメッセージを表示
             model.addAttribute("message", "対象を選択してください。");
             return index(model, loginUser);
         }
 
+        // セッションから一覧情報を取得
+        manualList = (List<Manuals>) session.getAttribute("session_manualList");
+
         // 権限チェック（自分か総務のみ）
-        int manualId = 0;
-        int userId = 0;
         if (loginUser.getLoginUser().getRoleClass().equals(RoleClass.AFFAIRS.getCode())) {
-            for (Map.Entry<String, String> selectManual : selectForm.getSelectManual().entrySet()) {
-                manualId = Integer.parseInt(selectManual.getValue());
-                userId = Integer.parseInt(selectManual.getValue());
+            // 選択したマニュアルIDを基に社員IDを取得し、判定する
+            manualList.stream()
+            .filter(m -> selectForm.getSelectManualId().contains(m.getManualId()))
+            .collect(Collectors.toMap(
+                m -> m.getManualId(),
+                m -> m.getUserId()
+            ))
+            .forEach((manualId, userId) -> {
                 if (userId == loginUser.getLoginUser().getUserId()) {
+                    // 削除
                     restTemplate.delete(API_URL + "/" + manualId, manualId);
                 }
-            }
+            });
             return "redirect:/manual/list";
         } else {
             // エラーメッセージを表示
