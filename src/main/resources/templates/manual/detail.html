@@ -18,7 +18,11 @@
                         </tr>
                         <tr>
                             <th>掲載期間</th>
-                            <td th:text="*{#strings.replace(startDate, '-', '/') + '〜' + #strings.replace(endDate, '-', '/')}"></td>
+                            <td>
+                                <span th:text="*{startDate != null ? #strings.replace(startDate, '-', '/') : ''}"></span>
+                                <span>〜</span>
+                                <span th:text="*{endDate != null ? #strings.replace(endDate, '-', '/') : ''}"></span>
+                            </td>
                         </tr>
                         <tr>
                             <th>作成者</th>
