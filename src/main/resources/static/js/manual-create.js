@@ -77,3 +77,18 @@ function createDayList2(yearId, monthId, dayId) {
         $(dayId).append($('<option>').val(i).text(i));
     }
 }
+
+function submitForm(id) {
+    if ($('#startYearList').val() === '' || $('#startMonthList').val() === '' || $('#startDayList').val() === '') {
+        if (!confirm('掲載開始日は本日日付になりますが、よろしいでしょうか')) {
+            return false;
+        }
+    }
+    let form = $('#form');
+    $('<input>').attr({
+        type: 'hidden',
+        name: 'manualId',
+        value: id
+    }).appendTo(form);
+    form.submit();
+}

@@ -129,10 +129,11 @@
                     <div class="text-center m-5">
                         <input type="hidden" th:value="${userId}" name="userId">
                         <th:block th:if="${manualId == 0}">
-                            <button type="submit" class="btn btnMain">登録</button>
+                            <button type="button" class="btn btnMain" th:onclick="|submitForm('${manualId}')|">登録</button>
                         </th:block>
                         <th:block th:unless="${manualId == 0}">
-                            <button type="submit" class="btn btnMain" th:formaction="@{/manual/update}" th:value="${manualId}" name="manualId">更新</button>
+                            <button type="button" class="btn btnMain" th:formaction="@{/manual/update}" th:value="${manualId}" name="manualId"
+                             th:onclick="|submitForm('${manualId}')|">更新</button>
                         </th:block>
                     </div>
                 </form>
