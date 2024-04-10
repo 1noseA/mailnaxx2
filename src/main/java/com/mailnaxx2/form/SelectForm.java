@@ -15,4 +15,7 @@ public class SelectForm {
 
     // 選択チェックボックス(週報ID)
     private List<Integer> selectWeeklyReportId;
+
+    // 選択チェックボックス(マニュアルID, 社員ID)
+    private List<Integer> selectManualId;
 }

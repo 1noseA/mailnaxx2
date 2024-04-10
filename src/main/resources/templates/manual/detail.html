@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common :: meta_header('マニュアル詳細',~{::link},~{::script})">
+<link rel="stylesheet" th:href="@{/css/user/detail.css}" />
+<script th:src="@{/js/manual.js}"></script>
+</head>
+<body>
+    <div th:replace="common :: header"></div>
+
+    <div class="contents">
+        <div class="container">
+            <div class="userInfoArea mt-5">
+                <div th:object="${manualInfo}">
+                    <table class="table table-bordered">
+                        <tr>
+                            <th>タイトル</th>
+                            <td th:text="*{title}"></td>
+                        </tr>
+                        <tr>
+                            <th>掲載期間</th>
+                            <td>
+                                <span th:text="*{startDate != null ? #strings.replace(startDate, '-', '/') : ''}"></span>
+                                <span>〜</span>
+                                <span th:text="*{endDate != null ? #strings.replace(endDate, '-', '/') : ''}"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>作成者</th>
+                            <td th:text="*{userId}"></td>
+                        </tr>
+                        <tr>
+                            <th>内容</th>
+                            <td th:text="*{content}"></td>
+                        </tr>
+                        <tr>
+                            <th>リンク</th>
+                            <td th:text="*{link}"></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="btn-toolbar justify-content-between mt-4 mb-5" role="toolbar">
+                <div>
+                    <button type="button" class="btn btnMain m-1" th:onclick="|edit('${manualInfo.manualId}')|">編集する</button>
+                </div>
+                <div>
+                    <button type="button" class="btn btnBack m-1" th:onclick="location.href='/manual/list'">戻る</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <form method="post" th:action="@{/manual/edit}" id="editForm">
+    </form>
+
+    <div th:replace="common :: footer"></div>
+</body>
+</html>
