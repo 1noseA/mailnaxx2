@@ -189,10 +189,12 @@ public class ManualsController {
         manualsForm.setStartYear(startDate[0]);
         manualsForm.setStartMonth(startDate[1].replaceFirst("^0+", ""));
         manualsForm.setStartDay(startDate[2].replaceFirst("^0+", ""));
-        String[] endDate = manualInfo.getEndDate().toString().split(CommonConstants.HALF_HYPHEN);
-        manualsForm.setEndYear(endDate[0]);
-        manualsForm.setEndMonth(endDate[1].replaceFirst("^0+", ""));
-        manualsForm.setEndDay(endDate[2].replaceFirst("^0+", ""));
+        if (manualInfo.getEndDate() != null) {
+            String[] endDate = manualInfo.getEndDate().toString().split(CommonConstants.HALF_HYPHEN);
+            manualsForm.setEndYear(endDate[0]);
+            manualsForm.setEndMonth(endDate[1].replaceFirst("^0+", ""));
+            manualsForm.setEndDay(endDate[2].replaceFirst("^0+", ""));
+        }
         manualsForm.setContent(manualInfo.getContent());
         manualsForm.setLink(manualInfo.getLink());
     }
