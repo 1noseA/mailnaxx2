@@ -51,11 +51,17 @@ public class UsersService {
         return userInfo;
     }
 
+    // IDを基に社員名取得
+    public String findNameById(int userId) {
+        String userName = usersMapper.findNameById(userId);
+        return userName;
+    }
+
     // 登録処理
     @Transactional
     public void insert(UsersForm usersForm, @AuthenticationPrincipal LoginUserDetails loginUser) {
         // 入力値をセットする
-    	Users user = setUserForm(new Users(), usersForm);
+        Users user = setUserForm(new Users(), usersForm);
 
         // パスワードはハッシュにする
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
