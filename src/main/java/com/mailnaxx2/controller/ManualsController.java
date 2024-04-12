@@ -22,6 +22,7 @@ import com.mailnaxx2.form.ManualsForm;
 import com.mailnaxx2.form.SelectForm;
 import com.mailnaxx2.jackson.Manuals;
 import com.mailnaxx2.security.LoginUserDetails;
+import com.mailnaxx2.service.UsersService;
 import com.mailnaxx2.validation.All;
 import com.mailnaxx2.validation.GroupOrder;
 import com.mailnaxx2.values.RoleClass;
@@ -40,6 +41,9 @@ public class ManualsController {
 
     @Autowired
     HttpSession session;
+
+    @Autowired
+    UsersService usersService;
 
     // マニュアル一覧
     List<Manuals> manualList;
@@ -111,7 +115,9 @@ public class ManualsController {
                         @AuthenticationPrincipal LoginUserDetails loginUser) {
         // 詳細情報を取得
         manualInfo = restTemplate.getForObject(API_URL + "/" + manualId, Manuals.class);
+        String userName = usersService.findNameById(manualInfo.getUserId());
         model.addAttribute("manualInfo", manualInfo);
+        model.addAttribute("userName", userName);
         model.addAttribute("loginUserInfo", loginUser.getLoginUser());
         return "manual/detail";
     }
@@ -189,10 +195,12 @@ public class ManualsController {
         manualsForm.setStartYear(startDate[0]);
         manualsForm.setStartMonth(startDate[1].replaceFirst("^0+", ""));
         manualsForm.setStartDay(startDate[2].replaceFirst("^0+", ""));
-        String[] endDate = manualInfo.getEndDate().toString().split(CommonConstants.HALF_HYPHEN);
-        manualsForm.setEndYear(endDate[0]);
-        manualsForm.setEndMonth(endDate[1].replaceFirst("^0+", ""));
-        manualsForm.setEndDay(endDate[2].replaceFirst("^0+", ""));
+        if (manualInfo.getEndDate() != null) {
+            String[] endDate = manualInfo.getEndDate().toString().split(CommonConstants.HALF_HYPHEN);
+            manualsForm.setEndYear(endDate[0]);
+            manualsForm.setEndMonth(endDate[1].replaceFirst("^0+", ""));
+            manualsForm.setEndDay(endDate[2].replaceFirst("^0+", ""));
+        }
         manualsForm.setContent(manualInfo.getContent());
         manualsForm.setLink(manualInfo.getLink());
     }

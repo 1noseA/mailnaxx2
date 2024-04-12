@@ -10,14 +10,14 @@
             u.user_id,
             u.user_number,
             u.user_name,
-			a.affiliation_id,
+            a.affiliation_id,
             u.role_class,
             u.sales_flg,
             u.password,
             u.last_login_date
         FROM
             users u
-		INNER JOIN affiliations a
+        INNER JOIN affiliations a
             ON u.affiliation_id = a.affiliation_id
         WHERE
             user_number = #{userNumber}
@@ -83,7 +83,7 @@
         ORDER BY u.user_number
     </select>
 
-	<!-- 現場社員取得 -->
+    <!-- 現場社員取得 -->
     <select id="findColleague" resultMap="userMap">
         SELECT
             u.user_id,
@@ -91,9 +91,9 @@
             u.user_name
         FROM users u
         WHERE
-			u.user_number != #{userNumber}
+            u.user_number != #{userNumber}
         AND u.deleted_flg = '0'
-		AND u.project_id = #{projectId}
+        AND u.project_id = #{projectId}
         ORDER BY u.user_number
     </select>
 
@@ -117,6 +117,15 @@
         FROM users u
         INNER JOIN affiliations a
             ON u.affiliation_id = a.affiliation_id
+        WHERE
+            user_id = #{userId}
+    </select>
+
+    <!-- IDを基に社員名取得 -->
+    <select id="findNameById" resultType="String">
+        SELECT
+            u.user_name
+        FROM users u
         WHERE
             user_id = #{userId}
     </select>
@@ -202,7 +211,7 @@
         <result property="updatedBy" column="updated_by" />
         <result property="updatedAt" column="updated_at" />
         <association property="affiliation" resultMap="affiliationResult"/>
-		<association property="project" resultMap="ProjectResult"/>
+        <association property="project" resultMap="projectResult"/>
     </resultMap>
 
     <resultMap id="affiliationResult" type="com.mailnaxx2.entity.Affiliations">
@@ -210,7 +219,7 @@
         <result property="affiliationName" column="affiliation_name" />
     </resultMap>
 
-	<resultMap id="ProjectResult" type="com.mailnaxx2.entity.Projects">
+    <resultMap id="projectResult" type="com.mailnaxx2.entity.Projects">
         <result property="projectId" column="project_id" />
     </resultMap>
 
