@@ -18,7 +18,6 @@
                             </div>
                         </th:block>
 
-
                         <div class="col-md-2 text-md-end">
                             <label for="userName" class="col-form-label fw-bold">氏名</label>
                         </div>
@@ -65,8 +64,9 @@
             <div class="listArea mx-auto">
                 <form method="post" th:action="@{/user/delete}" th:object="${selectForm}">
                     <div class="btn-toolbar justify-content-between" role="toolbar">
-                        <div class="mb-4">
-                            <button type="button" class="btn btnLight" onclick="location.href='/user/create'">新規登録</button>
+                        <div class="mb-4" role="group">
+                            <button type="button" class="btn btnLight me-3" onclick="location.href='/user/create'">新規登録</button>
+                            <button type="button" class="btn btnLight" onclick="location.href='/user/bulk-regist'">一括登録</button>
                         </div>
                         <div class="mb-4" role="group">
                             <button type="button" class="btn btnAccent me-3" onclick="location.href='/weekly-report/list'">報告を見る</button>
