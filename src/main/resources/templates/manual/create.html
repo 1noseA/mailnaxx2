@@ -132,8 +132,7 @@
                             <button type="button" class="btn btnMain" th:onclick="|submitForm('${manualId}')|">登録</button>
                         </th:block>
                         <th:block th:unless="${manualId == 0}">
-                            <button type="button" class="btn btnMain" th:formaction="@{/manual/update}" th:value="${manualId}" name="manualId"
-                             th:onclick="|submitForm('${manualId}')|">更新</button>
+                            <button type="button" class="btn btnMain" th:onclick="|submitForm('${manualId}')|">更新</button>
                         </th:block>
                     </div>
                 </form>

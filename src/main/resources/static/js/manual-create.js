@@ -90,5 +90,9 @@ function submitForm(id) {
         name: 'manualId',
         value: id
     }).appendTo(form);
+    // 更新の場合
+    if (id !== 0) {
+        form.attr('action', '/manual/update');
+    }
     form.submit();
 }
