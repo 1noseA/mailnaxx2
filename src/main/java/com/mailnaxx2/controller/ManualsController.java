@@ -1,5 +1,7 @@
 package com.mailnaxx2.controller;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -144,8 +146,12 @@ public class ManualsController {
             return create(manualsForm, model, loginUser);
         }
 
+        // 入力値を設定
+        Manuals manual = setEntity(manualsForm);
+        // レコード登録者
+        manual.setCreatedBy(manualsForm.getUserNumber());
         // 登録
-        manualInfo = restTemplate.postForObject(API_URL, manualsForm, Manuals.class);
+        manualInfo = restTemplate.postForObject(API_URL, manual, Manuals.class);
 
         return "redirect:/manual/list";
     }
@@ -180,10 +186,55 @@ public class ManualsController {
             return edit(manualId, manualsForm, model, loginUser);
         }
 
+        // 入力値を設定
+        Manuals manual = setEntity(manualsForm);
+        // マニュアルID
+        manual.setManualId(manualId);
+        // レコード更新者
+        manual.setUpdatedBy(manualsForm.getUserNumber());
         // 更新
-        manualInfo = restTemplate.patchForObject(API_URL + "/" + manualId, manualsForm, Manuals.class);
+        manualInfo = restTemplate.patchForObject(API_URL + "/" + manualId, manual, Manuals.class);
 
         return "redirect:/manual/list";
+    }
+
+    // 入力値をエンティティに設定
+    private Manuals setEntity(ManualsForm manualForm) {
+        Manuals manual = new Manuals();
+        // 社員ID
+        manual.setUserId(manualForm.getUserId());
+        // 表示順
+        manual.setDisplayOrder(manualForm.getDisplayOrder());
+        // タイトル
+        manual.setTitle(manualForm.getTitle());
+        // 掲載開始日
+        if (manualForm.getStartYear() != "" &&
+            manualForm.getStartMonth() != "" &&
+            manualForm.getStartDay() != "") {
+            String startYear = "%2s".formatted(manualForm.getStartYear()).replace(" ", "0");
+            String startMonth = "%2s".formatted(manualForm.getStartMonth()).replace(" ", "0");
+            String startDay = "%2s".formatted(manualForm.getStartDay()).replace(" ", "0");
+            LocalDate startDate = LocalDate.parse(startYear + startMonth + startDay, DateTimeFormatter.ofPattern("yyyyMMdd"));
+            manual.setStartDate(startDate);
+        } else {
+            manual.setStartDate(LocalDate.now());
+        }
+        // 掲載終了日
+        if (manualForm.getEndYear() != "" &&
+            manualForm.getEndMonth() != "" &&
+            manualForm.getEndDay() != "") {
+            String endYear = "%2s".formatted(manualForm.getEndYear()).replace(" ", "0");
+            String endMonth = "%2s".formatted(manualForm.getEndMonth()).replace(" ", "0");
+            String endDay = "%2s".formatted(manualForm.getEndDay()).replace(" ", "0");
+            LocalDate endDate = LocalDate.parse(endYear + endMonth + endDay, DateTimeFormatter.ofPattern("yyyyMMdd"));
+            manual.setEndDate(endDate);
+        }
+        // 内容
+        manual.setContent(manualForm.getContent());
+        // リンク
+        manual.setLink(manualForm.getLink());
+
+        return manual;
     }
 
     // 入力フォームに設定

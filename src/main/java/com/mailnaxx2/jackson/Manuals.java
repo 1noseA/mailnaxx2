@@ -3,6 +3,7 @@ package com.mailnaxx2.jackson;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -33,6 +34,18 @@ public class Manuals {
 
     // リンク
     public String link;
+
+    // レコード登録者
+    private String createdBy;
+
+    // レコード登録日
+    private LocalDateTime createdAt;
+
+    // レコード更新者
+    private String updatedBy;
+
+    // レコード更新日
+    private LocalDateTime updatedAt;
 
     // 引数なしのコンストラクタを定義しないとデシリアライズ（JSON -> Javaオブジェクトへの変換）時にエラーが起きる
     public Manuals() {
