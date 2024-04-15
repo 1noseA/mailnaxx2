@@ -193,7 +193,7 @@ public class ManualsController {
         // レコード更新者
         manual.setUpdatedBy(manualsForm.getUserNumber());
         // 更新
-        manualInfo = restTemplate.patchForObject(API_URL + "/" + manualId, manual, Manuals.class);
+        restTemplate.put(API_URL + "/" + manualId, manual);
 
         return "redirect:/manual/list";
     }
