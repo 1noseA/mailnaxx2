@@ -73,6 +73,7 @@ public class ManualsController {
 
     // 物理削除処理
     @SuppressWarnings("unchecked")
+    @Transactional
     @RequestMapping("/manual/delete")
     public String delete(@ModelAttribute SelectForm selectForm,
                         Model model,
@@ -136,6 +137,7 @@ public class ManualsController {
     }
 
     // 登録処理
+    @Transactional
     @PostMapping("/manual/create")
     public String create(@ModelAttribute @Validated(All.class) ManualsForm manualsForm,
                         BindingResult result,
