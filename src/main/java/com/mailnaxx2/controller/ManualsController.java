@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,12 +36,8 @@ import jakarta.servlet.http.HttpSession;
 @Controller
 public class ManualsController {
 
-    private final RestTemplate restTemplate;
-
-    // RestTemplateをコンストラクタインジェクションする
-    public ManualsController(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
-    }
+    @Autowired
+    RestTemplate restTemplate;
 
     @Autowired
     HttpSession session;
@@ -56,13 +54,17 @@ public class ManualsController {
     // マニュアルAPI URL
     private static final String API_URL = "http://localhost:8081/manual-api";
 
+    // マニュアルAPI URL（パラメータあり）
+    private static final String API_URL_PARAM = "http://localhost:8081/manual-api/{id}";
+
     // 一覧画面初期表示
     @GetMapping("/manual/list")
     public String index(Model model,
                         @AuthenticationPrincipal LoginUserDetails loginUser) {
         // マニュアル一覧を取得
-        Manuals[] manualArray = restTemplate.getForObject(API_URL, Manuals[].class);
-        manualList = Arrays.asList(manualArray);
+        RequestEntity<?> request = RequestEntity.get(API_URL).build();
+        ResponseEntity<Manuals[]> response = restTemplate.exchange(request, Manuals[].class);
+        manualList = Arrays.asList(response.getBody());
         System.out.println(manualList.toString());
         session.setAttribute("session_manualList", manualList);
         model.addAttribute("manualList", manualList);
@@ -117,7 +119,9 @@ public class ManualsController {
                         Model model,
                         @AuthenticationPrincipal LoginUserDetails loginUser) {
         // 詳細情報を取得
-        manualInfo = restTemplate.getForObject(API_URL + "/" + manualId, Manuals.class);
+        RequestEntity<?> request = RequestEntity.get(API_URL_PARAM, manualId).build();
+        ResponseEntity<Manuals> response = restTemplate.exchange(request, Manuals.class);
+        manualInfo = response.getBody();
         String userName = usersService.findNameById(manualInfo.getUserId());
         model.addAttribute("manualInfo", manualInfo);
         model.addAttribute("userName", userName);
@@ -153,7 +157,7 @@ public class ManualsController {
         // レコード登録者
         manual.setCreatedBy(manualsForm.getUserNumber());
         // 登録
-        manualInfo = restTemplate.postForObject(API_URL, manual, Manuals.class);
+        restTemplate.postForObject(API_URL, manual, Manuals.class);
 
         return "redirect:/manual/list";
     }
