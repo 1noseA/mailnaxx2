@@ -7,7 +7,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.RequestEntity;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -62,8 +65,7 @@ public class ManualsController {
     public String index(Model model,
                         @AuthenticationPrincipal LoginUserDetails loginUser) {
         // マニュアル一覧を取得
-        RequestEntity<?> request = RequestEntity.get(API_URL).build();
-        ResponseEntity<Manuals[]> response = restTemplate.exchange(request, Manuals[].class);
+        ResponseEntity<Manuals[]> response = restTemplate.exchange(API_URL, HttpMethod.GET, null, Manuals[].class);
         manualList = Arrays.asList(response.getBody());
         System.out.println(manualList.toString());
         session.setAttribute("session_manualList", manualList);
@@ -102,7 +104,7 @@ public class ManualsController {
             .forEach((manualId, userId) -> {
                 if (userId == loginUser.getLoginUser().getUserId()) {
                     // 削除
-                    restTemplate.delete(API_URL + "/" + manualId, manualId);
+                    restTemplate.delete(API_URL_PARAM, manualId);
                 }
             });
             return "redirect:/manual/list";
@@ -119,8 +121,7 @@ public class ManualsController {
                         Model model,
                         @AuthenticationPrincipal LoginUserDetails loginUser) {
         // 詳細情報を取得
-        RequestEntity<?> request = RequestEntity.get(API_URL_PARAM, manualId).build();
-        ResponseEntity<Manuals> response = restTemplate.exchange(request, Manuals.class);
+        ResponseEntity<Manuals> response = restTemplate.exchange(API_URL_PARAM, HttpMethod.GET, null, Manuals.class, manualId);
         manualInfo = response.getBody();
         String userName = usersService.findNameById(manualInfo.getUserId());
         model.addAttribute("manualInfo", manualInfo);
@@ -152,12 +153,18 @@ public class ManualsController {
             return create(manualsForm, model, loginUser);
         }
 
+        // リクエストヘッダーを作成
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
         // 入力値を設定
         Manuals manual = setEntity(manualsForm);
         // レコード登録者
         manual.setCreatedBy(manualsForm.getUserNumber());
+        HttpEntity<Manuals> entity = new HttpEntity<>(manual, headers);
+
         // 登録
-        restTemplate.postForObject(API_URL, manual, Manuals.class);
+        ResponseEntity<Manuals> response = restTemplate.exchange(API_URL, HttpMethod.POST, entity, Manuals.class);
 
         return "redirect:/manual/list";
     }
@@ -169,7 +176,8 @@ public class ManualsController {
                         Model model,
                         @AuthenticationPrincipal LoginUserDetails loginUser) {
         // 詳細情報を取得
-        manualInfo = restTemplate.getForObject(API_URL + "/" + manualId, Manuals.class);
+        ResponseEntity<Manuals> response = restTemplate.exchange(API_URL_PARAM, HttpMethod.GET, null, Manuals.class, manualId);
+        manualInfo = response.getBody();
         // 入力フォームに設定
         setInputForm(manualInfo, manualsForm);
 
@@ -199,7 +207,7 @@ public class ManualsController {
         // レコード更新者
         manual.setUpdatedBy(manualsForm.getUserNumber());
         // 更新
-        restTemplate.put(API_URL + "/" + manualId, manual);
+        restTemplate.put(API_URL_PARAM, manual, manualId);
 
         return "redirect:/manual/list";
     }
