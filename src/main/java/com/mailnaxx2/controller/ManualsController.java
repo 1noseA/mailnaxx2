@@ -153,18 +153,19 @@ public class ManualsController {
             return create(manualsForm, model, loginUser);
         }
 
-        // リクエストヘッダーを作成
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
         // 入力値を設定
         Manuals manual = setEntity(manualsForm);
         // レコード登録者
         manual.setCreatedBy(manualsForm.getUserNumber());
+
+        // リクエスト情報を作成
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<Manuals> entity = new HttpEntity<>(manual, headers);
 
         // 登録
         ResponseEntity<Manuals> response = restTemplate.exchange(API_URL, HttpMethod.POST, entity, Manuals.class);
+        manualInfo = response.getBody();
 
         return "redirect:/manual/list";
     }
