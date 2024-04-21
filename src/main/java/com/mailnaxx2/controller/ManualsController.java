@@ -25,9 +25,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.client.RestTemplate;
 
 import com.mailnaxx2.constants.CommonConstants;
+import com.mailnaxx2.entity.Manuals;
 import com.mailnaxx2.form.ManualsForm;
 import com.mailnaxx2.form.SelectForm;
-import com.mailnaxx2.jackson.Manuals;
 import com.mailnaxx2.security.LoginUserDetails;
 import com.mailnaxx2.service.UsersService;
 import com.mailnaxx2.validation.All;

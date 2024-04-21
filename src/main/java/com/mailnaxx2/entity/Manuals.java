@@ -1,4 +1,4 @@
-package com.mailnaxx2.jackson;
+package com.mailnaxx2.entity;
 
 import lombok.Data;
 
@@ -46,10 +46,6 @@ public class Manuals {
 
     // レコード更新日
     private LocalDateTime updatedAt;
-
-    // 引数なしのコンストラクタを定義しないとデシリアライズ（JSON -> Javaオブジェクトへの変換）時にエラーが起きる
-    public Manuals() {
-    }
 
     @Override
     public String toString() {
