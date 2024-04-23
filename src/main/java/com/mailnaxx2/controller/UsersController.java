@@ -1,5 +1,12 @@
 package com.mailnaxx2.controller;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.servlet.http.HttpSession;
@@ -15,6 +22,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.mailnaxx2.constants.CommonConstants;
 import com.mailnaxx2.constants.UserConstants;
@@ -29,6 +38,8 @@ import com.mailnaxx2.service.UsersService;
 import com.mailnaxx2.validation.All;
 import com.mailnaxx2.validation.GroupOrder;
 import com.mailnaxx2.values.RoleClass;
+
+import dto.BulkRegistUsersDTO;
 
 @Controller
 public class UsersController {
@@ -101,6 +112,78 @@ public class UsersController {
                              @AuthenticationPrincipal LoginUserDetails loginUser) {
         model.addAttribute("loginUserInfo", loginUser.getLoginUser());
         return "user/bulk-regist";
+    }
+
+    // 内容確認
+    @PostMapping("/user/confirm-file")
+    public String confirmFile(@RequestParam("file") MultipartFile file,
+                              Model model,
+                              @AuthenticationPrincipal LoginUserDetails loginUser) {
+        BulkRegistUsersDTO userDto = new BulkRegistUsersDTO();
+        List<BulkRegistUsersDTO> userDtoList = new ArrayList<>();
+        try (InputStream inputStream = file.getInputStream();
+                BufferedReader br = new BufferedReader(new InputStreamReader(inputStream))) {
+            String line = br.readLine();
+            while ((line = br.readLine()) != null) {
+                String[] item = line.split(CommonConstants.COMMA);
+                // 処理区分
+                userDto.setProcessClass(item[0]);
+                // 社員番号
+                if (item[1] != "") {
+                    userDto.setUserNumber(item[1]);
+                }
+                // 氏名_漢字
+                userDto.setUserName(item[2] + CommonConstants.HALF_SPACE + item[3]);
+                // 氏名_カナ
+                userDto.setUserNameKana(item[4] + CommonConstants.HALF_SPACE + item[5]);
+                // 入社年月
+                String hireYear = item[6];
+                String hireMonth = item[7];
+                if (hireMonth.length() == 1) {
+                    hireMonth = CommonConstants.FILLED_ZERO + hireMonth;
+                }
+                LocalDate hireDate = LocalDate.parse(hireYear + hireMonth + CommonConstants.FIRST_DAY, DateTimeFormatter.ofPattern(CommonConstants.FORMAT_YYMMDD));
+                userDto.setHireDate(hireDate);
+                // 所属
+                if (item[8] != "") {
+                    Affiliations affiliation = new Affiliations();
+                    affiliation.setAffiliationId(Integer.parseInt(item[8]));
+                    userDto.setAffiliation(affiliation);
+                }
+                // 権限区分
+                userDto.setRoleClass(item[9]);
+                // 営業フラグ
+                userDto.setSalesFlg(item[10]);
+                // 生年月日
+                String birthYear = item[11];
+                String birthMonth = item[12];
+                String birthDay = item[13];
+                if (birthMonth.length() == 1) {
+                    birthMonth = CommonConstants.FILLED_ZERO + birthMonth;
+                }
+                if (birthDay.length() == 1) {
+                    birthDay = CommonConstants.FILLED_ZERO + birthDay;
+                }
+                userDto.setBirthDate(LocalDate.parse(birthYear + birthMonth + birthDay, DateTimeFormatter.ofPattern(CommonConstants.FORMAT_YYMMDD)));
+                // 郵便番号
+                userDto.setPostCode(item[14]+ CommonConstants.HALF_HYPHEN  + item[15]);
+                // 住所
+                userDto.setAddress(item[16]);
+                // 電話番号
+                userDto.setPhoneNumber(item[17] + CommonConstants.HALF_HYPHEN + item[18]+ CommonConstants.HALF_HYPHEN + item[19]);
+                // メールアドレス
+                userDto.setEmailAddress(item[20]);
+                // パスワード
+                userDto.setPassword(item[21]);
+                userDtoList.add(userDto);
+            }
+            br.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        model.addAttribute("userDtoList", userDtoList);
+        model.addAttribute("loginUserInfo", loginUser.getLoginUser());
+        return "user/confirm-file";
     }
 
     // 登録画面初期表示

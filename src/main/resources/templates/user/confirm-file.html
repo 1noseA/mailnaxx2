@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common :: meta_header('内容確認',~{::link},~{::script})">
+<link rel="stylesheet" th:href="@{/css/user/create.css}" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script th:src="@{/js/common.js}"></script>
+<script th:src="@{/js/user-create.js}"></script>
+</head>
+<body>
+    <div th:replace="common :: header"></div>
+
+    <div class="contents">
+        <div class="container">
+            <div class="title text-center mt-5 p-3">内容確認</div>
+            <div class="formArea mx-auto mb-5">
+                <form method="post" th:action="@{/user/confirm-file}">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr class="border-bottom border-dark">
+                                <th scope="col">No</th>
+                                <th scope="col">処理区分</th>
+                                <th scope="col">社員番号</th>
+                                <th scope="col">氏名</th>
+                                <th scope="col">氏名（カナ）</th>
+                                <th scope="col">入社年月</th>
+                                <th scope="col">所属</th>
+                                <th scope="col">権限区分</th>
+                                <th scope="col">生年月日</th>
+                                <th scope="col">郵便番号</th>
+                                <th scope="col">住所</th>
+                                <th scope="col">電話番号</th>
+                                <th scope="col">メールアドレス</th>
+                                <th scope="col">パスワード</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <th:block th:each="userList, stat : ${userDtoList}">
+                                <tr>
+                                    <td>
+                                        <span th:text="${stat.count}"></span>
+                                    </td>
+                                    <td>
+                                        <span th:text="${userList.processClass}"></span>
+                                    </td>
+                                    <td>
+                                        <span th:text="${userList.userNumber}"></span>
+                                    </td>
+                                    <td>
+                                        <span th:text="${userList.userName}"></span>
+                                    </td>
+                                    <td>
+                                        <span th:text="${userList.userNameKana}"></span>
+                                    </td>
+                                    <td>
+                                        <span th:text="${#strings.replace(userList.hireDate, '-', '/')}"></span>
+                                    </td>
+                                    <td>
+                                        <span th:text="${userList.affiliation.affiliationName}"></span>
+                                    </td>
+                                    <td>
+                                        <th:block th:each="roleClass : ${roleClassList}">
+                                            <th:block th:if="${userList.roleClass == roleClass.code}">
+                                                <span th:text="${roleClass.viewName}"></span>
+                                            </th:block>
+                                        </th:block>
+                                        <span th:text="${userList.salesFlg == '1'} ? '営業' : ' '"></span>
+                                    </td>
+                                    <td>
+                                        <span th:text="${#strings.replace(userList.birthDate, '-', '/')}"></span>
+                                    </td>
+                                    <td>
+                                        <span th:text="${userList.postCode}"></span>
+                                    </td>
+                                    <td>
+                                        <span th:text="${userList.address}"></span>
+                                    </td>
+                                    <td>
+                                        <span th:text="${userList.phoneNumber}"></span>
+                                    </td>
+                                    <td>
+                                        <span th:text="${userList.emailAddress}"></span>
+                                    </td>
+                                    <td>
+                                        <span th:text="${userList.password}"></span>
+                                    </td>
+                                </tr>
+                            </th:block>
+                        </tbody>
+                    </table>
+                    <div class="my-4">
+                        <button type="submit" class="btn btnMain">確定</button>
+                    </div>
+                </form>
+            </div>
+            <div class="my-5">
+                <button type="button" class="btn btnBack" th:onclick="location.href='/user/bulk-regist'">戻る</button>
+            </div>
+        </div>
+    </div>
+    <div th:replace="common :: footer"></div>
+</body>
+</html>

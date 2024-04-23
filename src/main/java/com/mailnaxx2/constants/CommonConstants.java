@@ -8,6 +8,9 @@ public class CommonConstants {
     // 半角スペース
     public static final String HALF_SPACE = " ";
 
+    // カンマ
+    public static final String COMMA = ",";
+
     // 0埋め用
     public static final String FILLED_ZERO = "0";
 
@@ -25,4 +28,7 @@ public class CommonConstants {
 
     // 部分一致
     public static final String PARTIAL_MATCH = "1";
+
+    // 日付フォーマット（yyyyMMdd）
+    public static final String FORMAT_YYMMDD = "yyyyMMdd";
 }
