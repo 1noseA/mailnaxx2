@@ -119,13 +119,13 @@ public class UsersController {
     public String confirmFile(@RequestParam("file") MultipartFile file,
                               Model model,
                               @AuthenticationPrincipal LoginUserDetails loginUser) {
-        BulkRegistUsersDTO userDto = new BulkRegistUsersDTO();
         List<BulkRegistUsersDTO> userDtoList = new ArrayList<>();
         try (InputStream inputStream = file.getInputStream();
                 BufferedReader br = new BufferedReader(new InputStreamReader(inputStream))) {
             String line = br.readLine();
             while ((line = br.readLine()) != null) {
                 String[] item = line.split(CommonConstants.COMMA);
+                BulkRegistUsersDTO userDto = new BulkRegistUsersDTO();
                 // 処理区分
                 userDto.setProcessClass(item[0]);
                 // 社員番号
@@ -145,11 +145,14 @@ public class UsersController {
                 LocalDate hireDate = LocalDate.parse(hireYear + hireMonth + CommonConstants.FIRST_DAY, DateTimeFormatter.ofPattern(CommonConstants.FORMAT_YYMMDD));
                 userDto.setHireDate(hireDate);
                 // 所属
+                Affiliations affiliation = new Affiliations();
+                // 所属IDから所属名を取得
                 if (item[8] != "") {
-                    Affiliations affiliation = new Affiliations();
-                    affiliation.setAffiliationId(Integer.parseInt(item[8]));
-                    userDto.setAffiliation(affiliation);
+                    affiliation.setAffiliationName(item[8]);
+                } else {
+                    affiliation.setAffiliationName("");
                 }
+                userDto.setAffiliation(affiliation);
                 // 権限区分
                 userDto.setRoleClass(item[9]);
                 // 営業フラグ
