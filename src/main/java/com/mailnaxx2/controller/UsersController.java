@@ -146,9 +146,10 @@ public class UsersController {
                 userDto.setHireDate(hireDate);
                 // 所属
                 Affiliations affiliation = new Affiliations();
-                // 所属IDから所属名を取得
                 if (item[8] != "") {
-                    affiliation.setAffiliationName(item[8]);
+                    // 所属IDを基に所属名取得
+                    String affiliationName = affiliationsService.findNameById(Integer.parseInt(item[8]));
+                    affiliation.setAffiliationName(affiliationName);
                 } else {
                     affiliation.setAffiliationName("");
                 }
@@ -185,6 +186,7 @@ public class UsersController {
             e.printStackTrace();
         }
         model.addAttribute("userDtoList", userDtoList);
+        model.addAttribute("roleClassList", RoleClass.values());
         model.addAttribute("loginUserInfo", loginUser.getLoginUser());
         return "user/confirm-file";
     }

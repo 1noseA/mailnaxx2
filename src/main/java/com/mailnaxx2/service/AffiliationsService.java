@@ -19,4 +19,10 @@ public class AffiliationsService {
         List<Affiliations> affiliationList = affiliationsMapper.findAll();
         return affiliationList;
     }
+
+    // IDを基に所属名取得
+    public String findNameById(int affiliationId) {
+        String affiliationName = affiliationsMapper.findNameById(affiliationId);
+        return affiliationName;
+    }
 }

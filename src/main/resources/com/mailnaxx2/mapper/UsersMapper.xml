@@ -124,8 +124,8 @@
     <!-- IDを基に社員名取得 -->
     <select id="findNameById" resultType="String">
         SELECT
-            u.user_name
-        FROM users u
+            user_name
+        FROM users
         WHERE
             user_id = #{userId}
     </select>
