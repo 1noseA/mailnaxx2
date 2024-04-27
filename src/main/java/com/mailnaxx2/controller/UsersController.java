@@ -39,6 +39,7 @@ import com.mailnaxx2.service.AffiliationsService;
 import com.mailnaxx2.service.UsersService;
 import com.mailnaxx2.validation.All;
 import com.mailnaxx2.validation.GroupOrder;
+import com.mailnaxx2.values.ProcessClass;
 import com.mailnaxx2.values.RoleClass;
 
 @Controller
@@ -127,7 +128,12 @@ public class UsersController {
                 String[] item = line.split(CommonConstants.COMMA);
                 BulkRegistUsersDTO userDto = new BulkRegistUsersDTO();
                 // 処理区分
-                userDto.setProcessClass(item[0]);
+                if (item[0].equals(ProcessClass.INSERT.getCode()) ||
+                    item[0].equals(ProcessClass.UPDATE.getCode())) {
+                    userDto.setProcessClass(ProcessClass.getViewNameByCode(item[0]));
+                } else {
+                    // エラー
+                }
                 // 社員番号
                 if (StringUtils.isNotEmpty(item[1])) {
                     userDto.setUserNumber(item[1]);

@@ -1,20 +1,17 @@
 package com.mailnaxx2.values;
 
-// 権限区分
-public enum RoleClass {
+// 処理区分
+public enum ProcessClass {
 
-    MEMBER("1", "一般"),
-    LEADER("2", "リーダ・チーフ"),
-    MANAGER("3", "マネジャー"),
-    AFFAIRS("4", "総務"),
-    PRESIDENT("5", "社長");
+    INSERT("1", "登録"),
+    UPDATE("2", "更新");
 
     // コード値
     private final String code;
     // 表示名
     private final String viewName;
 
-    private RoleClass(String code, String viewName) {
+    private ProcessClass(String code, String viewName) {
         this.code = code;
         this.viewName = viewName;
     }
@@ -28,8 +25,8 @@ public enum RoleClass {
     }
 
     // コード値からEnum定数を取得
-    public static RoleClass getValueByCode(String code) {
-        for (RoleClass value : RoleClass.values()) {
+    public static ProcessClass getValueByCode(String code) {
+        for (ProcessClass value : ProcessClass.values()) {
             if (value.getCode().equals(code)) {
                 return value;
             }
@@ -39,7 +36,7 @@ public enum RoleClass {
 
     // コード値から表示名を取得
     public static String getViewNameByCode(String code) {
-        for (RoleClass value : RoleClass.values()) {
+        for (ProcessClass value : ProcessClass.values()) {
             if (value.getCode().equals(code)) {
                 return value.getViewName();
             }
