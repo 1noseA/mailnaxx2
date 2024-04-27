@@ -11,6 +11,7 @@ import java.util.List;
 
 import jakarta.servlet.http.HttpSession;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -129,7 +130,7 @@ public class UsersController {
                 // 処理区分
                 userDto.setProcessClass(item[0]);
                 // 社員番号
-                if (item[1] != "") {
+                if (StringUtils.isNotEmpty(item[1])) {
                     userDto.setUserNumber(item[1]);
                 }
                 // 氏名_漢字
@@ -146,18 +147,27 @@ public class UsersController {
                 userDto.setHireDate(hireDate);
                 // 所属
                 Affiliations affiliation = new Affiliations();
-                if (item[8] != "") {
-                    // 所属IDを基に所属名取得
-                    String affiliationName = affiliationsService.findNameById(Integer.parseInt(item[8]));
-                    affiliation.setAffiliationName(affiliationName);
+                String affiliationName = null;
+                if (StringUtils.isEmpty(item[8])) {
+                    affiliationName = affiliationsService.findNameById(CommonConstants.DEFAULT_AFFILIATION_ID);
                 } else {
-                    affiliation.setAffiliationName("");
+                    // 所属IDを基に所属名取得
+                    affiliationName = affiliationsService.findNameById(Integer.parseInt(item[8]));
                 }
+                affiliation.setAffiliationName(affiliationName);
                 userDto.setAffiliation(affiliation);
                 // 権限区分
-                userDto.setRoleClass(item[9]);
+                if (StringUtils.isEmpty(item[9])) {
+                    userDto.setRoleClass(CommonConstants.DEFAULT_ROLE_CLASS);
+                } else {
+                    userDto.setRoleClass(item[9]);
+                }
                 // 営業フラグ
-                userDto.setSalesFlg(item[10]);
+                if (StringUtils.isEmpty(item[10])) {
+                    userDto.setSalesFlg(CommonConstants.DEFAULT_SALES_FLG);
+                } else {
+                    userDto.setSalesFlg(item[10]);
+                }
                 // 生年月日
                 String birthYear = item[11];
                 String birthMonth = item[12];

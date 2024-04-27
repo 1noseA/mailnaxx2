@@ -31,4 +31,13 @@ public class CommonConstants {
 
     // 日付フォーマット（yyyyMMdd）
     public static final String FORMAT_YYMMDD = "yyyyMMdd";
+
+    // 所属IDデフォルト
+    public static final int DEFAULT_AFFILIATION_ID = 1;
+
+    // 権限区分デフォルト
+    public static final String DEFAULT_ROLE_CLASS = "1";
+
+    // 営業フラグデフォルト
+    public static final String DEFAULT_SALES_FLG = "0";
 }
