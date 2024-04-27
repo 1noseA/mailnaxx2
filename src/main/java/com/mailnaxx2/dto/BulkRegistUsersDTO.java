@@ -1,4 +1,4 @@
-package dto;
+package com.mailnaxx2.dto;
 
 import java.time.LocalDate;
 

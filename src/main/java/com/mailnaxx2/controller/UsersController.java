@@ -28,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.mailnaxx2.constants.CommonConstants;
 import com.mailnaxx2.constants.UserConstants;
+import com.mailnaxx2.dto.BulkRegistUsersDTO;
 import com.mailnaxx2.entity.Affiliations;
 import com.mailnaxx2.entity.Users;
 import com.mailnaxx2.form.SearchUsersForm;
@@ -39,8 +40,6 @@ import com.mailnaxx2.service.UsersService;
 import com.mailnaxx2.validation.All;
 import com.mailnaxx2.validation.GroupOrder;
 import com.mailnaxx2.values.RoleClass;
-
-import dto.BulkRegistUsersDTO;
 
 @Controller
 public class UsersController {
