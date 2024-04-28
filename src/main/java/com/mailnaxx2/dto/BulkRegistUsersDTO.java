@@ -7,7 +7,7 @@ import com.mailnaxx2.entity.Affiliations;
 import lombok.Data;
 
 /**
- * 社員
+ * 社員情報一括登録DTO
  */
 @Data
 public class BulkRegistUsersDTO {
