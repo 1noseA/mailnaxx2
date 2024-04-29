@@ -1,10 +1,17 @@
 package com.mailnaxx2.controller;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,9 +25,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.client.RestTemplate;
 
 import com.mailnaxx2.constants.CommonConstants;
+import com.mailnaxx2.entity.Manuals;
 import com.mailnaxx2.form.ManualsForm;
 import com.mailnaxx2.form.SelectForm;
-import com.mailnaxx2.jackson.Manuals;
 import com.mailnaxx2.security.LoginUserDetails;
 import com.mailnaxx2.service.UsersService;
 import com.mailnaxx2.validation.All;
@@ -32,12 +39,8 @@ import jakarta.servlet.http.HttpSession;
 @Controller
 public class ManualsController {
 
-    private final RestTemplate restTemplate;
-
-    // RestTemplateをコンストラクタインジェクションする
-    public ManualsController(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
-    }
+    @Autowired
+    RestTemplate restTemplate;
 
     @Autowired
     HttpSession session;
@@ -54,13 +57,16 @@ public class ManualsController {
     // マニュアルAPI URL
     private static final String API_URL = "http://localhost:8081/manual-api";
 
+    // マニュアルAPI URL（パラメータあり）
+    private static final String API_URL_PARAM = "http://localhost:8081/manual-api/{id}";
+
     // 一覧画面初期表示
     @GetMapping("/manual/list")
     public String index(Model model,
                         @AuthenticationPrincipal LoginUserDetails loginUser) {
         // マニュアル一覧を取得
-        Manuals[] manualArray = restTemplate.getForObject(API_URL, Manuals[].class);
-        manualList = Arrays.asList(manualArray);
+        ResponseEntity<Manuals[]> response = restTemplate.exchange(API_URL, HttpMethod.GET, null, Manuals[].class);
+        manualList = Arrays.asList(response.getBody());
         System.out.println(manualList.toString());
         session.setAttribute("session_manualList", manualList);
         model.addAttribute("manualList", manualList);
@@ -71,6 +77,7 @@ public class ManualsController {
 
     // 物理削除処理
     @SuppressWarnings("unchecked")
+    @Transactional
     @RequestMapping("/manual/delete")
     public String delete(@ModelAttribute SelectForm selectForm,
                         Model model,
@@ -97,7 +104,7 @@ public class ManualsController {
             .forEach((manualId, userId) -> {
                 if (userId == loginUser.getLoginUser().getUserId()) {
                     // 削除
-                    restTemplate.delete(API_URL + "/" + manualId, manualId);
+                    restTemplate.delete(API_URL_PARAM, manualId);
                 }
             });
             return "redirect:/manual/list";
@@ -114,7 +121,8 @@ public class ManualsController {
                         Model model,
                         @AuthenticationPrincipal LoginUserDetails loginUser) {
         // 詳細情報を取得
-        manualInfo = restTemplate.getForObject(API_URL + "/" + manualId, Manuals.class);
+        ResponseEntity<Manuals> response = restTemplate.exchange(API_URL_PARAM, HttpMethod.GET, null, Manuals.class, manualId);
+        manualInfo = response.getBody();
         String userName = usersService.findNameById(manualInfo.getUserId());
         model.addAttribute("manualInfo", manualInfo);
         model.addAttribute("userName", userName);
@@ -134,6 +142,7 @@ public class ManualsController {
     }
 
     // 登録処理
+    @Transactional
     @PostMapping("/manual/create")
     public String create(@ModelAttribute @Validated(All.class) ManualsForm manualsForm,
                         BindingResult result,
@@ -144,8 +153,19 @@ public class ManualsController {
             return create(manualsForm, model, loginUser);
         }
 
+        // 入力値を設定
+        Manuals manual = setEntity(manualsForm);
+        // レコード登録者
+        manual.setCreatedBy(manualsForm.getUserNumber());
+
+        // リクエスト情報を作成
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<Manuals> entity = new HttpEntity<>(manual, headers);
+
         // 登録
-        manualInfo = restTemplate.postForObject(API_URL, manualsForm, Manuals.class);
+        ResponseEntity<Manuals> response = restTemplate.exchange(API_URL, HttpMethod.POST, entity, Manuals.class);
+        manualInfo = response.getBody();
 
         return "redirect:/manual/list";
     }
@@ -157,7 +177,8 @@ public class ManualsController {
                         Model model,
                         @AuthenticationPrincipal LoginUserDetails loginUser) {
         // 詳細情報を取得
-        manualInfo = restTemplate.getForObject(API_URL + "/" + manualId, Manuals.class);
+        ResponseEntity<Manuals> response = restTemplate.exchange(API_URL_PARAM, HttpMethod.GET, null, Manuals.class, manualId);
+        manualInfo = response.getBody();
         // 入力フォームに設定
         setInputForm(manualInfo, manualsForm);
 
@@ -180,10 +201,55 @@ public class ManualsController {
             return edit(manualId, manualsForm, model, loginUser);
         }
 
+        // 入力値を設定
+        Manuals manual = setEntity(manualsForm);
+        // マニュアルID
+        manual.setManualId(manualId);
+        // レコード更新者
+        manual.setUpdatedBy(manualsForm.getUserNumber());
         // 更新
-        manualInfo = restTemplate.patchForObject(API_URL + "/" + manualId, manualsForm, Manuals.class);
+        restTemplate.put(API_URL_PARAM, manual, manualId);
 
         return "redirect:/manual/list";
+    }
+
+    // 入力値をエンティティに設定
+    private Manuals setEntity(ManualsForm manualForm) {
+        Manuals manual = new Manuals();
+        // 社員ID
+        manual.setUserId(manualForm.getUserId());
+        // 表示順
+        manual.setDisplayOrder(manualForm.getDisplayOrder());
+        // タイトル
+        manual.setTitle(manualForm.getTitle());
+        // 掲載開始日
+        if (manualForm.getStartYear() != "" &&
+            manualForm.getStartMonth() != "" &&
+            manualForm.getStartDay() != "") {
+            String startYear = "%2s".formatted(manualForm.getStartYear()).replace(" ", "0");
+            String startMonth = "%2s".formatted(manualForm.getStartMonth()).replace(" ", "0");
+            String startDay = "%2s".formatted(manualForm.getStartDay()).replace(" ", "0");
+            LocalDate startDate = LocalDate.parse(startYear + startMonth + startDay, DateTimeFormatter.ofPattern("yyyyMMdd"));
+            manual.setStartDate(startDate);
+        } else {
+            manual.setStartDate(LocalDate.now());
+        }
+        // 掲載終了日
+        if (manualForm.getEndYear() != "" &&
+            manualForm.getEndMonth() != "" &&
+            manualForm.getEndDay() != "") {
+            String endYear = "%2s".formatted(manualForm.getEndYear()).replace(" ", "0");
+            String endMonth = "%2s".formatted(manualForm.getEndMonth()).replace(" ", "0");
+            String endDay = "%2s".formatted(manualForm.getEndDay()).replace(" ", "0");
+            LocalDate endDate = LocalDate.parse(endYear + endMonth + endDay, DateTimeFormatter.ofPattern("yyyyMMdd"));
+            manual.setEndDate(endDate);
+        }
+        // 内容
+        manual.setContent(manualForm.getContent());
+        // リンク
+        manual.setLink(manualForm.getLink());
+
+        return manual;
     }
 
     // 入力フォームに設定
