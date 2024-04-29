@@ -115,14 +115,16 @@ public class UsersController {
     public String confirmFile(@RequestParam("file") MultipartFile file,
                               Model model,
                               @AuthenticationPrincipal LoginUserDetails loginUser) {
-        // 内容確認処理
-        BulkRegistUsersForm bulkRegistUsersForm = confirmFileService.setUserDtoList(file);
+        // 入力チェック
+        BulkRegistUsersForm bulkRegistUsersForm = confirmFileService.checkFile(file);
         // エラーの場合
         if (bulkRegistUsersForm.getMessageList().size() > 0) {
             model.addAttribute("messageList", bulkRegistUsersForm.getMessageList());
             return bulkRegist(model, loginUser);
         }
 
+        // 値の設定
+        bulkRegistUsersForm = confirmFileService.setUserDtoList(file);
         model.addAttribute("userDtoList", bulkRegistUsersForm.getUserDtoList());
         model.addAttribute("roleClassList", RoleClass.values());
         model.addAttribute("loginUserInfo", loginUser.getLoginUser());

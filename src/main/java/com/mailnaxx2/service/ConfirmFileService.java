@@ -28,10 +28,9 @@ public class ConfirmFileService {
     @Autowired
     AffiliationsService affiliationsService;
 
-    // 値の設定
-    public BulkRegistUsersForm setUserDtoList(MultipartFile file) {
+    // 入力チェック
+    public BulkRegistUsersForm checkFile(MultipartFile file) {
         BulkRegistUsersForm bulkRegistUsersForm = new BulkRegistUsersForm();
-        List<BulkRegistUsersDTO> userDtoList = new ArrayList<>();
         Message message = new Message();
         List<Message> messageList = new ArrayList<>();
 
@@ -73,10 +72,27 @@ public class ConfirmFileService {
                 // パスワード整合性
                 // checkPassword(item);
 
-                if (messageList.size() > 0) {
-                    bulkRegistUsersForm.setMessageList(messageList);
-                    return bulkRegistUsersForm;
-                }
+            }
+            if (messageList.size() > 0) {
+                bulkRegistUsersForm.setMessageList(messageList);
+            }
+            br.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return bulkRegistUsersForm;
+    }
+
+    // 値の設定
+    public BulkRegistUsersForm setUserDtoList(MultipartFile file) {
+        BulkRegistUsersForm bulkRegistUsersForm = new BulkRegistUsersForm();
+        List<BulkRegistUsersDTO> userDtoList = new ArrayList<>();
+
+        try (InputStream inputStream = file.getInputStream();
+                BufferedReader br = new BufferedReader(new InputStreamReader(inputStream))) {
+            String line = br.readLine();
+            while ((line = br.readLine()) != null) {
+                String[] item = line.split(CommonConstants.COMMA);
 
                 BulkRegistUsersDTO userDto = new BulkRegistUsersDTO();
 
