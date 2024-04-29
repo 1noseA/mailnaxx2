@@ -31,7 +31,6 @@ public class ConfirmFileService {
     // 入力チェック
     public BulkRegistUsersForm checkFile(MultipartFile file) {
         BulkRegistUsersForm bulkRegistUsersForm = new BulkRegistUsersForm();
-        Message message = new Message();
         List<Message> messageList = new ArrayList<>();
 
         try (InputStream inputStream = file.getInputStream();
@@ -45,6 +44,7 @@ public class ConfirmFileService {
                 // 必須チェック
                 String errorItem = checkRequired(item);
                 if (errorItem != null) {
+                    Message message = new Message();
                     message.setLineNum(i + "行目");
                     message.setItem(errorItem);
                     message.setContent("入力してください");
@@ -193,6 +193,9 @@ public class ConfirmFileService {
     private List<Message> checkDigits(String[] item) {
         List<Message> messageList = new ArrayList<>();
         for (int i = 0; i < item.length; i++) {
+            if (StringUtils.isEmpty(item[i])) {
+                break;
+            }
             switch (i) {
             case 2, 3:
                 if (!item[i].matches("^[^ -~｡-ﾟ]{1,10}$")) {
