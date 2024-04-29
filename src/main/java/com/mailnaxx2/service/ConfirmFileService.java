@@ -48,13 +48,16 @@ public class ConfirmFileService {
                 if (errorItem != null) {
                     message.setLineNum(i + "行目");
                     message.setItem(errorItem);
-                    message.setContent("入力してください。");
+                    message.setContent("入力してください");
                     messageList.add(message);
                 }
 
                 // 桁数・文字種チェック
                 List<Message> tempList = checkDigits(item);
                 if (tempList.size() > 0) {
+                    for (Message temp : tempList) {
+                        temp.setLineNum(i + "行目");
+                    }
                     messageList.addAll(tempList);
                 }
 
@@ -172,76 +175,86 @@ public class ConfirmFileService {
 
     // 桁数・文字種チェック
     private List<Message> checkDigits(String[] item) {
-        Message message = new Message();
         List<Message> messageList = new ArrayList<>();
         for (int i = 0; i < item.length; i++) {
             switch (i) {
             case 2, 3:
                 if (!item[i].matches("^[^ -~｡-ﾟ]{1,10}$")) {
+                    Message message = new Message();
                     message.setItem(BulkRegistCsvItem.getViewNameByCode(String.valueOf(i)));
-                    message.setContent("全角10文字以内で入力してください。");
+                    message.setContent("全角10文字以内で入力してください");
                     messageList.add(message);
                 }
                 break;
             case 4, 5:
                 if (!item[i].matches("^[ァ-ヶー]{1,10}$")) {
+                    Message message = new Message();
                     message.setItem(BulkRegistCsvItem.getViewNameByCode(String.valueOf(i)));
-                    message.setContent("全角カタカナ10文字以内で入力してください。");
+                    message.setContent("全角カタカナ10文字以内で入力してください");
                     messageList.add(message);
                 }
-            break;
+                break;
             case 6, 11, 15:
                 if (!item[i].matches("^[0-9]{4}$")) {
+                    Message message = new Message();
                     message.setItem(BulkRegistCsvItem.getViewNameByCode(String.valueOf(i)));
-                    message.setContent("半角数字4桁で入力してください。");
+                    message.setContent("半角数字4桁で入力してください");
                     messageList.add(message);
                 }
+                break;
             case 7, 12, 13:
                 if (!item[i].matches("^[0-9]{2}$")) {
+                    Message message = new Message();
                     message.setItem(BulkRegistCsvItem.getViewNameByCode(String.valueOf(i)));
-                    message.setContent("半角数字2桁で入力してください。");
+                    message.setContent("半角数字2桁で入力してください");
                     messageList.add(message);
                 }
                 break;
             case 14:
                 if (!item[i].matches("^[0-9]{3}$")) {
+                    Message message = new Message();
                     message.setItem(BulkRegistCsvItem.getViewNameByCode(String.valueOf(i)));
-                    message.setContent("半角数字3桁で入力してください。");
+                    message.setContent("半角数字3桁で入力してください");
                     messageList.add(message);
                 }
                 break;
             case 16:
                 if (!item[i].matches("^[^ -~｡-ﾟ]{1,256}$")) {
+                    Message message = new Message();
                     message.setItem(BulkRegistCsvItem.getViewNameByCode(String.valueOf(i)));
-                    message.setContent("全角256文字以内で入力してください。");
+                    message.setContent("全角256文字以内で入力してください");
                     messageList.add(message);
                 }
                 break;
             case 17:
                 if (!item[i].matches("^[0-9]{1,5}$")) {
+                    Message message = new Message();
                     message.setItem(BulkRegistCsvItem.getViewNameByCode(String.valueOf(i)));
-                    message.setContent("半角数字5桁で入力してください。");
+                    message.setContent("半角数字5桁以内で入力してください");
                     messageList.add(message);
                 }
                 break;
             case 18, 19:
                 if (!item[i].matches("^[0-9]{1,4}$")) {
+                    Message message = new Message();
                     message.setItem(BulkRegistCsvItem.getViewNameByCode(String.valueOf(i)));
-                    message.setContent("半角数字3桁で入力してください。");
+                    message.setContent("半角数字4桁以内で入力してください");
                     messageList.add(message);
                 }
                 break;
             case 20:
                 if (!item[i].matches("^[a-zA-Z0-9]{1,128}$")) {
+                    Message message = new Message();
                     message.setItem(BulkRegistCsvItem.getViewNameByCode(String.valueOf(i)));
-                    message.setContent("半角英数字128文字以内で入力してください。");
+                    message.setContent("半角英数字128文字以内で入力してください");
                     messageList.add(message);
                 }
                 break;
             case 21:
                 if (!item[i].matches("/^(?=.*?[0-9])[a-zA-Z0-9]{8,10}$/")) {
+                    Message message = new Message();
                     message.setItem(BulkRegistCsvItem.getViewNameByCode(String.valueOf(i)));
-                    message.setContent("半角英数字8文字以上10文字以内で入力してください。");
+                    message.setContent("半角英数字8文字以上10文字以内で入力してください");
                     messageList.add(message);
                 }
                 break;
