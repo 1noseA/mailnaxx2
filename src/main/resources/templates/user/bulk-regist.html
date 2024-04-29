@@ -14,6 +14,13 @@
             <div class="title text-center mt-5 p-3">社員一括登録</div>
             <div class="formArea mx-auto mb-5">
                 <form method="post" th:action="@{/user/confirm-file}" enctype="multipart/form-data">
+                    <th:block th:if="${messageList != null && messageList.size() > 0}">
+                        <div class="col-md-12 ms-3 pb-3">
+                            <th:block th:each="message : ${messageList}">
+                                <span class="text-danger" th:text="${message.lineNum + '&emsp;' + message.item + '：' + message.content}"></span><br>
+                            </th:block>
+                        </div>
+                    </th:block>
                     <input type="file" name="file">
                     <div class="my-4">
                         <button type="submit" class="btn btnMain">内容を確認</button>

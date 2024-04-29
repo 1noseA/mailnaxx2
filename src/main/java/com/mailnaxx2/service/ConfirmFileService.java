@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.mailnaxx2.constants.CommonConstants;
 import com.mailnaxx2.dto.BulkRegistUsersDTO;
 import com.mailnaxx2.entity.Affiliations;
+import com.mailnaxx2.form.BulkRegistUsersForm;
 import com.mailnaxx2.validation.Message;
 import com.mailnaxx2.values.BulkRegistCsvItem;
 import com.mailnaxx2.values.ProcessClass;
@@ -28,8 +29,12 @@ public class ConfirmFileService {
     AffiliationsService affiliationsService;
 
     // 値の設定
-    public List<BulkRegistUsersDTO> setUserDtoList(MultipartFile file) {
+    public BulkRegistUsersForm setUserDtoList(MultipartFile file) {
+        BulkRegistUsersForm bulkRegistUsersForm = new BulkRegistUsersForm();
         List<BulkRegistUsersDTO> userDtoList = new ArrayList<>();
+        Message message = new Message();
+        List<Message> messageList = new ArrayList<>();
+
         try (InputStream inputStream = file.getInputStream();
                 BufferedReader br = new BufferedReader(new InputStreamReader(inputStream))) {
             String line = br.readLine();
@@ -37,9 +42,6 @@ public class ConfirmFileService {
             while ((line = br.readLine()) != null) {
                 i++;
                 String[] item = line.split(CommonConstants.COMMA);
-
-                Message message = new Message();
-                List<Message> messageList = new ArrayList<>();
 
                 // 必須チェック
                 String errorItem = checkRequired(item);
@@ -50,11 +52,11 @@ public class ConfirmFileService {
                     messageList.add(message);
                 }
 
-                // 桁数チェック
-                // checkDigits(item);
-
-                // 文字種チェック
-                // checkType(item);
+                // 桁数・文字種チェック
+                List<Message> tempList = checkDigits(item);
+                if (tempList.size() > 0) {
+                    messageList.addAll(tempList);
+                }
 
                 // 処理区分と社員番号の相関チェック
                 // checkProcessClass(item);
@@ -67,6 +69,11 @@ public class ConfirmFileService {
 
                 // パスワード整合性
                 // checkPassword(item);
+
+                if (messageList.size() > 0) {
+                    bulkRegistUsersForm.setMessageList(messageList);
+                    return bulkRegistUsersForm;
+                }
 
                 BulkRegistUsersDTO userDto = new BulkRegistUsersDTO();
 
@@ -143,7 +150,8 @@ public class ConfirmFileService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return userDtoList;
+        bulkRegistUsersForm.setUserDtoList(userDtoList);
+        return bulkRegistUsersForm;
     }
 
     // 必須チェック
@@ -156,15 +164,91 @@ public class ConfirmFileService {
             // 未入力の場合、項目番号をListに追加
             if (targetNum.contains(i) && StringUtils.isEmpty(item[i])) {
                 itemName = BulkRegistCsvItem.getViewNameByCode(String.valueOf(i));
-                errorItem = (errorItem == null) ? itemName : errorItem + ", " + itemName;
+                errorItem = (errorItem == null) ? itemName : errorItem + CommonConstants.TOTEN + itemName;
             }
         }
         return errorItem;
     }
 
-    // 桁数チェック
-
-    // 文字種チェック
+    // 桁数・文字種チェック
+    private List<Message> checkDigits(String[] item) {
+        Message message = new Message();
+        List<Message> messageList = new ArrayList<>();
+        for (int i = 0; i < item.length; i++) {
+            switch (i) {
+            case 2, 3:
+                if (!item[i].matches("^[^ -~｡-ﾟ]{1,10}$")) {
+                    message.setItem(BulkRegistCsvItem.getViewNameByCode(String.valueOf(i)));
+                    message.setContent("全角10文字以内で入力してください。");
+                    messageList.add(message);
+                }
+                break;
+            case 4, 5:
+                if (!item[i].matches("^[ァ-ヶー]{1,10}$")) {
+                    message.setItem(BulkRegistCsvItem.getViewNameByCode(String.valueOf(i)));
+                    message.setContent("全角カタカナ10文字以内で入力してください。");
+                    messageList.add(message);
+                }
+            break;
+            case 6, 11, 15:
+                if (!item[i].matches("^[0-9]{4}$")) {
+                    message.setItem(BulkRegistCsvItem.getViewNameByCode(String.valueOf(i)));
+                    message.setContent("半角数字4桁で入力してください。");
+                    messageList.add(message);
+                }
+            case 7, 12, 13:
+                if (!item[i].matches("^[0-9]{2}$")) {
+                    message.setItem(BulkRegistCsvItem.getViewNameByCode(String.valueOf(i)));
+                    message.setContent("半角数字2桁で入力してください。");
+                    messageList.add(message);
+                }
+                break;
+            case 14:
+                if (!item[i].matches("^[0-9]{3}$")) {
+                    message.setItem(BulkRegistCsvItem.getViewNameByCode(String.valueOf(i)));
+                    message.setContent("半角数字3桁で入力してください。");
+                    messageList.add(message);
+                }
+                break;
+            case 16:
+                if (!item[i].matches("^[^ -~｡-ﾟ]{1,256}$")) {
+                    message.setItem(BulkRegistCsvItem.getViewNameByCode(String.valueOf(i)));
+                    message.setContent("全角256文字以内で入力してください。");
+                    messageList.add(message);
+                }
+                break;
+            case 17:
+                if (!item[i].matches("^[0-9]{1,5}$")) {
+                    message.setItem(BulkRegistCsvItem.getViewNameByCode(String.valueOf(i)));
+                    message.setContent("半角数字5桁で入力してください。");
+                    messageList.add(message);
+                }
+                break;
+            case 18, 19:
+                if (!item[i].matches("^[0-9]{1,4}$")) {
+                    message.setItem(BulkRegistCsvItem.getViewNameByCode(String.valueOf(i)));
+                    message.setContent("半角数字3桁で入力してください。");
+                    messageList.add(message);
+                }
+                break;
+            case 20:
+                if (!item[i].matches("^[a-zA-Z0-9]{1,128}$")) {
+                    message.setItem(BulkRegistCsvItem.getViewNameByCode(String.valueOf(i)));
+                    message.setContent("半角英数字128文字以内で入力してください。");
+                    messageList.add(message);
+                }
+                break;
+            case 21:
+                if (!item[i].matches("/^(?=.*?[0-9])[a-zA-Z0-9]{8,10}$/")) {
+                    message.setItem(BulkRegistCsvItem.getViewNameByCode(String.valueOf(i)));
+                    message.setContent("半角英数字8文字以上10文字以内で入力してください。");
+                    messageList.add(message);
+                }
+                break;
+            }
+        }
+        return messageList;
+    }
 
     // 処理区分と社員番号の相関チェック
 
