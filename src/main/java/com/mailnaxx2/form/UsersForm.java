@@ -51,7 +51,6 @@ public class UsersForm {
     private String hireMonth;
 
     // 所属
-    @NotBlank(groups = ValidGroup1.class, message = "選択してください")
     private String affiliationId;
 
     // 権限区分

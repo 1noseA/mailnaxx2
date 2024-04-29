@@ -15,16 +15,20 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.mailnaxx2.constants.CommonConstants;
 import com.mailnaxx2.constants.UserConstants;
 import com.mailnaxx2.entity.Affiliations;
 import com.mailnaxx2.entity.Users;
+import com.mailnaxx2.form.BulkRegistUsersForm;
 import com.mailnaxx2.form.SearchUsersForm;
 import com.mailnaxx2.form.SelectForm;
 import com.mailnaxx2.form.UsersForm;
 import com.mailnaxx2.security.LoginUserDetails;
 import com.mailnaxx2.service.AffiliationsService;
+import com.mailnaxx2.service.ConfirmFileService;
 import com.mailnaxx2.service.UsersService;
 import com.mailnaxx2.validation.All;
 import com.mailnaxx2.validation.GroupOrder;
@@ -42,6 +46,9 @@ public class UsersController {
     @Autowired
     AffiliationsService affiliationsService;
 
+    @Autowired
+    ConfirmFileService confirmFileService;
+
     // 管理者
     boolean isAdmin;
 
@@ -57,9 +64,9 @@ public class UsersController {
     // 一覧画面初期表示
     @RequestMapping("/user/list")
     public String index(SearchUsersForm searchUsersForm,
-    					Model model,
-    					@AuthenticationPrincipal LoginUserDetails loginUser) {
-    	// 社員一覧を取得
+                        Model model,
+                        @AuthenticationPrincipal LoginUserDetails loginUser) {
+        // 社員一覧を取得
         userList = usersService.findAll();
         model.addAttribute("userList", userList);
         model.addAttribute("roleClassList", RoleClass.values());
@@ -81,9 +88,9 @@ public class UsersController {
     // 検索処理
     @PostMapping("/user/search")
     public String search(SearchUsersForm searchUsersForm,
-    					Model model,
-    					@AuthenticationPrincipal LoginUserDetails loginUser) {
-    	// 社員一覧を取得
+                        Model model,
+                        @AuthenticationPrincipal LoginUserDetails loginUser) {
+        // 社員一覧を取得
         userList = usersService.findBySearchForm(searchUsersForm);
         model.addAttribute("userList", userList);
         model.addAttribute("roleClassList", RoleClass.values());
@@ -95,11 +102,40 @@ public class UsersController {
         return "user/list";
     }
 
+    // 一括登録初期表示
+    @GetMapping("/user/bulk-regist")
+    public String bulkRegist(Model model,
+                             @AuthenticationPrincipal LoginUserDetails loginUser) {
+        model.addAttribute("loginUserInfo", loginUser.getLoginUser());
+        return "user/bulk-regist";
+    }
+
+    // 内容確認
+    @PostMapping("/user/confirm-file")
+    public String confirmFile(@RequestParam("file") MultipartFile file,
+                              Model model,
+                              @AuthenticationPrincipal LoginUserDetails loginUser) {
+        // 入力チェック
+        BulkRegistUsersForm bulkRegistUsersForm = confirmFileService.checkFile(file);
+        // エラーの場合
+        if (bulkRegistUsersForm.getMessageList().size() > 0) {
+            model.addAttribute("messageList", bulkRegistUsersForm.getMessageList());
+            return bulkRegist(model, loginUser);
+        }
+
+        // 値の設定
+        bulkRegistUsersForm = confirmFileService.setUserDtoList(file);
+        model.addAttribute("userDtoList", bulkRegistUsersForm.getUserDtoList());
+        model.addAttribute("roleClassList", RoleClass.values());
+        model.addAttribute("loginUserInfo", loginUser.getLoginUser());
+        return "user/confirm-file";
+    }
+
     // 登録画面初期表示
     @GetMapping("/user/create")
     public String create(@ModelAttribute UsersForm usersForm,
-    					Model model,
-    					@AuthenticationPrincipal LoginUserDetails loginUser) {
+                        Model model,
+                        @AuthenticationPrincipal LoginUserDetails loginUser) {
         model.addAttribute("userId", 0);
 
         // 所属プルダウン
@@ -117,9 +153,9 @@ public class UsersController {
     // 登録処理
     @PostMapping("/user/create")
     public String create(@ModelAttribute @Validated(All.class) UsersForm usersForm,
-    					BindingResult result,
-    					Model model,
-    					@AuthenticationPrincipal LoginUserDetails loginUser) {
+                        BindingResult result,
+                        Model model,
+                        @AuthenticationPrincipal LoginUserDetails loginUser) {
         // 入力エラーチェック
         if (result.hasErrors()) {
             // リダイレクトだと入力エラーの値が引き継がれない
@@ -136,9 +172,9 @@ public class UsersController {
     // 論理削除処理
     @RequestMapping("/user/delete")
     public String delete(@ModelAttribute SelectForm selectForm,
-    					SearchUsersForm searchUsersForm,
-    					Model model,
-    					@AuthenticationPrincipal LoginUserDetails loginUser) {
+                        SearchUsersForm searchUsersForm,
+                        Model model,
+                        @AuthenticationPrincipal LoginUserDetails loginUser) {
         // 入力チェック
         if (selectForm.getSelectUserId() == null) {
             // エラーメッセージを表示
@@ -167,9 +203,9 @@ public class UsersController {
     // 詳細画面初期表示
     @PostMapping("/user/detail")
     public String detail(int userId,
-    					Model model,
-    					@AuthenticationPrincipal LoginUserDetails loginUser) {
-    	// 詳細情報を取得
+                        Model model,
+                        @AuthenticationPrincipal LoginUserDetails loginUser) {
+        // 詳細情報を取得
         userInfo = usersService.findById(userId);
         model.addAttribute("userInfo", userInfo);
         model.addAttribute("roleClass", RoleClass.getViewNameByCode(userInfo.getRoleClass()));
@@ -180,10 +216,10 @@ public class UsersController {
     // 編集画面初期表示
     @PostMapping("/user/edit")
     public String edit(int userId,
-    					@ModelAttribute UsersForm usersForm,
-    					Model model,
-    					@AuthenticationPrincipal LoginUserDetails loginUser) {
-    	// 詳細情報を取得
+                        @ModelAttribute UsersForm usersForm,
+                        Model model,
+                        @AuthenticationPrincipal LoginUserDetails loginUser) {
+        // 詳細情報を取得
         userInfo = usersService.findById(userId);
         // 入力フォームに設定
         setInputForm(userInfo, usersForm);
@@ -206,10 +242,10 @@ public class UsersController {
     @Transactional
     @PostMapping("/user/update")
     public String update(int userId,
-    					@ModelAttribute @Validated(GroupOrder.class) UsersForm usersForm,
-    					BindingResult result,
-    					Model model,
-    					@AuthenticationPrincipal LoginUserDetails loginUser) {
+                        @ModelAttribute @Validated(GroupOrder.class) UsersForm usersForm,
+                        BindingResult result,
+                        Model model,
+                        @AuthenticationPrincipal LoginUserDetails loginUser) {
         // 入力エラーチェック
         if (result.hasErrors()) {
             return edit(userId, usersForm, model, loginUser);
@@ -226,7 +262,7 @@ public class UsersController {
 
     // 入力フォームに設定
     private void setInputForm(Users userInfo, UsersForm usersForm) {
-    	String[] userName = userInfo.getUserName().split(CommonConstants.HALF_SPACE);
+        String[] userName = userInfo.getUserName().split(CommonConstants.HALF_SPACE);
         usersForm.setUserLastName(userName[0]);
         usersForm.setUserFirstName(userName[1]);
         String[] userNameKana = userInfo.getUserNameKana().split(CommonConstants.HALF_SPACE);
