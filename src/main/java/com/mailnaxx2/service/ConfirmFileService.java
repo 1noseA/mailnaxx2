@@ -52,16 +52,22 @@ public class ConfirmFileService {
                 }
 
                 // 桁数・文字種チェック
-                List<Message> tempList = checkDigits(item);
-                if (tempList.size() > 0) {
-                    for (Message temp : tempList) {
-                        temp.setLineNum(i + "行目");
+                List<Message> checkDigitList = checkDigit(item);
+                if (checkDigitList.size() > 0) {
+                    for (Message list : checkDigitList) {
+                        list.setLineNum(i + "行目");
                     }
-                    messageList.addAll(tempList);
+                    messageList.addAll(checkDigitList);
                 }
 
                 // 処理区分と社員番号の相関チェック
-                // checkProcessClass(item);
+                List<Message> checkProcessList = checkProcessClass(item);
+                if (checkProcessList.size() > 0) {
+                    for (Message list : checkProcessList) {
+                        list.setLineNum(i + "行目");
+                    }
+                    messageList.addAll(checkProcessList);
+                }
 
                 // 電話番号整合性
                 // checkPhoneNumber(item);
@@ -100,8 +106,6 @@ public class ConfirmFileService {
                 if (item[0].equals(ProcessClass.INSERT.getCode()) ||
                     item[0].equals(ProcessClass.UPDATE.getCode())) {
                     userDto.setProcessClass(ProcessClass.getViewNameByCode(item[0]));
-                } else {
-                    // エラー
                 }
                 // 社員番号
                 if (StringUtils.isNotEmpty(item[1])) {
@@ -190,7 +194,7 @@ public class ConfirmFileService {
     }
 
     // 桁数・文字種チェック
-    private List<Message> checkDigits(String[] item) {
+    private List<Message> checkDigit(String[] item) {
         List<Message> messageList = new ArrayList<>();
         for (int i = 0; i < item.length; i++) {
             if (StringUtils.isEmpty(item[i])) {
@@ -283,6 +287,26 @@ public class ConfirmFileService {
     }
 
     // 処理区分と社員番号の相関チェック
+    private List<Message> checkProcessClass(String[] item) {
+        List<Message> messageList = new ArrayList<>();
+        if (!item[0].equals(ProcessClass.INSERT.getCode()) && !item[0].equals(ProcessClass.UPDATE.getCode())) {
+            Message message = new Message();
+            message.setItem(BulkRegistCsvItem.getViewNameByCode("0"));
+            message.setContent("半角数字1か2を入力してください。");
+            messageList.add(message);
+        } else if (item[0].equals(ProcessClass.INSERT.getCode()) && StringUtils.isNotEmpty(item[1])) {
+            Message message = new Message();
+            message.setItem(BulkRegistCsvItem.getViewNameByCode("1"));
+            message.setContent("登録の場合は入力できません");
+            messageList.add(message);
+        } else if (item[0].equals(ProcessClass.UPDATE.getCode()) && StringUtils.isEmpty(item[1])) {
+            Message message = new Message();
+            message.setItem(BulkRegistCsvItem.getViewNameByCode("1"));
+            message.setContent("更新の場合は入力してください");
+            messageList.add(message);
+        }
+        return messageList;
+    }
 
     // 電話番号整合性
 
