@@ -70,7 +70,13 @@ public class ConfirmFileService {
                 }
 
                 // 電話番号整合性
-                // checkPhoneNumber(item);
+                if (checkPhoneNumber(item[17] + item[18] + item[19])) {
+                    Message message = new Message();
+                    message.setLineNum(i + "行目");
+                    message.setItem("電話番号");
+                    message.setContent("正しく入力してください");
+                    messageList.add(message);
+                }
 
                 // メールアドレス整合性
                 // checkEmail(item);
@@ -292,7 +298,7 @@ public class ConfirmFileService {
         if (!item[0].equals(ProcessClass.INSERT.getCode()) && !item[0].equals(ProcessClass.UPDATE.getCode())) {
             Message message = new Message();
             message.setItem(BulkRegistCsvItem.getViewNameByCode("0"));
-            message.setContent("半角数字1か2を入力してください。");
+            message.setContent("半角数字1か2を入力してください");
             messageList.add(message);
         } else if (item[0].equals(ProcessClass.INSERT.getCode()) && StringUtils.isNotEmpty(item[1])) {
             Message message = new Message();
@@ -309,6 +315,13 @@ public class ConfirmFileService {
     }
 
     // 電話番号整合性
+    private Boolean checkPhoneNumber(String phoneNumber) {
+        Boolean result = false;
+        if (!phoneNumber.matches("^0\\d{9,10}$")) {
+            result = true;
+        }
+        return result;
+    }
 
     // メールアドレス整合性
 
