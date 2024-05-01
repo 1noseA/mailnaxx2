@@ -85,7 +85,7 @@ public class ConfirmFileService {
                 // checkPassword(item);
 
             }
-            if (messageList.size() > 0) {
+            if (messageList != null) {
                 bulkRegistUsersForm.setMessageList(messageList);
             }
             br.close();
@@ -272,7 +272,7 @@ public class ConfirmFileService {
                 }
                 break;
             case 20:
-                if (!item[i].matches("^[a-zA-Z0-9]{1,128}$")) {
+                if (!item[i].matches("^[a-zA-Z0-9._%+-@]{1,128}$")) {
                     Message message = new Message();
                     message.setItem(BulkRegistCsvItem.getViewNameByCode(String.valueOf(i)));
                     message.setContent("半角英数字128文字以内で入力してください");
@@ -280,7 +280,7 @@ public class ConfirmFileService {
                 }
                 break;
             case 21:
-                if (!item[i].matches("/^(?=.*?[0-9])[a-zA-Z0-9]{8,10}$/")) {
+                if (!item[i].matches("^(?=.*?[0-9])[a-zA-Z0-9]{8,10}$")) {
                     Message message = new Message();
                     message.setItem(BulkRegistCsvItem.getViewNameByCode(String.valueOf(i)));
                     message.setContent("半角英数字8文字以上10文字以内で入力してください");
