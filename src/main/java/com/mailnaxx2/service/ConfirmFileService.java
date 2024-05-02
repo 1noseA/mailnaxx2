@@ -79,12 +79,15 @@ public class ConfirmFileService {
                 }
 
                 // メールアドレス整合性
-                // checkEmail(item);
-
-                // パスワード整合性
-                // checkPassword(item);
-
+                if (checkEmail(item[20])) {
+                    Message message = new Message();
+                    message.setLineNum(i + "行目");
+                    message.setItem("メールアドレス");
+                    message.setContent("正しく入力してください");
+                    messageList.add(message);
+                }
             }
+
             if (messageList != null) {
                 bulkRegistUsersForm.setMessageList(messageList);
             }
@@ -280,7 +283,7 @@ public class ConfirmFileService {
                 }
                 break;
             case 21:
-                if (!item[i].matches("^(?=.*?[0-9])[a-zA-Z0-9]{8,10}$")) {
+                if (!item[i].matches("^(?=.*[0-9])(?=.*[a-zA-Z])[a-zA-Z0-9]{8,10}$")) {
                     Message message = new Message();
                     message.setItem(BulkRegistCsvItem.getViewNameByCode(String.valueOf(i)));
                     message.setContent("半角英数字8文字以上10文字以内で入力してください");
@@ -324,7 +327,11 @@ public class ConfirmFileService {
     }
 
     // メールアドレス整合性
-
-    // パスワード整合性
-
+    private Boolean checkEmail(String email) {
+        Boolean result = false;
+        if (!email.matches("^([a-zA-Z0-9])+([a-zA-Z0-9._-])*@([a-zA-Z0-9_-])+([a-zA-Z0-9._-]+)+$")) {
+            result = true;
+        }
+        return result;
+    }
 }
