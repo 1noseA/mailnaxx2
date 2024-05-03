@@ -20,9 +20,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.mailnaxx2.constants.CommonConstants;
 import com.mailnaxx2.constants.UserConstants;
+import com.mailnaxx2.dto.ConfirmFileDTO;
 import com.mailnaxx2.entity.Affiliations;
 import com.mailnaxx2.entity.Users;
-import com.mailnaxx2.form.BulkRegistUsersForm;
 import com.mailnaxx2.form.SearchUsersForm;
 import com.mailnaxx2.form.SelectForm;
 import com.mailnaxx2.form.UsersForm;
@@ -116,16 +116,16 @@ public class UsersController {
                               Model model,
                               @AuthenticationPrincipal LoginUserDetails loginUser) {
         // 入力チェック
-        BulkRegistUsersForm bulkRegistUsersForm = confirmFileService.checkFile(file);
+        ConfirmFileDTO dto = confirmFileService.checkFile(file);
         // エラーの場合
-        if (bulkRegistUsersForm.getMessageList().size() > 0) {
-            model.addAttribute("messageList", bulkRegistUsersForm.getMessageList());
+        if (dto.getMessageList().size() > 0) {
+            model.addAttribute("messageList", dto.getMessageList());
             return uploadFile(model, loginUser);
         }
 
         // 値の設定
-        bulkRegistUsersForm = confirmFileService.setUserDtoList(file);
-        model.addAttribute("userDtoList", bulkRegistUsersForm.getUserDtoList());
+        dto = confirmFileService.setUserDtoList(file);
+        model.addAttribute("userDtoList", dto.getUserDtoList());
         model.addAttribute("roleClassList", RoleClass.values());
         model.addAttribute("loginUserInfo", loginUser.getLoginUser());
         return "user/confirm-file";

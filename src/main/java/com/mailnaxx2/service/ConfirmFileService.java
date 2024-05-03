@@ -16,8 +16,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.mailnaxx2.constants.CommonConstants;
 import com.mailnaxx2.dto.BulkRegistUsersDTO;
+import com.mailnaxx2.dto.ConfirmFileDTO;
 import com.mailnaxx2.entity.Affiliations;
-import com.mailnaxx2.form.BulkRegistUsersForm;
 import com.mailnaxx2.validation.Message;
 import com.mailnaxx2.values.BulkRegistCsvItem;
 import com.mailnaxx2.values.ProcessClass;
@@ -29,8 +29,8 @@ public class ConfirmFileService {
     AffiliationsService affiliationsService;
 
     // 入力チェック
-    public BulkRegistUsersForm checkFile(MultipartFile file) {
-        BulkRegistUsersForm bulkRegistUsersForm = new BulkRegistUsersForm();
+    public ConfirmFileDTO checkFile(MultipartFile file) {
+        ConfirmFileDTO dto = new ConfirmFileDTO();
         List<Message> messageList = new ArrayList<>();
 
         try (InputStream inputStream = file.getInputStream();
@@ -89,18 +89,18 @@ public class ConfirmFileService {
             }
 
             if (messageList != null) {
-                bulkRegistUsersForm.setMessageList(messageList);
+                dto.setMessageList(messageList);
             }
             br.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return bulkRegistUsersForm;
+        return dto;
     }
 
     // 値の設定
-    public BulkRegistUsersForm setUserDtoList(MultipartFile file) {
-        BulkRegistUsersForm bulkRegistUsersForm = new BulkRegistUsersForm();
+    public ConfirmFileDTO setUserDtoList(MultipartFile file) {
+        ConfirmFileDTO bulkRegistUsersForm = new ConfirmFileDTO();
         List<BulkRegistUsersDTO> userDtoList = new ArrayList<>();
 
         try (InputStream inputStream = file.getInputStream();
