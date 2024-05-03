@@ -103,11 +103,11 @@ public class UsersController {
     }
 
     // 一括登録初期表示
-    @GetMapping("/user/bulk-regist")
-    public String bulkRegist(Model model,
+    @GetMapping("/user/upload-file")
+    public String uploadFile(Model model,
                              @AuthenticationPrincipal LoginUserDetails loginUser) {
         model.addAttribute("loginUserInfo", loginUser.getLoginUser());
-        return "user/bulk-regist";
+        return "user/upload-file";
     }
 
     // 内容確認
@@ -120,7 +120,7 @@ public class UsersController {
         // エラーの場合
         if (bulkRegistUsersForm.getMessageList().size() > 0) {
             model.addAttribute("messageList", bulkRegistUsersForm.getMessageList());
-            return bulkRegist(model, loginUser);
+            return uploadFile(model, loginUser);
         }
 
         // 値の設定
