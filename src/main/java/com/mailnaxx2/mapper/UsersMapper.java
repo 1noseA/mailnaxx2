@@ -35,8 +35,11 @@ public interface UsersMapper {
     // IDを基に社員名取得
     public String findNameById(int userId);
 
-    // 1件排他ロック
+    // 1件排他ロック（ID）
     public Users forLockById(int userId);
+
+    // 1件排他ロック（社員番号）
+    public Users forLockByNumber(String userNumber);
 
     // 複数件排他ロック
     public List<Users> forLockByIdList(List<Integer> idList);

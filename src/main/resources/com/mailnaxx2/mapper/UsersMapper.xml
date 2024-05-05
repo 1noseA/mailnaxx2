@@ -130,7 +130,7 @@
             user_id = #{userId}
     </select>
 
-    <!-- 1件排他ロック -->
+    <!-- 1件排他ロック（ID） -->
     <select id="forLockById" resultMap="userMap">
         SELECT
             u.user_id,
@@ -153,6 +153,32 @@
             ON u.affiliation_id = a.affiliation_id
         WHERE
             user_id = #{userId}
+        FOR UPDATE
+    </select>
+
+    <!-- 1件排他ロック（社員番号） -->
+    <select id="forLockByNumber" resultMap="userMap">
+        SELECT
+            u.user_id,
+            u.user_number,
+            u.user_name,
+            u.user_name_kana,
+            u.hire_date,
+            a.affiliation_id,
+            a.affiliation_name,
+            u.role_class,
+            u.sales_flg,
+            u.birth_date,
+            u.post_code,
+            u.address,
+            u.phone_number,
+            u.email_address,
+            u.password
+        FROM users u
+        INNER JOIN affiliations a
+            ON u.affiliation_id = a.affiliation_id
+        WHERE
+            user_number = #{userNumber}
         FOR UPDATE
     </select>
 

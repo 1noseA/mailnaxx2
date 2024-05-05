@@ -1,5 +1,6 @@
 package com.mailnaxx2.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.mailnaxx2.validation.Message;
@@ -13,8 +14,8 @@ import lombok.Data;
 public class ConfirmFileDTO {
 
     // 社員情報一括登録DTO
-    private List<BulkRegistUsersDTO> userDtoList;
+    private List<BulkRegistUsersDTO> userDtoList = new ArrayList<>();
 
     // エラーメッセージ
-    private List<Message> messageList;
+    private List<Message> messageList = new ArrayList<>();
 }

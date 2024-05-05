@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.mailnaxx2.constants.CommonConstants;
 import com.mailnaxx2.constants.UserConstants;
+import com.mailnaxx2.dto.CompletedBulkRegistDTO;
 import com.mailnaxx2.dto.ConfirmFileDTO;
 import com.mailnaxx2.entity.Affiliations;
 import com.mailnaxx2.entity.Users;
@@ -28,6 +29,7 @@ import com.mailnaxx2.form.SelectForm;
 import com.mailnaxx2.form.UsersForm;
 import com.mailnaxx2.security.LoginUserDetails;
 import com.mailnaxx2.service.AffiliationsService;
+import com.mailnaxx2.service.BulkRegistService;
 import com.mailnaxx2.service.ConfirmFileService;
 import com.mailnaxx2.service.UsersService;
 import com.mailnaxx2.validation.All;
@@ -48,6 +50,9 @@ public class UsersController {
 
     @Autowired
     ConfirmFileService confirmFileService;
+
+    @Autowired
+    BulkRegistService bulkRegistService;
 
     // 管理者
     boolean isAdmin;
@@ -125,10 +130,26 @@ public class UsersController {
 
         // 値の設定
         dto = confirmFileService.setUserDtoList(file);
+        model.addAttribute("confirmFileDTO", dto);
         model.addAttribute("userDtoList", dto.getUserDtoList());
         model.addAttribute("roleClassList", RoleClass.values());
         model.addAttribute("loginUserInfo", loginUser.getLoginUser());
         return "user/confirm-file";
+    }
+
+    // 一括登録処理
+    @PostMapping("/user/bulk-regist")
+    public String bulkRegist(@ModelAttribute ConfirmFileDTO confirmDTO,
+                             Model model,
+                             @AuthenticationPrincipal LoginUserDetails loginUser) {
+        // 一括登録処理
+        CompletedBulkRegistDTO completedDTO = bulkRegistService.insert(confirmDTO.getUserDtoList(), loginUser);
+        // 失敗したらメッセージ表示
+
+        model.addAttribute("insertCount", completedDTO.getInsertCount());
+        model.addAttribute("updateCount", completedDTO.getUpdateCount());
+        model.addAttribute("loginUserInfo", loginUser.getLoginUser());
+        return "user/bulk-regist";
     }
 
     // 登録画面初期表示

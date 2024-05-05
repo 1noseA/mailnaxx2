@@ -60,8 +60,8 @@ public class UsersService {
     // 登録処理
     @Transactional
     public void insert(UsersForm usersForm, @AuthenticationPrincipal LoginUserDetails loginUser) {
-        // 入力値をセットする
-        Users user = setUserForm(new Users(), usersForm);
+        // エンティティにセットする
+        Users user = setEntity(new Users(), usersForm);
 
         // パスワードはハッシュにする
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -80,8 +80,8 @@ public class UsersService {
         // 排他ロック
         user = usersMapper.forLockById(user.getUserId());
 
-        // 入力値をセットする
-        user = setUserForm(user, usersForm);
+        // エンティティにセットする
+        user = setEntity(user, usersForm);
 
         // パスワードは入力されていたら変更
         if (usersForm.getPassword() != "") {
@@ -100,8 +100,8 @@ public class UsersService {
         usersMapper.update(user);
     }
 
-    // 入力値をセットする
-    private Users setUserForm(Users user, UsersForm usersForm) {
+    // エンティティにセットする
+    private Users setEntity(Users user, UsersForm usersForm) {
         // 氏名
         user.setUserName(usersForm.getUserLastName() + CommonConstants.HALF_SPACE + usersForm.getUserFirstName());
         user.setUserNameKana(usersForm.getUserLastKana() + CommonConstants.HALF_SPACE + usersForm.getUserFirstKana());
