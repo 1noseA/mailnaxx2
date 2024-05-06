@@ -100,9 +100,9 @@ public class BulkRegistService {
                     .filter(u -> u.getHireDate().isEqual(dto.getHireDate()))
                     .count() + 1;
             String num = max >= 10 ? String.valueOf(max) : CommonConstants.FILLED_ZERO + String.valueOf(max);
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-            String hireDateStr = dto.getHireDate().format(formatter);
-            user.setUserNumber(hireDateStr + num);
+            String hireDateStr = dto.getHireDate().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+            String userNumber = hireDateStr.substring(0,6) + num;
+            user.setUserNumber(userNumber);
         }
 
         // 氏名
