@@ -18,6 +18,7 @@
                         <tr class="border-bottom border-dark">
                             <th scope="col">登録件数</th>
                             <th scope="col">更新件数</th>
+                            <th scope="col">エラー件数</th>
                             <th scope="col">総件数</th>
                         </tr>
                     </thead>
@@ -30,6 +31,10 @@
                                 <span th:text="${updateCount}"></span>
                             </td>
                             <td>
+                                <span th:text="${errorCount}"></span>
+                            </td>
+                            <td>
+                                <span th:text="${totalCount}"></span>
                             </td>
                         </tr>
                     </tbody>

@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.mailnaxx2.constants.CommonConstants;
 import com.mailnaxx2.constants.UserConstants;
+import com.mailnaxx2.dto.BulkRegistUsersDTO;
 import com.mailnaxx2.dto.CompletedBulkRegistDTO;
 import com.mailnaxx2.dto.ConfirmFileDTO;
 import com.mailnaxx2.entity.Affiliations;
@@ -34,6 +35,7 @@ import com.mailnaxx2.service.ConfirmFileService;
 import com.mailnaxx2.service.UsersService;
 import com.mailnaxx2.validation.All;
 import com.mailnaxx2.validation.GroupOrder;
+import com.mailnaxx2.values.ProcessClass;
 import com.mailnaxx2.values.RoleClass;
 
 @Controller
@@ -130,8 +132,10 @@ public class UsersController {
 
         // 値の設定
         dto = confirmFileService.setUserDtoList(file);
-        model.addAttribute("confirmFileDTO", dto);
+        session.setAttribute("session_userDtoList", dto.getUserDtoList());
+        //model.addAttribute("confirmFileDTO", dto);
         model.addAttribute("userDtoList", dto.getUserDtoList());
+        model.addAttribute("processClassList", ProcessClass.values());
         model.addAttribute("roleClassList", RoleClass.values());
         model.addAttribute("loginUserInfo", loginUser.getLoginUser());
         return "user/confirm-file";
@@ -139,15 +143,18 @@ public class UsersController {
 
     // 一括登録処理
     @PostMapping("/user/bulk-regist")
-    public String bulkRegist(@ModelAttribute ConfirmFileDTO confirmDTO,
-                             Model model,
+    public String bulkRegist(Model model,
                              @AuthenticationPrincipal LoginUserDetails loginUser) {
+        @SuppressWarnings({ "unchecked", "unused" })
+        List<BulkRegistUsersDTO> userDtoList = (List<BulkRegistUsersDTO>) session.getAttribute("session_userDtoList");
         // 一括登録処理
-        CompletedBulkRegistDTO completedDTO = bulkRegistService.insert(confirmDTO.getUserDtoList(), loginUser);
+        CompletedBulkRegistDTO completedDTO = bulkRegistService.insert(userDtoList, loginUser);
         // 失敗したらメッセージ表示
 
         model.addAttribute("insertCount", completedDTO.getInsertCount());
         model.addAttribute("updateCount", completedDTO.getUpdateCount());
+        model.addAttribute("errorCount", completedDTO.getErrorCount());
+        model.addAttribute("totalCount", completedDTO.getTotalCount());
         model.addAttribute("loginUserInfo", loginUser.getLoginUser());
         return "user/bulk-regist";
     }

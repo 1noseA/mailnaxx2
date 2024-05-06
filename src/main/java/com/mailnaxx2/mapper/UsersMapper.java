@@ -48,10 +48,10 @@ public interface UsersMapper {
     public List<Users> findBySales();
 
     // 登録
-    public void insert(Users user);
+    public int insert(Users user);
 
     // 更新
-    public void update(Users user);
+    public int update(Users user);
 
     // 論理削除
     public void delete(List<Users> userList);

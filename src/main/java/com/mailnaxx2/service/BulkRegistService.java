@@ -1,6 +1,7 @@
 package com.mailnaxx2.service;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,8 @@ public class BulkRegistService {
 
         int insertCount = 0;
         int updateCount = 0;
+        int errorCount = 0;
+        int totalCount = userDtoList.size();
 
         CompletedBulkRegistDTO completedDTO = new CompletedBulkRegistDTO();
         for (int i = 0; i < userDtoList.size(); i++) {
@@ -50,9 +53,13 @@ public class BulkRegistService {
                 user.setCreatedBy(loginUser.getLoginUser().getUserNumber());
 
                 // 登録
-                usersMapper.insert(user);
-                insertCount++;
-            } else { // 登録の場合
+                int count = usersMapper.insert(user);
+                if (count > 0) {
+                    insertCount++;
+                } else {
+                    errorCount++;
+                }
+            } else { // 更新の場合
                 // パスワードは入力されていたら変更
                 if (dto.getPassword() != "") {
                     BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -66,12 +73,18 @@ public class BulkRegistService {
                 user.setUpdatedBy(loginUser.getLoginUser().getUserNumber());
 
                 // 更新
-                usersMapper.update(user);
-                updateCount++;
+                int count = usersMapper.update(user);
+                if (count > 0) {
+                    updateCount++;
+                } else {
+                    errorCount++;
+                }
             }
         }
         completedDTO.setInsertCount(insertCount);
         completedDTO.setUpdateCount(updateCount);
+        completedDTO.setErrorCount(errorCount);
+        completedDTO.setTotalCount(totalCount);
         return completedDTO;
     }
 
@@ -79,7 +92,7 @@ public class BulkRegistService {
     private Users setEntity(Users user, BulkRegistUsersDTO dto) {
         // 社員番号
         if (dto.getProcessClass().equals(ProcessClass.UPDATE.getCode())) {
-            user.setUserNumber(dto.getUserNameKana());
+            user.setUserNumber(dto.getUserNumber());
         } else {
             // 社員番号生成
             List<Users> usersList =  usersMapper.findAll();
@@ -87,7 +100,9 @@ public class BulkRegistService {
                     .filter(u -> u.getHireDate().isEqual(dto.getHireDate()))
                     .count() + 1;
             String num = max >= 10 ? String.valueOf(max) : CommonConstants.FILLED_ZERO + String.valueOf(max);
-            user.setUserNumber(dto.getHireDate() + num);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+            String hireDateStr = dto.getHireDate().format(formatter);
+            user.setUserNumber(hireDateStr + num);
         }
 
         // 氏名

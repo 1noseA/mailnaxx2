@@ -39,7 +39,12 @@
                                         <span th:text="${stat.count}"></span>
                                     </td>
                                     <td>
-                                        <span th:text="${userList.processClass}"></span>
+                                        <th:block th:each="processClass : ${processClassList}">
+                                            <th:block th:if="${userList.processClass == processClass.code}">
+                                                <span th:text="${processClass.viewName}"></span>
+                                            </th:block>
+                                        </th:block>
+                                        <!-- <span th:text="${ProcessClass.getViewNameByCode(userList.processClass)}"></span> -->
                                     </td>
                                     <td>
                                         <span th:text="${userList.userNumber}"></span>
@@ -84,7 +89,7 @@
                         </tbody>
                     </table>
                     <div class="my-4">
-                        <input type="hidden" th:value="${confirmDTO}" name="confirmDTO">
+                        <!-- <input type="hidden" th:value="${confirmDTO}" name="confirmDTO"> -->
                         <!-- <input type="hidden" th:value="${userDtoList}" name="userDtoList"> -->
                         <button type="submit" class="btn btnMain">確定</button>
                     </div>

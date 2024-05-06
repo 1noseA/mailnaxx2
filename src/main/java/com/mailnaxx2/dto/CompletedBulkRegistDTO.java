@@ -13,4 +13,10 @@ public class CompletedBulkRegistDTO {
 
     // 更新件数
     private int updateCount;
+
+    // エラー件数
+    private int errorCount;
+
+    // 総件数
+    private int totalCount;
 }

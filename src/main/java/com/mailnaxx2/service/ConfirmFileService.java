@@ -112,10 +112,7 @@ public class ConfirmFileService {
                 BulkRegistUsersDTO userDto = new BulkRegistUsersDTO();
 
                 // 処理区分
-                if (item[0].equals(ProcessClass.INSERT.getCode()) ||
-                    item[0].equals(ProcessClass.UPDATE.getCode())) {
-                    userDto.setProcessClass(ProcessClass.getViewNameByCode(item[0]));
-                }
+                userDto.setProcessClass(item[0]);
                 // 社員番号
                 if (StringUtils.isNotEmpty(item[1])) {
                     userDto.setUserNumber(item[1]);
@@ -134,13 +131,17 @@ public class ConfirmFileService {
                 userDto.setHireDate(hireDate);
                 // 所属
                 Affiliations affiliation = new Affiliations();
+                int affiliationId = 0;
                 String affiliationName = null;
                 if (StringUtils.isEmpty(item[8])) {
+                    affiliationId = CommonConstants.DEFAULT_AFFILIATION_ID;
                     affiliationName = affiliationsService.findNameById(CommonConstants.DEFAULT_AFFILIATION_ID);
                 } else {
+                    affiliationId = Integer.parseInt(item[8]);
                     // 所属IDを基に所属名取得
                     affiliationName = affiliationsService.findNameById(Integer.parseInt(item[8]));
                 }
+                affiliation.setAffiliationId(affiliationId);
                 affiliation.setAffiliationName(affiliationName);
                 userDto.setAffiliation(affiliation);
                 // 権限区分
