@@ -17,7 +17,8 @@
                     <th:block th:if="${messageList != null && messageList.size() > 0}">
                         <div class="col-md-12 ms-3 pb-3">
                             <th:block th:each="message : ${messageList}">
-                                <span class="text-danger" th:text="${message.lineNum + '&emsp;' + message.item + '：' + message.content}"></span><br>
+                                <span class="text-danger" th:if="${message.lineNum != null && message.item != null}" th:text="${message.lineNum + '&emsp;' + message.item + '：'}"></span>
+                                <span class="text-danger" th:text="${message.content}"></span><br>
                             </th:block>
                         </div>
                     </th:block>

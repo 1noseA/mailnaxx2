@@ -1,5 +1,6 @@
 package com.mailnaxx2.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.servlet.http.HttpSession;
@@ -35,6 +36,7 @@ import com.mailnaxx2.service.ConfirmFileService;
 import com.mailnaxx2.service.UsersService;
 import com.mailnaxx2.validation.All;
 import com.mailnaxx2.validation.GroupOrder;
+import com.mailnaxx2.validation.Message;
 import com.mailnaxx2.values.ProcessClass;
 import com.mailnaxx2.values.RoleClass;
 
@@ -133,7 +135,6 @@ public class UsersController {
         // 値の設定
         dto = confirmFileService.setUserDtoList(file);
         session.setAttribute("session_userDtoList", dto.getUserDtoList());
-        //model.addAttribute("confirmFileDTO", dto);
         model.addAttribute("userDtoList", dto.getUserDtoList());
         model.addAttribute("processClassList", ProcessClass.values());
         model.addAttribute("roleClassList", RoleClass.values());
@@ -149,7 +150,15 @@ public class UsersController {
         List<BulkRegistUsersDTO> userDtoList = (List<BulkRegistUsersDTO>) session.getAttribute("session_userDtoList");
         // 一括登録処理
         CompletedBulkRegistDTO completedDTO = bulkRegistService.insert(userDtoList, loginUser);
-        // 失敗したらメッセージ表示
+        // エラーの場合
+        if (completedDTO.getErrorCount() > 0) {
+            Message message = new Message();
+            message.setContent("登録・更新に失敗しました");
+            List<Message> messageList = new ArrayList<>();
+            messageList.add(message);
+            model.addAttribute("messageList", messageList);
+            return uploadFile(model, loginUser);
+        }
 
         model.addAttribute("insertCount", completedDTO.getInsertCount());
         model.addAttribute("updateCount", completedDTO.getUpdateCount());
