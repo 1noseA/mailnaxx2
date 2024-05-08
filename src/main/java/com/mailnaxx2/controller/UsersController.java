@@ -1,5 +1,6 @@
 package com.mailnaxx2.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.servlet.http.HttpSession;
@@ -20,18 +21,23 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.mailnaxx2.constants.CommonConstants;
 import com.mailnaxx2.constants.UserConstants;
+import com.mailnaxx2.dto.BulkRegistUsersDTO;
+import com.mailnaxx2.dto.CompletedBulkRegistDTO;
+import com.mailnaxx2.dto.ConfirmFileDTO;
 import com.mailnaxx2.entity.Affiliations;
 import com.mailnaxx2.entity.Users;
-import com.mailnaxx2.form.BulkRegistUsersForm;
 import com.mailnaxx2.form.SearchUsersForm;
 import com.mailnaxx2.form.SelectForm;
 import com.mailnaxx2.form.UsersForm;
 import com.mailnaxx2.security.LoginUserDetails;
 import com.mailnaxx2.service.AffiliationsService;
+import com.mailnaxx2.service.BulkRegistService;
 import com.mailnaxx2.service.ConfirmFileService;
 import com.mailnaxx2.service.UsersService;
 import com.mailnaxx2.validation.All;
 import com.mailnaxx2.validation.GroupOrder;
+import com.mailnaxx2.validation.Message;
+import com.mailnaxx2.values.ProcessClass;
 import com.mailnaxx2.values.RoleClass;
 
 @Controller
@@ -48,6 +54,9 @@ public class UsersController {
 
     @Autowired
     ConfirmFileService confirmFileService;
+
+    @Autowired
+    BulkRegistService bulkRegistService;
 
     // 管理者
     boolean isAdmin;
@@ -103,11 +112,11 @@ public class UsersController {
     }
 
     // 一括登録初期表示
-    @GetMapping("/user/bulk-regist")
-    public String bulkRegist(Model model,
+    @GetMapping("/user/upload-file")
+    public String uploadFile(Model model,
                              @AuthenticationPrincipal LoginUserDetails loginUser) {
         model.addAttribute("loginUserInfo", loginUser.getLoginUser());
-        return "user/bulk-regist";
+        return "user/upload-file";
     }
 
     // 内容確認
@@ -116,19 +125,47 @@ public class UsersController {
                               Model model,
                               @AuthenticationPrincipal LoginUserDetails loginUser) {
         // 入力チェック
-        BulkRegistUsersForm bulkRegistUsersForm = confirmFileService.checkFile(file);
+        ConfirmFileDTO dto = confirmFileService.checkFile(file);
         // エラーの場合
-        if (bulkRegistUsersForm.getMessageList().size() > 0) {
-            model.addAttribute("messageList", bulkRegistUsersForm.getMessageList());
-            return bulkRegist(model, loginUser);
+        if (dto.getMessageList().size() > 0) {
+            model.addAttribute("messageList", dto.getMessageList());
+            return uploadFile(model, loginUser);
         }
 
         // 値の設定
-        bulkRegistUsersForm = confirmFileService.setUserDtoList(file);
-        model.addAttribute("userDtoList", bulkRegistUsersForm.getUserDtoList());
+        dto = confirmFileService.setUserDtoList(file);
+        session.setAttribute("session_userDtoList", dto.getUserDtoList());
+        model.addAttribute("userDtoList", dto.getUserDtoList());
+        model.addAttribute("processClassList", ProcessClass.values());
         model.addAttribute("roleClassList", RoleClass.values());
         model.addAttribute("loginUserInfo", loginUser.getLoginUser());
         return "user/confirm-file";
+    }
+
+    // 一括登録処理
+    @PostMapping("/user/bulk-regist")
+    public String bulkRegist(Model model,
+                             @AuthenticationPrincipal LoginUserDetails loginUser) {
+        @SuppressWarnings({ "unchecked", "unused" })
+        List<BulkRegistUsersDTO> userDtoList = (List<BulkRegistUsersDTO>) session.getAttribute("session_userDtoList");
+        // 一括登録処理
+        CompletedBulkRegistDTO completedDTO = bulkRegistService.insert(userDtoList, loginUser);
+        // エラーの場合
+        if (completedDTO.getErrorCount() > 0) {
+            Message message = new Message();
+            message.setContent("登録・更新に失敗しました");
+            List<Message> messageList = new ArrayList<>();
+            messageList.add(message);
+            model.addAttribute("messageList", messageList);
+            return uploadFile(model, loginUser);
+        }
+
+        model.addAttribute("insertCount", completedDTO.getInsertCount());
+        model.addAttribute("updateCount", completedDTO.getUpdateCount());
+        model.addAttribute("errorCount", completedDTO.getErrorCount());
+        model.addAttribute("totalCount", completedDTO.getTotalCount());
+        model.addAttribute("loginUserInfo", loginUser.getLoginUser());
+        return "user/bulk-regist";
     }
 
     // 登録画面初期表示

@@ -16,8 +16,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.mailnaxx2.constants.CommonConstants;
 import com.mailnaxx2.dto.BulkRegistUsersDTO;
+import com.mailnaxx2.dto.ConfirmFileDTO;
 import com.mailnaxx2.entity.Affiliations;
-import com.mailnaxx2.form.BulkRegistUsersForm;
 import com.mailnaxx2.validation.Message;
 import com.mailnaxx2.values.BulkRegistCsvItem;
 import com.mailnaxx2.values.ProcessClass;
@@ -29,8 +29,8 @@ public class ConfirmFileService {
     AffiliationsService affiliationsService;
 
     // 入力チェック
-    public BulkRegistUsersForm checkFile(MultipartFile file) {
-        BulkRegistUsersForm bulkRegistUsersForm = new BulkRegistUsersForm();
+    public ConfirmFileDTO checkFile(MultipartFile file) {
+        ConfirmFileDTO dto = new ConfirmFileDTO();
         List<Message> messageList = new ArrayList<>();
 
         try (InputStream inputStream = file.getInputStream();
@@ -52,40 +52,55 @@ public class ConfirmFileService {
                 }
 
                 // 桁数・文字種チェック
-                List<Message> tempList = checkDigits(item);
-                if (tempList.size() > 0) {
-                    for (Message temp : tempList) {
-                        temp.setLineNum(i + "行目");
+                List<Message> checkDigitList = checkDigit(item);
+                if (checkDigitList.size() > 0) {
+                    for (Message list : checkDigitList) {
+                        list.setLineNum(i + "行目");
                     }
-                    messageList.addAll(tempList);
+                    messageList.addAll(checkDigitList);
                 }
 
                 // 処理区分と社員番号の相関チェック
-                // checkProcessClass(item);
+                List<Message> checkProcessList = checkProcessClass(item);
+                if (checkProcessList.size() > 0) {
+                    for (Message list : checkProcessList) {
+                        list.setLineNum(i + "行目");
+                    }
+                    messageList.addAll(checkProcessList);
+                }
 
                 // 電話番号整合性
-                // checkPhoneNumber(item);
+                if (checkPhoneNumber(item[17] + item[18] + item[19])) {
+                    Message message = new Message();
+                    message.setLineNum(i + "行目");
+                    message.setItem("電話番号");
+                    message.setContent("正しく入力してください");
+                    messageList.add(message);
+                }
 
                 // メールアドレス整合性
-                // checkEmail(item);
-
-                // パスワード整合性
-                // checkPassword(item);
-
+                if (checkEmail(item[20])) {
+                    Message message = new Message();
+                    message.setLineNum(i + "行目");
+                    message.setItem("メールアドレス");
+                    message.setContent("正しく入力してください");
+                    messageList.add(message);
+                }
             }
-            if (messageList.size() > 0) {
-                bulkRegistUsersForm.setMessageList(messageList);
+
+            if (messageList != null) {
+                dto.setMessageList(messageList);
             }
             br.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return bulkRegistUsersForm;
+        return dto;
     }
 
     // 値の設定
-    public BulkRegistUsersForm setUserDtoList(MultipartFile file) {
-        BulkRegistUsersForm bulkRegistUsersForm = new BulkRegistUsersForm();
+    public ConfirmFileDTO setUserDtoList(MultipartFile file) {
+        ConfirmFileDTO bulkRegistUsersForm = new ConfirmFileDTO();
         List<BulkRegistUsersDTO> userDtoList = new ArrayList<>();
 
         try (InputStream inputStream = file.getInputStream();
@@ -97,12 +112,7 @@ public class ConfirmFileService {
                 BulkRegistUsersDTO userDto = new BulkRegistUsersDTO();
 
                 // 処理区分
-                if (item[0].equals(ProcessClass.INSERT.getCode()) ||
-                    item[0].equals(ProcessClass.UPDATE.getCode())) {
-                    userDto.setProcessClass(ProcessClass.getViewNameByCode(item[0]));
-                } else {
-                    // エラー
-                }
+                userDto.setProcessClass(item[0]);
                 // 社員番号
                 if (StringUtils.isNotEmpty(item[1])) {
                     userDto.setUserNumber(item[1]);
@@ -121,13 +131,17 @@ public class ConfirmFileService {
                 userDto.setHireDate(hireDate);
                 // 所属
                 Affiliations affiliation = new Affiliations();
+                int affiliationId = 0;
                 String affiliationName = null;
                 if (StringUtils.isEmpty(item[8])) {
+                    affiliationId = CommonConstants.DEFAULT_AFFILIATION_ID;
                     affiliationName = affiliationsService.findNameById(CommonConstants.DEFAULT_AFFILIATION_ID);
                 } else {
+                    affiliationId = Integer.parseInt(item[8]);
                     // 所属IDを基に所属名取得
                     affiliationName = affiliationsService.findNameById(Integer.parseInt(item[8]));
                 }
+                affiliation.setAffiliationId(affiliationId);
                 affiliation.setAffiliationName(affiliationName);
                 userDto.setAffiliation(affiliation);
                 // 権限区分
@@ -190,7 +204,7 @@ public class ConfirmFileService {
     }
 
     // 桁数・文字種チェック
-    private List<Message> checkDigits(String[] item) {
+    private List<Message> checkDigit(String[] item) {
         List<Message> messageList = new ArrayList<>();
         for (int i = 0; i < item.length; i++) {
             if (StringUtils.isEmpty(item[i])) {
@@ -262,7 +276,7 @@ public class ConfirmFileService {
                 }
                 break;
             case 20:
-                if (!item[i].matches("^[a-zA-Z0-9]{1,128}$")) {
+                if (!item[i].matches("^[a-zA-Z0-9._%+-@]{1,128}$")) {
                     Message message = new Message();
                     message.setItem(BulkRegistCsvItem.getViewNameByCode(String.valueOf(i)));
                     message.setContent("半角英数字128文字以内で入力してください");
@@ -270,7 +284,7 @@ public class ConfirmFileService {
                 }
                 break;
             case 21:
-                if (!item[i].matches("/^(?=.*?[0-9])[a-zA-Z0-9]{8,10}$/")) {
+                if (!item[i].matches("^(?=.*[0-9])(?=.*[a-zA-Z])[a-zA-Z0-9]{8,10}$")) {
                     Message message = new Message();
                     message.setItem(BulkRegistCsvItem.getViewNameByCode(String.valueOf(i)));
                     message.setContent("半角英数字8文字以上10文字以内で入力してください");
@@ -283,11 +297,42 @@ public class ConfirmFileService {
     }
 
     // 処理区分と社員番号の相関チェック
+    private List<Message> checkProcessClass(String[] item) {
+        List<Message> messageList = new ArrayList<>();
+        if (!item[0].equals(ProcessClass.INSERT.getCode()) && !item[0].equals(ProcessClass.UPDATE.getCode())) {
+            Message message = new Message();
+            message.setItem(BulkRegistCsvItem.getViewNameByCode("0"));
+            message.setContent("半角数字1か2を入力してください");
+            messageList.add(message);
+        } else if (item[0].equals(ProcessClass.INSERT.getCode()) && StringUtils.isNotEmpty(item[1])) {
+            Message message = new Message();
+            message.setItem(BulkRegistCsvItem.getViewNameByCode("1"));
+            message.setContent("登録の場合は入力できません");
+            messageList.add(message);
+        } else if (item[0].equals(ProcessClass.UPDATE.getCode()) && StringUtils.isEmpty(item[1])) {
+            Message message = new Message();
+            message.setItem(BulkRegistCsvItem.getViewNameByCode("1"));
+            message.setContent("更新の場合は入力してください");
+            messageList.add(message);
+        }
+        return messageList;
+    }
 
     // 電話番号整合性
+    private Boolean checkPhoneNumber(String phoneNumber) {
+        Boolean result = false;
+        if (!phoneNumber.matches("^0\\d{9,10}$")) {
+            result = true;
+        }
+        return result;
+    }
 
     // メールアドレス整合性
-
-    // パスワード整合性
-
+    private Boolean checkEmail(String email) {
+        Boolean result = false;
+        if (!email.matches("^([a-zA-Z0-9])+([a-zA-Z0-9._-])*@([a-zA-Z0-9_-])+([a-zA-Z0-9._-]+)+$")) {
+            result = true;
+        }
+        return result;
+    }
 }
