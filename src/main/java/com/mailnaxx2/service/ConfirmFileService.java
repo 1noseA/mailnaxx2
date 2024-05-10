@@ -33,6 +33,15 @@ public class ConfirmFileService {
         ConfirmFileDTO dto = new ConfirmFileDTO();
         List<Message> messageList = new ArrayList<>();
 
+        // ファイル必須チェック
+        if (file.isEmpty()) {
+            Message message = new Message();
+            message.setContent("ファイルを選択してください");
+            messageList.add(message);
+            dto.setMessageList(messageList);
+            return dto;
+        }
+
         try (InputStream inputStream = file.getInputStream();
                 BufferedReader br = new BufferedReader(new InputStreamReader(inputStream))) {
             String line = br.readLine();
