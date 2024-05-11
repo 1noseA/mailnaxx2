@@ -10,6 +10,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import com.mailnaxx2.constants.CommonConstants;
 import com.mailnaxx2.dto.BulkRegistUsersDTO;
@@ -85,6 +86,8 @@ public class BulkRegistService {
             }
         } catch (Exception e) {
             errorCount++;
+            // 明示的にロールバック
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
         } finally {
             completedDTO.setInsertCount(insertCount);
             completedDTO.setUpdateCount(updateCount);
