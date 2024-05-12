@@ -4,11 +4,13 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import com.mailnaxx2.constants.CommonConstants;
 import com.mailnaxx2.dto.BulkRegistUsersDTO;
@@ -25,66 +27,73 @@ public class BulkRegistService {
     UsersMapper usersMapper;
 
     // 一括登録処理
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public CompletedBulkRegistDTO insert(List<BulkRegistUsersDTO> userDtoList, @AuthenticationPrincipal LoginUserDetails loginUser) {
 
         int insertCount = 0;
         int updateCount = 0;
         int errorCount = 0;
         int totalCount = userDtoList.size();
-
         CompletedBulkRegistDTO completedDTO = new CompletedBulkRegistDTO();
-        for (int i = 0; i < userDtoList.size(); i++) {
-            BulkRegistUsersDTO dto = userDtoList.get(i);
-            Users user = new Users();
 
-            // 更新の場合、排他ロックを行う
-            if (dto.getProcessClass().equals(ProcessClass.UPDATE.getCode())) {
-                user = usersMapper.forLockByNumber(dto.getUserNumber());
-            }
-            // エンティティにセットする
-            user = setEntity(user, dto);
+        try {
+            for (int i = 0; i < userDtoList.size(); i++) {
+                BulkRegistUsersDTO dto = userDtoList.get(i);
+                Users user = new Users();
 
-            if (dto.getProcessClass().equals(ProcessClass.INSERT.getCode())) {
-                // パスワードはハッシュにする
-                BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-                user.setPassword(passwordEncoder.encode(dto.getPassword()));
-                // 作成者はセッションの社員番号
-                user.setCreatedBy(loginUser.getLoginUser().getUserNumber());
-
-                // 登録
-                int count = usersMapper.insert(user);
-                if (count > 0) {
-                    insertCount++;
-                } else {
-                    errorCount++;
+                // 更新の場合、排他ロックを行う
+                if (dto.getProcessClass().equals(ProcessClass.UPDATE.getCode())) {
+                    user = usersMapper.forLockByNumber(dto.getUserNumber());
                 }
-            } else { // 更新の場合
-                // パスワードは入力されていたら変更
-                if (dto.getPassword() != "") {
+                // エンティティにセットする
+                user = setEntity(user, dto);
+
+                if (dto.getProcessClass().equals(ProcessClass.INSERT.getCode())) {
+                    // パスワードはハッシュにする
                     BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
                     user.setPassword(passwordEncoder.encode(dto.getPassword()));
-                    // パスワード変更日時
-                    user.setPassChangedDate(LocalDateTime.now());
-                    // 前回パスワード
-                    user.setOldPassword(user.getPassword());
-                }
-                // 更新者はセッションの社員番号
-                user.setUpdatedBy(loginUser.getLoginUser().getUserNumber());
+                    // 作成者はセッションの社員番号
+                    user.setCreatedBy(loginUser.getLoginUser().getUserNumber());
 
-                // 更新
-                int count = usersMapper.update(user);
-                if (count > 0) {
-                    updateCount++;
-                } else {
-                    errorCount++;
+                    // 登録
+                    int count = usersMapper.insert(user);
+                    if (count > 0) {
+                        insertCount++;
+                    } else {
+                        throw new Exception("登録に失敗しました");
+                    }
+                } else { // 更新の場合
+                    // パスワードは入力されていたら変更
+                    if (StringUtils.isNotEmpty(dto.getPassword())) {
+                        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+                        user.setPassword(passwordEncoder.encode(dto.getPassword()));
+                        // パスワード変更日時
+                        user.setPassChangedDate(LocalDateTime.now());
+                        // 前回パスワード
+                        user.setOldPassword(user.getPassword());
+                    }
+                    // 更新者はセッションの社員番号
+                    user.setUpdatedBy(loginUser.getLoginUser().getUserNumber());
+
+                    // 更新
+                    int count = usersMapper.update(user);
+                    if (count > 0) {
+                        updateCount++;
+                    } else {
+                        throw new Exception("更新に失敗しました");
+                    }
                 }
             }
+        } catch (Exception e) {
+            errorCount++;
+            // 明示的にロールバック
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+        } finally {
+            completedDTO.setInsertCount(insertCount);
+            completedDTO.setUpdateCount(updateCount);
+            completedDTO.setErrorCount(errorCount);
+            completedDTO.setTotalCount(totalCount);
         }
-        completedDTO.setInsertCount(insertCount);
-        completedDTO.setUpdateCount(updateCount);
-        completedDTO.setErrorCount(errorCount);
-        completedDTO.setTotalCount(totalCount);
         return completedDTO;
     }
 
