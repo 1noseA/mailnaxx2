@@ -206,8 +206,21 @@ public class UsersController {
         return "redirect:/user/list";
     }
 
+    // CSV出力
+    @PostMapping("/user/csv-export")
+    public String csvExport(@ModelAttribute SelectForm selectForm,
+                            SearchUsersForm searchUsersForm,
+                            Model model,
+                            @AuthenticationPrincipal LoginUserDetails loginUser) {
+        // 選択がなかったら一覧表示全件出力
+        if (selectForm.getSelectUserId() == null) {
+            return  index(searchUsersForm, model, loginUser);
+        }
+        return index(searchUsersForm, model, loginUser);
+    }
+
     // 論理削除処理
-    @RequestMapping("/user/delete")
+    @PostMapping("/user/delete")
     public String delete(@ModelAttribute SelectForm selectForm,
                         SearchUsersForm searchUsersForm,
                         Model model,
