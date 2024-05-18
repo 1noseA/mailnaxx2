@@ -3,6 +3,7 @@ package com.mailnaxx2.values;
 // 処理区分
 public enum ProcessClass {
 
+    NONE("0", ""),
     INSERT("1", "登録"),
     UPDATE("2", "更新");
 

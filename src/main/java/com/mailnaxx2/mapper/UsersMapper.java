@@ -47,6 +47,9 @@ public interface UsersMapper {
     // 営業担当取得
     public List<Users> findBySales();
 
+    // CSVデータ取得
+    public List<Users> findByIdList(List<Integer> idList);
+
     // 登録
     public int insert(Users user);
 

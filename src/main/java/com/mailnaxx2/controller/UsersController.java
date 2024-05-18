@@ -29,10 +29,12 @@ import com.mailnaxx2.entity.Users;
 import com.mailnaxx2.form.SearchUsersForm;
 import com.mailnaxx2.form.SelectForm;
 import com.mailnaxx2.form.UsersForm;
+import com.mailnaxx2.model.UsersCsv;
 import com.mailnaxx2.security.LoginUserDetails;
 import com.mailnaxx2.service.AffiliationsService;
 import com.mailnaxx2.service.BulkRegistService;
 import com.mailnaxx2.service.ConfirmFileService;
+import com.mailnaxx2.service.UsersCsvExport;
 import com.mailnaxx2.service.UsersService;
 import com.mailnaxx2.validation.All;
 import com.mailnaxx2.validation.GroupOrder;
@@ -57,6 +59,9 @@ public class UsersController {
 
     @Autowired
     BulkRegistService bulkRegistService;
+
+    @Autowired
+    UsersCsvExport usersCsvExport;
 
     // 管理者
     boolean isAdmin;
@@ -216,6 +221,11 @@ public class UsersController {
         if (selectForm.getSelectUserId() == null) {
             return  index(searchUsersForm, model, loginUser);
         }
+        // CSVデータ取得処理
+        List<UsersCsv> csvList = usersCsvExport.getUsersCsv(selectForm.getSelectUserId());
+
+        // CSV出力処理
+
         return index(searchUsersForm, model, loginUser);
     }
 
