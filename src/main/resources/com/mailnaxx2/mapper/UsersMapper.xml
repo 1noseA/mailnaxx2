@@ -228,8 +228,7 @@
             u.post_code,
             u.address,
             u.phone_number,
-            u.email_address,
-            u.password
+            u.email_address
         FROM users u
         INNER JOIN affiliations a
             ON u.affiliation_id = a.affiliation_id
@@ -239,6 +238,7 @@
                 open="(" separator="," close=")">
                 #{item}
             </foreach>
+        ORDER BY u.user_number
     </select>
 
     <!-- マッピング -->

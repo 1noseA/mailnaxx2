@@ -1,5 +1,6 @@
 package com.mailnaxx2.service;
 
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,16 +28,16 @@ public class UsersCsvExport {
             csvItem.setUserNumber(user.getUserNumber());
             csvItem.setUserName(user.getUserName());
             csvItem.setUserNameKana(user.getUserNameKana());
-            csvItem.setHireDate(user.getHireDate());
-            csvItem.setAffiliation(user.getAffiliation());
+            csvItem.setHireDate((user.getHireDate()).format(DateTimeFormatter.ofPattern("yyyy/MM/dd")));
+            csvItem.setAffiliationId(String.valueOf(user.getAffiliation().getAffiliationId()));
             csvItem.setRoleClass(user.getRoleClass());
             csvItem.setSalesFlg(user.getSalesFlg());
-            csvItem.setBirthDate(user.getBirthDate());
+            csvItem.setBirthDate((user.getBirthDate()).format(DateTimeFormatter.ofPattern("yyyy/MM/dd")));
             csvItem.setPostCode(user.getPostCode());
             csvItem.setAddress(user.getAddress());
             csvItem.setPhoneNumber(user.getPhoneNumber());
             csvItem.setEmailAddress(user.getEmailAddress());
-            csvItem.setPassword(user.getPassword());
+            csvItem.setPassword("********");
             csvList.add(csvItem);
         }
         return csvList;

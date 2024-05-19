@@ -1,8 +1,10 @@
 package com.mailnaxx2.controller;
 
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -213,20 +215,42 @@ public class UsersController {
 
     // CSV出力
     @PostMapping("/user/csv-export")
-    public String csvExport(@ModelAttribute SelectForm selectForm,
-                            SearchUsersForm searchUsersForm,
-                            Model model,
-                            @AuthenticationPrincipal LoginUserDetails loginUser) {
+    public void csvExport(@ModelAttribute SelectForm selectForm,
+                          SearchUsersForm searchUsersForm,
+                          Model model,
+                          @AuthenticationPrincipal LoginUserDetails loginUser,
+                          HttpServletResponse response) {
         // 選択がなかったら一覧表示全件出力
         if (selectForm.getSelectUserId() == null) {
-            return  index(searchUsersForm, model, loginUser);
         }
         // CSVデータ取得処理
         List<UsersCsv> csvList = usersCsvExport.getUsersCsv(selectForm.getSelectUserId());
 
-        // CSV出力処理
+        response.setContentType("text/csv; charset=UTF-8");
+        response.setHeader("Content-Disposition", "attachment; filename=UserInfo.csv");
 
-        return index(searchUsersForm, model, loginUser);
+        try(PrintWriter writer = response.getWriter()) {
+            for (UsersCsv user : csvList) {
+                writer.println(String.join(CommonConstants.COMMA,
+                    user.getProcessClass(),
+                    user.getUserNumber(),
+                    user.getUserName(),
+                    user.getUserNameKana(),
+                    user.getHireDate(),
+                    user.getAffiliationId(),
+                    user.getRoleClass(),
+                    user.getSalesFlg(),
+                    user.getBirthDate(),
+                    user.getPostCode(),
+                    user.getAddress(),
+                    user.getPhoneNumber(),
+                    user.getEmailAddress(),
+                    user.getPassword())
+                );
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     // 論理削除処理

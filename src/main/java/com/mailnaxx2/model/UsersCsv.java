@@ -1,9 +1,5 @@
 package com.mailnaxx2.model;
 
-import java.time.LocalDate;
-
-import com.mailnaxx2.entity.Affiliations;
-
 import lombok.Data;
 
 /**
@@ -25,10 +21,10 @@ public class UsersCsv {
     private String userNameKana;
 
     // 入社年月
-    private LocalDate hireDate;
+    private String hireDate;
 
     // 所属
-    private Affiliations affiliation;
+    private String affiliationId;
 
     // 権限区分
     private String roleClass;
@@ -37,7 +33,7 @@ public class UsersCsv {
     private String salesFlg;
 
     // 生年月日
-    private LocalDate birthDate;
+    private String birthDate;
 
     // 郵便番号
     private String postCode;
