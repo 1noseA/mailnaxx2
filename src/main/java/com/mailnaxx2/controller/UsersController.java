@@ -84,6 +84,7 @@ public class UsersController {
                         @AuthenticationPrincipal LoginUserDetails loginUser) {
         // 社員一覧を取得
         userList = usersService.findAll();
+        session.setAttribute("session_userList", userList);
         model.addAttribute("userList", userList);
         model.addAttribute("roleClassList", RoleClass.values());
 
@@ -108,6 +109,7 @@ public class UsersController {
                         @AuthenticationPrincipal LoginUserDetails loginUser) {
         // 社員一覧を取得
         userList = usersService.findBySearchForm(searchUsersForm);
+        session.setAttribute("session_userList", userList);
         model.addAttribute("userList", userList);
         model.addAttribute("roleClassList", RoleClass.values());
 
@@ -214,6 +216,7 @@ public class UsersController {
     }
 
     // CSV出力
+    @SuppressWarnings("unchecked")
     @PostMapping("/user/csv-export")
     public void csvExport(@ModelAttribute SelectForm selectForm,
                           SearchUsersForm searchUsersForm,
@@ -222,9 +225,15 @@ public class UsersController {
                           HttpServletResponse response) {
         // 選択がなかったら一覧表示全件出力
         if (selectForm.getSelectUserId() == null) {
+            // セッションから社員情報取得
+            userList = (List<Users>) session.getAttribute("session_userList");
+        } else {
+            // 選択したIDを基に社員情報取得
+            userList = usersCsvExport.findByIdList(selectForm.getSelectUserId());
         }
-        // CSVデータ取得処理
-        List<UsersCsv> csvList = usersCsvExport.getUsersCsv(selectForm.getSelectUserId());
+
+        // CSV項目設定
+        List<UsersCsv> csvList = usersCsvExport.setUsersCsv(userList);
 
         response.setContentType("text/csv; charset=UTF-8");
         response.setHeader("Content-Disposition", "attachment; filename=UserInfo.csv");

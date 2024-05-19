@@ -18,9 +18,14 @@ public class UsersCsvExport {
     @Autowired
     UsersMapper usersMapper;
 
-    // CSVデータ取得処理
-    public List<UsersCsv> getUsersCsv(List<Integer> selectUserId) {
+    // 社員情報取得
+    public List<Users> findByIdList(List<Integer> selectUserId) {
         List<Users> userList = usersMapper.findByIdList(selectUserId);
+        return userList;
+    }
+
+    // CSV項目設定
+    public List<UsersCsv> setUsersCsv(List<Users> userList) {
         List<UsersCsv> csvList = new ArrayList<>();
         for (Users user : userList) {
             UsersCsv csvItem = new UsersCsv();
