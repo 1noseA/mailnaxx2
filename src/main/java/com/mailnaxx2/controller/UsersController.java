@@ -239,22 +239,22 @@ public class UsersController {
         response.setHeader("Content-Disposition", "attachment; filename=UserInfo.csv");
 
         try(PrintWriter writer = response.getWriter()) {
-            for (UsersCsv user : csvList) {
+            for (UsersCsv csv : csvList) {
                 writer.println(String.join(CommonConstants.COMMA,
-                    user.getProcessClass(),
-                    user.getUserNumber(),
-                    user.getUserName(),
-                    user.getUserNameKana(),
-                    user.getHireDate(),
-                    user.getAffiliationId(),
-                    user.getRoleClass(),
-                    user.getSalesFlg(),
-                    user.getBirthDate(),
-                    user.getPostCode(),
-                    user.getAddress(),
-                    user.getPhoneNumber(),
-                    user.getEmailAddress(),
-                    user.getPassword())
+                    csv.getProcessClass(),
+                    csv.getUserNumber(),
+                    csv.getUserName(),
+                    csv.getUserNameKana(),
+                    csv.getHireDate(),
+                    csv.getAffiliationId(),
+                    csv.getRoleClass(),
+                    csv.getSalesFlg(),
+                    csv.getBirthDate(),
+                    csv.getPostCode(),
+                    csv.getAddress(),
+                    csv.getPhoneNumber(),
+                    csv.getEmailAddress(),
+                    csv.getPassword())
                 );
             }
         } catch (Exception e) {

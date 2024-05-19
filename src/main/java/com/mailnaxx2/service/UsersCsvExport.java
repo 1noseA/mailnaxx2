@@ -28,22 +28,22 @@ public class UsersCsvExport {
     public List<UsersCsv> setUsersCsv(List<Users> userList) {
         List<UsersCsv> csvList = new ArrayList<>();
         for (Users user : userList) {
-            UsersCsv csvItem = new UsersCsv();
-            csvItem.setProcessClass(ProcessClass.NONE.getCode());
-            csvItem.setUserNumber(user.getUserNumber());
-            csvItem.setUserName(user.getUserName());
-            csvItem.setUserNameKana(user.getUserNameKana());
-            csvItem.setHireDate((user.getHireDate()).format(DateTimeFormatter.ofPattern("yyyy/MM/dd")));
-            csvItem.setAffiliationId(String.valueOf(user.getAffiliation().getAffiliationId()));
-            csvItem.setRoleClass(user.getRoleClass());
-            csvItem.setSalesFlg(user.getSalesFlg());
-            csvItem.setBirthDate((user.getBirthDate()).format(DateTimeFormatter.ofPattern("yyyy/MM/dd")));
-            csvItem.setPostCode(user.getPostCode());
-            csvItem.setAddress(user.getAddress());
-            csvItem.setPhoneNumber(user.getPhoneNumber());
-            csvItem.setEmailAddress(user.getEmailAddress());
-            csvItem.setPassword("********");
-            csvList.add(csvItem);
+            UsersCsv csv = new UsersCsv();
+            csv.setProcessClass(ProcessClass.NONE.getCode());
+            csv.setUserNumber(user.getUserNumber());
+            csv.setUserName(user.getUserName());
+            csv.setUserNameKana(user.getUserNameKana());
+            csv.setHireDate((user.getHireDate()).format(DateTimeFormatter.ofPattern("yyyy/MM/dd")));
+            csv.setAffiliationId(String.valueOf(user.getAffiliation().getAffiliationId()));
+            csv.setRoleClass(user.getRoleClass());
+            csv.setSalesFlg(user.getSalesFlg());
+            csv.setBirthDate((user.getBirthDate()).format(DateTimeFormatter.ofPattern("yyyy/MM/dd")));
+            csv.setPostCode(user.getPostCode());
+            csv.setAddress(user.getAddress());
+            csv.setPhoneNumber(user.getPhoneNumber());
+            csv.setEmailAddress(user.getEmailAddress());
+            csv.setPassword("********");
+            csvList.add(csv);
         }
         return csvList;
     }
