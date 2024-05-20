@@ -7,4 +7,7 @@ public class UserConstants {
 
     // 所属_研修生
     public static final String TRAINEE = "2";
+
+    // CSV最大出力件数
+    public static final int CSV_MAX_LINE = 10000;
 }

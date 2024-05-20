@@ -69,7 +69,7 @@
                             <button type="button" class="btn btnLight" onclick="location.href='/user/upload-file'">一括登録</button>
                         </div>
                         <div class="mb-4" role="group">
-                            <button type="button" class="btn btnAccent me-3" onclick="location.href='/weekly-report/list'">報告を見る</button>
+                            <button type="submit" class="btn btnAccent me-3" th:formaction="@{/user/csv-export}">CSV出力</button>
                             <th:block th:if="${isAdmin}">
                                 <button type="submit" class="btn btnDark">削除</button>
                             </th:block>

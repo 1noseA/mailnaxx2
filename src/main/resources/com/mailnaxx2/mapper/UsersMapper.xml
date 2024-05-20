@@ -44,10 +44,17 @@
             u.user_id,
             u.user_number,
             u.user_name,
+            u.user_name_kana,
             u.hire_date,
+            a.affiliation_id,
             a.affiliation_name,
             u.role_class,
-            u.sales_flg
+            u.sales_flg,
+            u.birth_date,
+            u.post_code,
+            u.address,
+            u.phone_number,
+            u.email_address
         FROM users u
         INNER JOIN affiliations a
             ON u.affiliation_id = a.affiliation_id
@@ -62,10 +69,17 @@
             u.user_id,
             u.user_number,
             u.user_name,
+            u.user_name_kana,
             u.hire_date,
+            a.affiliation_id,
             a.affiliation_name,
             u.role_class,
-            u.sales_flg
+            u.sales_flg,
+            u.birth_date,
+            u.post_code,
+            u.address,
+            u.phone_number,
+            u.email_address
         FROM users u
         INNER JOIN affiliations a
             ON u.affiliation_id = a.affiliation_id
@@ -210,6 +224,35 @@
                 #{item}
             </foreach>
         FOR UPDATE
+    </select>
+
+    <!-- CSVデータ取得 -->
+    <select id="findByIdList" resultMap="userMap">
+        SELECT
+            u.user_id,
+            u.user_number,
+            u.user_name,
+            u.user_name_kana,
+            u.hire_date,
+            a.affiliation_id,
+            a.affiliation_name,
+            u.role_class,
+            u.sales_flg,
+            u.birth_date,
+            u.post_code,
+            u.address,
+            u.phone_number,
+            u.email_address
+        FROM users u
+        INNER JOIN affiliations a
+            ON u.affiliation_id = a.affiliation_id
+        WHERE
+            u.user_id IN
+            <foreach item="item" index="index" collection="idList"
+                open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        ORDER BY u.user_number
     </select>
 
     <!-- マッピング -->

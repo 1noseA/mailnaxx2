@@ -1,8 +1,10 @@
 package com.mailnaxx2.controller;
 
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,10 +31,12 @@ import com.mailnaxx2.entity.Users;
 import com.mailnaxx2.form.SearchUsersForm;
 import com.mailnaxx2.form.SelectForm;
 import com.mailnaxx2.form.UsersForm;
+import com.mailnaxx2.model.UsersCsv;
 import com.mailnaxx2.security.LoginUserDetails;
 import com.mailnaxx2.service.AffiliationsService;
 import com.mailnaxx2.service.BulkRegistService;
 import com.mailnaxx2.service.ConfirmFileService;
+import com.mailnaxx2.service.UsersCsvExport;
 import com.mailnaxx2.service.UsersService;
 import com.mailnaxx2.validation.All;
 import com.mailnaxx2.validation.GroupOrder;
@@ -58,6 +62,9 @@ public class UsersController {
     @Autowired
     BulkRegistService bulkRegistService;
 
+    @Autowired
+    UsersCsvExport usersCsvExport;
+
     // 管理者
     boolean isAdmin;
 
@@ -77,6 +84,7 @@ public class UsersController {
                         @AuthenticationPrincipal LoginUserDetails loginUser) {
         // 社員一覧を取得
         userList = usersService.findAll();
+        session.setAttribute("session_userList", userList);
         model.addAttribute("userList", userList);
         model.addAttribute("roleClassList", RoleClass.values());
 
@@ -101,6 +109,7 @@ public class UsersController {
                         @AuthenticationPrincipal LoginUserDetails loginUser) {
         // 社員一覧を取得
         userList = usersService.findBySearchForm(searchUsersForm);
+        session.setAttribute("session_userList", userList);
         model.addAttribute("userList", userList);
         model.addAttribute("roleClassList", RoleClass.values());
 
@@ -206,8 +215,55 @@ public class UsersController {
         return "redirect:/user/list";
     }
 
+    // CSV出力
+    @SuppressWarnings("unchecked")
+    @PostMapping("/user/csv-export")
+    public void csvExport(@ModelAttribute SelectForm selectForm,
+                          SearchUsersForm searchUsersForm,
+                          Model model,
+                          @AuthenticationPrincipal LoginUserDetails loginUser,
+                          HttpServletResponse response) {
+        // 選択がなかったら一覧表示全件出力
+        if (selectForm.getSelectUserId() == null) {
+            // セッションから社員情報取得
+            userList = (List<Users>) session.getAttribute("session_userList");
+        } else {
+            // 選択したIDを基に社員情報取得
+            userList = usersCsvExport.findByIdList(selectForm.getSelectUserId());
+        }
+
+        // CSV項目設定
+        List<UsersCsv> csvList = usersCsvExport.setUsersCsv(userList);
+
+        response.setContentType("text/csv; charset=UTF-8");
+        response.setHeader("Content-Disposition", "attachment; filename=UserInfo.csv");
+
+        try(PrintWriter writer = response.getWriter()) {
+            for (UsersCsv csv : csvList) {
+                writer.println(String.join(CommonConstants.COMMA,
+                    csv.getProcessClass(),
+                    csv.getUserNumber(),
+                    csv.getUserName(),
+                    csv.getUserNameKana(),
+                    csv.getHireDate(),
+                    csv.getAffiliationId(),
+                    csv.getRoleClass(),
+                    csv.getSalesFlg(),
+                    csv.getBirthDate(),
+                    csv.getPostCode(),
+                    csv.getAddress(),
+                    csv.getPhoneNumber(),
+                    csv.getEmailAddress(),
+                    csv.getPassword())
+                );
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     // 論理削除処理
-    @RequestMapping("/user/delete")
+    @PostMapping("/user/delete")
     public String delete(@ModelAttribute SelectForm selectForm,
                         SearchUsersForm searchUsersForm,
                         Model model,
