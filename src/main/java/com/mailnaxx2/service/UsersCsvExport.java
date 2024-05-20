@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.mailnaxx2.constants.UserConstants;
 import com.mailnaxx2.entity.Users;
 import com.mailnaxx2.mapper.UsersMapper;
 import com.mailnaxx2.model.UsersCsv;
@@ -26,6 +27,12 @@ public class UsersCsvExport {
 
     // CSV項目設定
     public List<UsersCsv> setUsersCsv(List<Users> userList) {
+        // 最大10000件までで切り取る
+        int maxLine = UserConstants.CSV_MAX_LINE;
+        if (userList.size() > maxLine) {
+            userList = new ArrayList<>(userList.subList(0, maxLine));
+        }
+
         List<UsersCsv> csvList = new ArrayList<>();
         for (Users user : userList) {
             UsersCsv csv = new UsersCsv();
