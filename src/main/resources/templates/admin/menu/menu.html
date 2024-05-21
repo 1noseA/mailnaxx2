@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common :: meta_header('管理メニュー',~{::link},~{::script})">
+<link rel="stylesheet" th:href="@{/css/admin/admin.css}" />
+</head>
+<body>
+    <div th:replace="common :: header"></div>
+
+    <div class="contents">
+        <div class="container my-5">
+
+            <div class="menuArea">
+                <div class="row">
+                    <div class="col-12 col-md-4 p-1">
+                        <a th:href="@{/admin/document/upload}">各種資料アップロード</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="common :: footer"></div>
+</body>
+</html>

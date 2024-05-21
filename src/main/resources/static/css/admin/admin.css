@@ -1,0 +1,14 @@
+.menuArea {
+    width: 80%;
+    margin: 0 auto;
+    text-align: center;
+}
+
+/* レスポンシブ */
+@media screen and (max-width: 992px) {
+    .menuArea {
+        width: 90%;
+    }
+}
+@media screen and (max-width: 576px) {
+}
