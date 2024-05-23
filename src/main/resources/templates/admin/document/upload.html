@@ -7,6 +7,43 @@
     <div th:replace="common :: header"></div>
 
     <div class="contents">
+        <div class="container">
+            <div class="title text-center mt-5 p-3">各種資料アップロード</div>
+            <div class="formArea mx-auto mb-5">
+                <form method="post" th:action="@{/admin/document/upload}" enctype="multipart/form-data">
+                    <!-- <th:block th:if="${messageList != null && messageList.size() > 0}">
+                        <div class="col-md-12 ms-3 pb-3">
+                            <th:block th:each="message : ${messageList}">
+                                <span class="text-danger" th:if="${message.lineNum != null && message.item != null}" th:text="${message.lineNum + '&emsp;' + message.item + '：'}"></span>
+                                <span class="text-danger" th:text="${message.content}"></span><br>
+                            </th:block>
+                        </div>
+                    </th:block> -->
+                    <div class="row mb-3">
+                        <div class="col-12 col-md-3 text-md-end">
+                            <label for="userNameKana" class="col-form-label">表示名
+
+                            </label>
+                        </div>
+                        <div class="col-12 col-md-8">
+                            <input type="test" name="display_name">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-12 col-md-3"></div>
+                        <div class="col-12 col-md-8">
+                            <input type="file" name="file">
+                        </div>
+                    </div>
+                    <div class="text-center m-5">
+                        <button type="submit" class="btn btnMain">アップロード</button>
+                    </div>
+                </form>
+            </div>
+            <div class="my-5">
+                <button type="button" class="btn btnBack" th:onclick="location.href='/admin/menu'">戻る</button>
+            </div>
+        </div>
     </div>
 
     <div th:replace="common :: footer"></div>
