@@ -36,7 +36,7 @@ import com.mailnaxx2.security.LoginUserDetails;
 import com.mailnaxx2.service.AffiliationsService;
 import com.mailnaxx2.service.BulkRegistService;
 import com.mailnaxx2.service.ConfirmFileService;
-import com.mailnaxx2.service.UsersCsvExport;
+import com.mailnaxx2.service.UsersCsvExportService;
 import com.mailnaxx2.service.UsersService;
 import com.mailnaxx2.validation.All;
 import com.mailnaxx2.validation.GroupOrder;
@@ -63,7 +63,7 @@ public class UsersController {
     BulkRegistService bulkRegistService;
 
     @Autowired
-    UsersCsvExport usersCsvExport;
+    UsersCsvExportService usersCsvExport;
 
     // 管理者
     boolean isAdmin;

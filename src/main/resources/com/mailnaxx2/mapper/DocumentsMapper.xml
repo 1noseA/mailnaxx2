@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mailnaxx2.mapper.DocumentsMapper">
+
+    <!-- 登録 -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="documentId">
+        INSERT INTO documents
+        (
+            file_name,
+            display_name,
+            file_data,
+            created_by,
+            created_at
+        )
+        VALUES
+        (
+            #{fileName},
+            #{displayName},
+            #{fileData},
+            #{createdBy},
+            CURRENT_TIMESTAMP
+        )
+    </insert>
+</mapper>

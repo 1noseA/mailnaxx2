@@ -12,35 +12,35 @@ import lombok.Getter;
 public class Notices {
 
     // お知らせID
-    private int notice_id;
+    private int noticeId;
 
     // 掲載開始日
-    private LocalDate start_date;
+    private LocalDate startDate;
 
     // 掲載終了日
-    private LocalDate end_date;
+    private LocalDate endDate;
 
     // 表示範囲
-    private String display_range;
+    private String displayRange;
 
     // ユーザID
-    private int user_id;
+    private int userId;
 
     // 内容
-    private String notice_message;
+    private String noticeMessage;
 
     // リンク
-    private String reference_link;
+    private String referenceLink;
 
     // レコード登録者
-    private String created_by;
+    private String createdBy;
 
     // レコード登録日
-    private LocalDateTime created_at;
+    private LocalDateTime createdAt;
 
     // レコード更新者
-    private String updated_by;
+    private String updatedBy;
 
     // レコード更新日
-    private LocalDateTime updated_at;
+    private LocalDateTime updatedAt;
 }
