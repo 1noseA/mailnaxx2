@@ -17,10 +17,10 @@ public class Documents {
     private String fileName;
 
     // 表示名
-    private int displayName;
+    private String displayName;
 
     // ファイルデータ
-    private String fileData;
+    private byte[] fileData;
 
     // 削除フラグ
     private String deletedFlg;

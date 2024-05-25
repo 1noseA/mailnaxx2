@@ -1,5 +1,7 @@
 package com.mailnaxx2.form;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import lombok.Data;
 
 /**
@@ -8,12 +10,9 @@ import lombok.Data;
 @Data
 public class DocumentsForm {
 
-    // ファイル名
-    private String fileName;
-
     // 表示名
     private String displayName;
 
     // ファイルデータ
-    private String fileData;
+    private MultipartFile fileData;
 }
