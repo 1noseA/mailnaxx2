@@ -40,6 +40,8 @@ public class DocumentController {
         // 登録
         documentsService.insert(documentsForm, loginUser);
 
+        // Formの初期化
+        model.addAttribute("documentsForm", new DocumentsForm());
         model.addAttribute("loginUserInfo", loginUser.getLoginUser());
         return "document/upload";
     }
