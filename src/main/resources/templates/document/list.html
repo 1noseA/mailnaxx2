@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common :: meta_header('資料一覧',~{::link},~{::script})">
+<link rel="stylesheet" th:href="@{/css/user/list.css}" />
+<script th:src="@{/js/user.js}"></script>
+</head>
+<body>
+    <div th:replace="common :: header"></div>
+
+    <div class="contents">
+        <div class="container">
+            <div class="listArea mx-auto">
+                <th:block th:if="${documentList.size() > 0}">
+                    <th:block th:each="document : ${documentList}">
+                        <ul>
+                            <li th:text="${document.fileName}"></li>
+                        </ul>
+                    </th:block>
+                </th:block>
+                <div class="my-5">
+                    <button type="button" class="btn btnBack" th:onclick="location.href='/top'">戻る</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="common :: footer"></div>
+</body>
+</html>

@@ -23,4 +23,27 @@
             CURRENT_TIMESTAMP
         )
     </insert>
+
+    <!-- 一覧取得 -->
+    <select id="findAll" resultMap="documentMap">
+        SELECT
+            file_name
+        FROM documents
+        WHERE
+            deleted_flg = '0'
+        ORDER BY document_id
+    </select>
+
+    <!-- マッピング -->
+    <resultMap id="documentMap" type="com.mailnaxx2.entity.Documents">
+        <result property="documentId" column="document_id" />
+        <result property="fileName" column="file_name" />
+        <result property="displayName" column="display_name" />
+        <result property="fileData" column="file_data" />
+        <result property="deletedFlg" column="deleted_flg" />
+        <result property="createdBy" column="created_by" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedBy" column="updated_by" />
+        <result property="updatedAt" column="updated_at" />
+    </resultMap>
 </mapper>

@@ -1,6 +1,7 @@
 package com.mailnaxx2.service;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -63,4 +64,8 @@ public class DocumentsService {
     // ダウンロード
 
     // 一覧取得
+    public List<Documents> findAll() {
+        List<Documents> documentList = documentsMapper.findAll();
+        return documentList;
+    }
 }

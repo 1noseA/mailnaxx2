@@ -1,5 +1,7 @@
 package com.mailnaxx2.mapper;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 
 import com.mailnaxx2.entity.Documents;
@@ -15,4 +17,5 @@ public interface DocumentsMapper {
     // ダウンロード
 
     // 一覧取得
+    public List<Documents> findAll();
 }

@@ -1,4 +1,4 @@
-package com.mailnaxx2.controller.admin;
+package com.mailnaxx2.controller;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -13,6 +13,6 @@ public class MenuController {
     @GetMapping("/admin/menu")
     public String index(Model model, @AuthenticationPrincipal LoginUserDetails loginUser) {
         model.addAttribute("loginUserInfo", loginUser.getLoginUser());
-        return "admin/menu/menu";
+        return "menu/menu";
     }
 }

@@ -22,6 +22,9 @@ public class Documents {
     // ファイルデータ
     private byte[] fileData;
 
+    // 表示順
+    //private int displayOrder;
+
     // 削除フラグ
     private String deletedFlg;
 
