@@ -25,8 +25,8 @@ public class DocumentController {
     // アップロード画面初期表示
     @GetMapping("/admin/document/upload")
     public String upload(@ModelAttribute DocumentsForm documentsForm,
-                        Model model,
-                        @AuthenticationPrincipal LoginUserDetails loginUser) {
+                         Model model,
+                         @AuthenticationPrincipal LoginUserDetails loginUser) {
         model.addAttribute("loginUserInfo", loginUser.getLoginUser());
         return "document/upload";
     }

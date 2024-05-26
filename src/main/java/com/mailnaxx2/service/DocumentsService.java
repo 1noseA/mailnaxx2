@@ -54,6 +54,8 @@ public class DocumentsService {
         // 表示順
         if (documentsForm.getDisplayOrder() != null) {
             document.setDisplayOrder(documentsForm.getDisplayOrder());
+        } else {
+            document.setDisplayOrder(CommonConstants.MAX_DISPLAY_ORDER);
         }
 
         return document;
