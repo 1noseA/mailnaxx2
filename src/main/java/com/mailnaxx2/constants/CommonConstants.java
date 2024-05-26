@@ -11,6 +11,9 @@ public class CommonConstants {
     // カンマ
     public static final String COMMA = ",";
 
+    // ドット
+    public static final String DOT = ".";
+
     // 読点
     public static final String TOTEN = "、";
 

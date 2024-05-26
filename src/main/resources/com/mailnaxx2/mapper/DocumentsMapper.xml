@@ -11,6 +11,7 @@
             file_name,
             display_name,
             file_data,
+            display_order,
             created_by,
             created_at
         )
@@ -19,6 +20,7 @@
             #{fileName},
             #{displayName},
             #{fileData},
+            #{displayOrder},
             #{createdBy},
             CURRENT_TIMESTAMP
         )
@@ -27,11 +29,11 @@
     <!-- 一覧取得 -->
     <select id="findAll" resultMap="documentMap">
         SELECT
-            file_name
+            display_name
         FROM documents
         WHERE
             deleted_flg = '0'
-        ORDER BY document_id
+        ORDER BY display_order, document_id
     </select>
 
     <!-- マッピング -->
@@ -40,6 +42,7 @@
         <result property="fileName" column="file_name" />
         <result property="displayName" column="display_name" />
         <result property="fileData" column="file_data" />
+        <result property="displayOrder" column="display_order" />
         <result property="deletedFlg" column="deleted_flg" />
         <result property="createdBy" column="created_by" />
         <result property="createdAt" column="created_at" />

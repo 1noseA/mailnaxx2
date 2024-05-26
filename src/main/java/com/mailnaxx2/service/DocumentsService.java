@@ -3,12 +3,14 @@ package com.mailnaxx2.service;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.mailnaxx2.constants.CommonConstants;
 import com.mailnaxx2.entity.Documents;
 import com.mailnaxx2.form.DocumentsForm;
 import com.mailnaxx2.mapper.DocumentsMapper;
@@ -36,13 +38,23 @@ public class DocumentsService {
     // エンティティにセットする
     private Documents setEntity(Documents document, DocumentsForm documentsForm) {
         // ファイル名
-        document.setFileName((documentsForm.getFileData()).getOriginalFilename());
+        String fileName = (documentsForm.getFileData()).getOriginalFilename();
+        document.setFileName(fileName);
 
         // 表示名
-        document.setDisplayName(documentsForm.getDisplayName());
+        if (StringUtils.isEmpty(documentsForm.getDisplayName())) {
+            document.setDisplayName(fileName.substring(0, fileName.lastIndexOf(CommonConstants.DOT)));
+        } else {
+            document.setDisplayName(documentsForm.getDisplayName());
+        }
 
         // ファイルデータ
         document.setFileData(getByteFile(documentsForm.getFileData()));
+
+        // 表示順
+        if (documentsForm.getDisplayOrder() != null) {
+            document.setDisplayOrder(documentsForm.getDisplayOrder());
+        }
 
         return document;
     }

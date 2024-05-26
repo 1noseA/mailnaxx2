@@ -21,12 +21,18 @@
                     </th:block> -->
                     <div class="row mb-3">
                         <div class="col-12 col-md-3 text-md-end">
-                            <label for="userNameKana" class="col-form-label">表示名
-
-                            </label>
+                            <label for="displayName" class="col-form-label">表示名</label>
                         </div>
                         <div class="col-12 col-md-8">
                             <input type="text" class="form-control" th:field="*{displayName}">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-12 col-md-3 text-md-end">
+                            <label for="displayOrder" class="col-form-label">表示順</label>
+                        </div>
+                        <div class="col-12 col-md-8">
+                            <input type="text" class="form-control" th:field="*{displayOrder}">
                         </div>
                     </div>
                     <div class="row mb-3">

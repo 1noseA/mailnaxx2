@@ -155,7 +155,7 @@ public class UsersController {
     @PostMapping("/user/bulk-regist")
     public String bulkRegist(Model model,
                              @AuthenticationPrincipal LoginUserDetails loginUser) {
-        @SuppressWarnings({ "unchecked", "unused" })
+        @SuppressWarnings({ "unchecked" })
         List<BulkRegistUsersDTO> userDtoList = (List<BulkRegistUsersDTO>) session.getAttribute("session_userDtoList");
         // 一括登録処理
         CompletedBulkRegistDTO completedDTO = bulkRegistService.insert(userDtoList, loginUser);

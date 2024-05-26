@@ -13,6 +13,9 @@ public class DocumentsForm {
     // 表示名
     private String displayName;
 
+    // 表示順
+    private Integer displayOrder;
+
     // ファイルデータ
     private MultipartFile fileData;
 }
