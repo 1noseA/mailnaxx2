@@ -25,7 +25,7 @@
                         </div>
                         <div class="col-12 col-md-8">
                             <div class="input-group has-validation">
-                                <input type="text" class="form-control" th:errorclass="is-invalid" th:field="*{displayOrder}">
+                                <input type="text" class="form-control" th:errorclass="is-invalid" th:field="*{displayOrder}" maxlength="3">
                                 <span class="invalid-feedback" th:if="${#fields.hasErrors('displayOrder')}" th:errors="*{displayOrder}"></span>
                             </div>
                         </div>

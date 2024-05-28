@@ -1,8 +1,8 @@
 package com.mailnaxx2.form;
 
-import org.hibernate.validator.constraints.Range;
 import org.springframework.web.multipart.MultipartFile;
 
+import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
 /**
@@ -15,8 +15,8 @@ public class DocumentsForm {
     private String displayName;
 
     // 表示順
-    @Range(min = 1, max = 999, message = "半角数字3桁で入力してください")
-    private Integer displayOrder;
+    @Pattern(regexp = "^$|^[0-9]{1,3}$", message = "半角数字3桁で入力してください")
+    private String displayOrder;
 
     // ファイルデータ
     private MultipartFile fileData;

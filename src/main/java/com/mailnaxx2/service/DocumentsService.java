@@ -52,8 +52,8 @@ public class DocumentsService {
         document.setFileData(getByteFile(documentsForm.getFileData()));
 
         // 表示順
-        if (documentsForm.getDisplayOrder() != null) {
-            document.setDisplayOrder(documentsForm.getDisplayOrder());
+        if (StringUtils.isEmpty(documentsForm.getDisplayOrder())) {
+            document.setDisplayOrder(Integer.parseInt(documentsForm.getDisplayOrder()));
         } else {
             document.setDisplayOrder(CommonConstants.MAX_DISPLAY_ORDER);
         }
