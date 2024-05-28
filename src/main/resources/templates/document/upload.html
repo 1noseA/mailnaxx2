@@ -11,14 +11,6 @@
             <div class="title text-center mt-5 p-3">各種資料アップロード</div>
             <div class="formArea mx-auto mb-5">
                 <form method="post" th:action="@{/admin/document/upload}" th:object="${documentsForm}" enctype="multipart/form-data">
-                    <!-- <th:block th:if="${messageList != null && messageList.size() > 0}">
-                        <div class="col-md-12 ms-3 pb-3">
-                            <th:block th:each="message : ${messageList}">
-                                <span class="text-danger" th:if="${message.lineNum != null && message.item != null}" th:text="${message.lineNum + '&emsp;' + message.item + '：'}"></span>
-                                <span class="text-danger" th:text="${message.content}"></span><br>
-                            </th:block>
-                        </div>
-                    </th:block> -->
                     <div class="row mb-3">
                         <div class="col-12 col-md-3 text-md-end">
                             <label for="displayName" class="col-form-label">表示名</label>
@@ -32,13 +24,19 @@
                             <label for="displayOrder" class="col-form-label">表示順</label>
                         </div>
                         <div class="col-12 col-md-8">
-                            <input type="text" class="form-control" th:field="*{displayOrder}">
+                            <div class="input-group has-validation">
+                                <input type="text" class="form-control" th:errorclass="is-invalid" th:field="*{displayOrder}">
+                                <span class="invalid-feedback" th:if="${#fields.hasErrors('displayOrder')}" th:errors="*{displayOrder}"></span>
+                            </div>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-12 col-md-3"></div>
                         <div class="col-12 col-md-8">
-                            <input type="file" class="form-control" th:field="*{fileData}">
+                            <div class="input-group has-validation">
+                                <input type="file" class="form-control" th:errorclass="is-invalid" th:field="*{fileData}">
+                                <span class="invalid-feedback" th:if="${#fields.hasErrors('fileData')}" th:errors="*{fileData}"></span>
+                            </div>
                         </div>
                     </div>
                     <div class="text-center m-5">

@@ -7,6 +7,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,6 +16,7 @@ import com.mailnaxx2.entity.Documents;
 import com.mailnaxx2.form.DocumentsForm;
 import com.mailnaxx2.security.LoginUserDetails;
 import com.mailnaxx2.service.DocumentsService;
+import com.mailnaxx2.validation.All;
 
 @Controller
 public class DocumentController {
@@ -33,10 +35,26 @@ public class DocumentController {
 
     // アップロード処理
     @PostMapping("/admin/document/upload")
-    public String upload(DocumentsForm documentsForm,
+    public String upload(@ModelAttribute @Validated DocumentsForm documentsForm,
                          BindingResult result,
                          Model model,
                          @AuthenticationPrincipal LoginUserDetails loginUser) {
+        boolean errFlg = false;
+        // ファイルの存在チェック
+        if (documentsForm.getFileData().isEmpty()) {
+            result.rejectValue("fileData", "NotBlank", "ファイルを選択してください");
+            errFlg = true;
+        }
+
+        // 入力エラーチェック
+        if (result.hasErrors()) {
+            errFlg = true;
+        }
+
+        if (errFlg) {
+            return upload(documentsForm, model, loginUser);
+        }
+
         // 登録
         documentsService.insert(documentsForm, loginUser);
 
