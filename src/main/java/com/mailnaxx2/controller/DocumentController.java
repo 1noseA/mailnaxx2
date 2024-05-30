@@ -28,6 +28,9 @@ public class DocumentController {
     public String upload(@ModelAttribute DocumentsForm documentsForm,
                          Model model,
                          @AuthenticationPrincipal LoginUserDetails loginUser) {
+        // 資料一覧取得
+        List<Documents> documentList = documentsService.findAll();
+        model.addAttribute("documentList", documentList);
         model.addAttribute("loginUserInfo", loginUser.getLoginUser());
         return "document/upload";
     }
