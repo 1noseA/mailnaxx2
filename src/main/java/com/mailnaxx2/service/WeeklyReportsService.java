@@ -69,8 +69,8 @@ public class WeeklyReportsService {
     @Transactional
     public void bulkConfirm(SelectForm selectForm, @AuthenticationPrincipal LoginUserDetails loginUser) {
         List<Integer> idList = new ArrayList<>();
-        for (int i = 0; i < selectForm.getSelectWeeklyReportId().size(); i++) {
-            idList.add(selectForm.getSelectWeeklyReportId().get(i));
+        for (int i = 0; i < selectForm.getSelectId().size(); i++) {
+            idList.add(selectForm.getSelectId().get(i));
         }
         // 複数件排他ロック
         weeklyReportList = weeklyReportsMapper.forLockByIdList(idList);
@@ -92,7 +92,7 @@ public class WeeklyReportsService {
 
     // 先週分取得
     public WeeklyReports findByLastWeek(int userId, LocalDate lastReportDate) {
-    	WeeklyReports lastWeekReportInfo = weeklyReportsMapper.findByLastWeek(userId, lastReportDate);
+        WeeklyReports lastWeekReportInfo = weeklyReportsMapper.findByLastWeek(userId, lastReportDate);
         return lastWeekReportInfo;
     }
 
@@ -153,7 +153,7 @@ public class WeeklyReportsService {
     // 登録処理
     @Transactional
     public void insert(WeeklyReportForm weeklyReportForm,
-    				   @AuthenticationPrincipal LoginUserDetails loginUser) {
+                       @AuthenticationPrincipal LoginUserDetails loginUser) {
         // 入力値をセットする
         WeeklyReports weeklyReport = setWeeklyReport(new WeeklyReports(), weeklyReportForm);
 
@@ -170,7 +170,7 @@ public class WeeklyReportsService {
 
         // 現場社員が存在する場合
         if (weeklyReportForm.getColleagueId() != 0) {
-        	// 登録した週報IDを取得
+            // 登録した週報IDを取得
             int weeklyReportId = weeklyReport.getWeeklyReportId();
             // 現場社員に週報IDを追加
             colleaguesMapper.addWeeklyReportId(weeklyReportForm.getColleagueId(), weeklyReportId);
@@ -181,13 +181,13 @@ public class WeeklyReportsService {
     @Transactional
     public void update(WeeklyReportForm weeklyReportForm, @AuthenticationPrincipal LoginUserDetails loginUser) {
         // 排他ロック
-    	WeeklyReports weeklyReport = weeklyReportsMapper.forLockById(weeklyReportForm.getWeeklyReportId());
+        WeeklyReports weeklyReport = weeklyReportsMapper.forLockById(weeklyReportForm.getWeeklyReportId());
 
         // 入力値をセットする
-    	weeklyReport = setWeeklyReport(weeklyReport, weeklyReportForm);
+        weeklyReport = setWeeklyReport(weeklyReport, weeklyReportForm);
 
         // 更新者はセッションの社員番号
-    	weeklyReport.setUpdatedBy(loginUser.getLoginUser().getUserNumber());
+        weeklyReport.setUpdatedBy(loginUser.getLoginUser().getUserNumber());
 
         // 更新
         weeklyReportsMapper.update(weeklyReport);
@@ -197,58 +197,58 @@ public class WeeklyReportsService {
 
     // 入力値をセットする
     private WeeklyReports setWeeklyReport(WeeklyReports weeklyReport, WeeklyReportForm weeklyReportForm) {
-    	// 現場ID
-    	Projects project = new Projects();
-    	project.setProjectId(weeklyReportForm.getProjectId());
-    	Users salesUser = new Users();
-    	salesUser.setUserId(weeklyReportForm.getSalesUserId());
-    	project.setSalesUser(salesUser);
-    	weeklyReport.setProject(project);
+        // 現場ID
+        Projects project = new Projects();
+        project.setProjectId(weeklyReportForm.getProjectId());
+        Users salesUser = new Users();
+        salesUser.setUserId(weeklyReportForm.getSalesUserId());
+        project.setSalesUser(salesUser);
+        weeklyReport.setProject(project);
 
         // 報告対象週
-    	weeklyReport.setReportDate(weeklyReportForm.getReportDate());
+        weeklyReport.setReportDate(weeklyReportForm.getReportDate());
 
-    	// 平均残業時間
-    	weeklyReport.setAveOvertimeHours(weeklyReportForm.getAveOvertimeHours());
+        // 平均残業時間
+        weeklyReport.setAveOvertimeHours(weeklyReportForm.getAveOvertimeHours());
 
-    	// 進捗状況
-    	weeklyReport.setProgress(weeklyReportForm.getProgress());
+        // 進捗状況
+        weeklyReport.setProgress(weeklyReportForm.getProgress());
 
-    	// 体調
-    	weeklyReport.setCondition(weeklyReportForm.getCondition());
+        // 体調
+        weeklyReport.setCondition(weeklyReportForm.getCondition());
 
-    	// 人間関係
-    	weeklyReport.setRelationship(weeklyReportForm.getRelationship());
+        // 人間関係
+        weeklyReport.setRelationship(weeklyReportForm.getRelationship());
 
-    	// 今週の計画
-    	weeklyReport.setPlan(weeklyReportForm.getPlan());
+        // 今週の計画
+        weeklyReport.setPlan(weeklyReportForm.getPlan());
 
-    	// 作業内容
-    	weeklyReport.setWorkContent(weeklyReportForm.getWorkContent());
+        // 作業内容
+        weeklyReport.setWorkContent(weeklyReportForm.getWorkContent());
 
-    	// 難易度
-    	weeklyReport.setDifficulty(weeklyReportForm.getDifficulty());
+        // 難易度
+        weeklyReport.setDifficulty(weeklyReportForm.getDifficulty());
 
-    	// スケジュール感
-    	weeklyReport.setSchedule(weeklyReportForm.getSchedule());
+        // スケジュール感
+        weeklyReport.setSchedule(weeklyReportForm.getSchedule());
 
-    	// 結果
-    	weeklyReport.setResult(weeklyReportForm.getResult());
+        // 結果
+        weeklyReport.setResult(weeklyReportForm.getResult());
 
-    	// 所感
-    	weeklyReport.setImpression(weeklyReportForm.getImpression());
+        // 所感
+        weeklyReport.setImpression(weeklyReportForm.getImpression());
 
-    	// 改善点
-    	weeklyReport.setImprovements(weeklyReportForm.getImprovements());
+        // 改善点
+        weeklyReport.setImprovements(weeklyReportForm.getImprovements());
 
-    	// 次週の計画
-    	weeklyReport.setNextPlan(weeklyReportForm.getNextPlan());
+        // 次週の計画
+        weeklyReport.setNextPlan(weeklyReportForm.getNextPlan());
 
-    	// 特記事項
-    	weeklyReport.setRemarks(weeklyReportForm.getRemarks());
+        // 特記事項
+        weeklyReport.setRemarks(weeklyReportForm.getRemarks());
 
-    	// ステータス
-    	weeklyReport.setStatus(weeklyReportForm.getStatus());
+        // ステータス
+        weeklyReport.setStatus(weeklyReportForm.getStatus());
 
         return weeklyReport;
     }
