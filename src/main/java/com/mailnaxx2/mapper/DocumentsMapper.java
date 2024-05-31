@@ -13,6 +13,10 @@ public interface DocumentsMapper {
     public int insert(Documents document);
 
     // 論理削除
+    public void delete(List<Documents> documentList);
+
+    // 複数件排他ロック
+    public List<Documents> forLockByIdList(List<Integer> idList);
 
     // ダウンロード
 

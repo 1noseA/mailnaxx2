@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import com.mailnaxx2.entity.Documents;
 import com.mailnaxx2.form.DocumentsForm;
+import com.mailnaxx2.form.SelectForm;
 import com.mailnaxx2.security.LoginUserDetails;
 import com.mailnaxx2.service.DocumentsService;
 
@@ -64,6 +65,22 @@ public class DocumentController {
         model.addAttribute("documentsForm", new DocumentsForm());
         model.addAttribute("loginUserInfo", loginUser.getLoginUser());
         return "document/upload";
+    }
+
+    // 論理削除処理
+    @PostMapping("/admin/document/delete")
+    public String delete(@ModelAttribute SelectForm selectForm,
+                         DocumentsForm documentsForm,
+                         Model model,
+                         @AuthenticationPrincipal LoginUserDetails loginUser) {
+        // 入力チェック
+        if (selectForm.getSelectId() == null) {
+            // エラーメッセージを表示
+            model.addAttribute("message", "対象を選択してください。");
+            return upload(documentsForm, model, loginUser);
+        }
+        documentsService.delete(selectForm, loginUser);
+        return upload(documentsForm, model, loginUser);
     }
 
     // 資料一覧画面初期表示

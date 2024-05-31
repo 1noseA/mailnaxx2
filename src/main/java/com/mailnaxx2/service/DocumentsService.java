@@ -1,6 +1,7 @@
 package com.mailnaxx2.service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -13,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.mailnaxx2.constants.CommonConstants;
 import com.mailnaxx2.entity.Documents;
 import com.mailnaxx2.form.DocumentsForm;
+import com.mailnaxx2.form.SelectForm;
 import com.mailnaxx2.mapper.DocumentsMapper;
 import com.mailnaxx2.security.LoginUserDetails;
 
@@ -22,7 +24,7 @@ public class DocumentsService {
     @Autowired
     DocumentsMapper documentsMapper;
 
-    // 登録
+    // 登録処理
     @Transactional
     public void insert(DocumentsForm documentsForm, @AuthenticationPrincipal LoginUserDetails loginUser) {
         // エンティティにセットする
@@ -73,11 +75,28 @@ public class DocumentsService {
         }
     }
 
-    // 論理削除
+    // 論理削除処理
+    @Transactional
+    public void delete(SelectForm selectForm, @AuthenticationPrincipal LoginUserDetails loginUser) {
+        List<Integer> idList = new ArrayList<>();
+        for (int i = 0; i < selectForm.getSelectId().size(); i++) {
+            idList.add(selectForm.getSelectId().get(i));
+        }
+        // 複数件排他ロック
+        List<Documents> documentList = documentsMapper.forLockByIdList(idList);
 
-    // ダウンロード
+        for (int i = 0; i < documentList.size(); i++) {
+            // 更新者はセッションの社員番号
+            documentList.get(i).setUpdatedBy(loginUser.getLoginUser().getUserNumber());
+        }
 
-    // 一覧取得
+        // 論理削除
+        documentsMapper.delete(documentList);
+    }
+
+    // ダウンロード処理
+
+    // 一覧取得処理
     public List<Documents> findAll() {
         List<Documents> documentList = documentsMapper.findAll();
         return documentList;

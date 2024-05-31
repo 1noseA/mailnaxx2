@@ -26,10 +26,43 @@
         )
     </insert>
 
+    <!-- 複数件排他ロック -->
+    <select id="forLockByIdList" resultMap="documentMap">
+        SELECT
+            document_id,
+            file_name,
+            display_name,
+            file_data,
+            display_order,
+            deleted_flg
+        FROM documents
+        WHERE
+            document_id IN
+            <foreach item="item" index="index" collection="idList"
+                open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        FOR UPDATE
+    </select>
+
+    <!-- 論理削除 -->
+    <update id="delete">
+        <foreach collection="documentList" item="d" separator=";">
+            UPDATE documents SET
+                deleted_flg = '1',
+                updated_by = #{d.updatedBy},
+                updated_at = CURRENT_TIMESTAMP
+            WHERE
+                document_id = #{d.documentId}
+        </foreach>
+    </update>
+
     <!-- 一覧取得 -->
     <select id="findAll" resultMap="documentMap">
         SELECT
-            display_name
+            document_id,
+            display_name,
+            display_order
         FROM documents
         WHERE
             deleted_flg = '0'
