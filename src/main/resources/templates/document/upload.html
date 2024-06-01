@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common :: meta_header('各種資料アップロード',~{::link},~{::script})">
+<link rel="stylesheet" th:href="@{/css/admin/admin.css}" />
+</head>
+<body>
+    <div th:replace="common :: header"></div>
+
+    <div class="contents">
+        <div class="container">
+            <div class="title text-center mt-5 p-3">各種資料アップロード</div>
+            <div class="formArea mx-auto mb-5">
+                <form method="post" th:action="@{/admin/document/upload}" th:object="${documentsForm}" enctype="multipart/form-data">
+                    <div class="row mb-3">
+                        <div class="col-12 col-md-3 text-md-end">
+                            <label for="displayName" class="col-form-label">表示名</label>
+                        </div>
+                        <div class="col-12 col-md-8">
+                            <input type="text" class="form-control" th:field="*{displayName}">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-12 col-md-3 text-md-end">
+                            <label for="displayOrder" class="col-form-label">表示順</label>
+                        </div>
+                        <div class="col-12 col-md-8">
+                            <div class="input-group has-validation">
+                                <input type="text" class="form-control" th:errorclass="is-invalid" th:field="*{displayOrder}" maxlength="3">
+                                <span class="invalid-feedback" th:if="${#fields.hasErrors('displayOrder')}" th:errors="*{displayOrder}"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-12 col-md-3"></div>
+                        <div class="col-12 col-md-8">
+                            <div class="input-group has-validation">
+                                <input type="file" class="form-control" th:errorclass="is-invalid" th:field="*{fileData}">
+                                <span class="invalid-feedback" th:if="${#fields.hasErrors('fileData')}" th:errors="*{fileData}"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center m-5">
+                        <button type="submit" class="btn btnMain">アップロード</button>
+                    </div>
+                </form>
+            </div>
+            <div class="listArea mx-auto p-5">
+                <form method="post" th:action="@{/admin/document/delete}" th:object="${selectForm}">
+                    <th:block th:if="${documentList.size() > 0}">
+                        <div class="text-end">
+                            <button type="submit" class="btn btnDark">削除</button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead>
+                                    <tr class="border-bottom border-dark">
+                                        <th scope="col" class="text-canter"></th>
+                                        <th scope="col">表示順</th>
+                                        <th scope="col">表示名</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <th:block th:each="document : ${documentList}">
+                                        <tr>
+                                            <td>
+                                                <div class="form-check d-flex justify-content-center align-items-center">
+                                                    <input class="form-check-input" type="checkbox" name="selectId" th:value="${document.documentId}">
+                                                </div>
+                                            </td>
+                                            <td th:text="${document.displayOrder}"></td>
+                                            <td th:text="${document.displayName}"></td>
+                                        </tr>
+                                    </th:block>
+                                </tbody>
+                            </table>
+                        </div>
+                    </th:block>
+                </form>
+            </div>
+            <div class="my-5">
+                <button type="button" class="btn btnBack" th:onclick="location.href='/admin/menu'">戻る</button>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="common :: footer"></div>
+</body>
+</html>

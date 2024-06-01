@@ -11,6 +11,9 @@ public class CommonConstants {
     // カンマ
     public static final String COMMA = ",";
 
+    // ドット
+    public static final String DOT = ".";
+
     // 読点
     public static final String TOTEN = "、";
 
@@ -43,4 +46,7 @@ public class CommonConstants {
 
     // 営業フラグデフォルト
     public static final String DEFAULT_SALES_FLG = "0";
+
+    // 資料表示順最大値
+    public static final int MAX_DISPLAY_ORDER = 999;
 }

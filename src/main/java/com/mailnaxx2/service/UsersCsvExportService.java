@@ -14,7 +14,7 @@ import com.mailnaxx2.model.UsersCsv;
 import com.mailnaxx2.values.ProcessClass;
 
 @Service
-public class UsersCsvExport {
+public class UsersCsvExportService {
 
     @Autowired
     UsersMapper usersMapper;
@@ -54,6 +54,4 @@ public class UsersCsvExport {
         }
         return csvList;
     }
-
-    // CSV出力処理
 }
