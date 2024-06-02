@@ -94,11 +94,18 @@ public class DocumentsService {
         documentsMapper.delete(documentList);
     }
 
-    // ダウンロード処理
-
     // 一覧取得処理
     public List<Documents> findAll() {
         List<Documents> documentList = documentsMapper.findAll();
         return documentList;
     }
+
+    // 1件取得処理
+    public Documents findById(int id) {
+        Documents documentInfo = documentsMapper.findById(id);
+        return documentInfo;
+    }
+
+    // ダウンロード処理
+
 }

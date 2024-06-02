@@ -11,11 +11,13 @@
             <div class="title text-center mt-5 p-3">資料一覧</div>
             <div class="listArea mx-auto p-5">
                 <th:block th:if="${documentList.size() > 0}">
-                    <th:block th:each="document : ${documentList}">
-                        <ul>
-                            <li th:text="${document.displayName}"></li>
-                        </ul>
-                    </th:block>
+                    <ul>
+                        <th:block th:each="document : ${documentList}">
+                            <li>
+                                <a th:href="@{/document/download(id=${document.documentId})}" th:text="${document.displayName}"></a>
+                            </li>
+                        </th:block>
+                    </ul>
                 </th:block>
             </div>
             <div class="my-5">

@@ -11,6 +11,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.mailnaxx2.entity.Documents;
 import com.mailnaxx2.form.DocumentsForm;
@@ -18,8 +19,13 @@ import com.mailnaxx2.form.SelectForm;
 import com.mailnaxx2.security.LoginUserDetails;
 import com.mailnaxx2.service.DocumentsService;
 
+import jakarta.servlet.http.HttpSession;
+
 @Controller
 public class DocumentController {
+
+    @Autowired
+    HttpSession session;
 
     @Autowired
     DocumentsService documentsService;
@@ -89,6 +95,27 @@ public class DocumentController {
                         @AuthenticationPrincipal LoginUserDetails loginUser) {
         // 資料一覧取得
         List<Documents> documentList = documentsService.findAll();
+        session.setAttribute("session_documentList", documentList);
+        model.addAttribute("documentList", documentList);
+        model.addAttribute("loginUserInfo", loginUser.getLoginUser());
+        return "document/list";
+    }
+
+    // 資料ダウンロード
+    @GetMapping("/document/download")
+    public String download(@RequestParam("id") int id,
+                           Model model,
+                           @AuthenticationPrincipal LoginUserDetails loginUser) {
+        if (id == 0) {
+            return "document/list";
+        }
+
+        // 資料取得
+        Documents documentInfo = documentsService.findById(id);
+
+        // 資料一覧をセッションから取得
+        @SuppressWarnings("unchecked")
+        List<Documents> documentList = (List<Documents>) session.getAttribute("session_documentList");
         model.addAttribute("documentList", documentList);
         model.addAttribute("loginUserInfo", loginUser.getLoginUser());
         return "document/list";

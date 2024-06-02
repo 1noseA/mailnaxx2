@@ -69,6 +69,19 @@
         ORDER BY display_order, document_id
     </select>
 
+    <!-- 1件取得 -->
+    <select id="findById" resultMap="documentMap">
+        SELECT
+            document_id,
+            file_name,
+            display_name,
+            file_data
+        FROM documents
+        WHERE
+            deleted_flg = '0'
+        AND document_id = #{documentId}
+    </select>
+
     <!-- マッピング -->
     <resultMap id="documentMap" type="com.mailnaxx2.entity.Documents">
         <result property="documentId" column="document_id" />

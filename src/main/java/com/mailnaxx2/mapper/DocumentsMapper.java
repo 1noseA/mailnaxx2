@@ -18,8 +18,11 @@ public interface DocumentsMapper {
     // 複数件排他ロック
     public List<Documents> forLockByIdList(List<Integer> idList);
 
-    // ダウンロード
-
     // 一覧取得
     public List<Documents> findAll();
+
+    // 1件取得
+    public Documents findById(int documentId);
+
+    // ダウンロード
 }
