@@ -1,5 +1,10 @@
 package com.mailnaxx2.controller;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.mailnaxx2.entity.Documents;
 import com.mailnaxx2.form.DocumentsForm;
@@ -19,6 +25,7 @@ import com.mailnaxx2.form.SelectForm;
 import com.mailnaxx2.security.LoginUserDetails;
 import com.mailnaxx2.service.DocumentsService;
 
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
@@ -103,21 +110,22 @@ public class DocumentController {
 
     // 資料ダウンロード
     @GetMapping("/document/download")
-    public String download(@RequestParam("id") int id,
+    public void download(@RequestParam("id") int id,
                            Model model,
-                           @AuthenticationPrincipal LoginUserDetails loginUser) {
-        if (id == 0) {
-            return "document/list";
+                           @AuthenticationPrincipal LoginUserDetails loginUser,
+                           HttpServletResponse response) {
+        if (id != 0) {
+            // 資料取得
+            Documents documentInfo = documentsService.findById(id);
+            String fileName = documentInfo.getFileName();
+            try (FileOutputStream fos = new FileOutputStream(fileName)) {
+                String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8.name());
+                response.setContentType("application/octet-stream");
+                response.setHeader("Content-Disposition", "attachment; filename=" + encodedFileName);
+                fos.write(documentInfo.getFileData());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-
-        // 資料取得
-        Documents documentInfo = documentsService.findById(id);
-
-        // 資料一覧をセッションから取得
-        @SuppressWarnings("unchecked")
-        List<Documents> documentList = (List<Documents>) session.getAttribute("session_documentList");
-        model.addAttribute("documentList", documentList);
-        model.addAttribute("loginUserInfo", loginUser.getLoginUser());
-        return "document/list";
     }
 }
