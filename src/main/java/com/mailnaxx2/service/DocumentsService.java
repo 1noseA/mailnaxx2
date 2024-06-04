@@ -55,9 +55,9 @@ public class DocumentsService {
 
         // 表示順
         if (StringUtils.isEmpty(documentsForm.getDisplayOrder())) {
-            document.setDisplayOrder(Integer.parseInt(documentsForm.getDisplayOrder()));
-        } else {
             document.setDisplayOrder(CommonConstants.MAX_DISPLAY_ORDER);
+        } else {
+            document.setDisplayOrder(Integer.parseInt(documentsForm.getDisplayOrder()));
         }
 
         return document;

@@ -4,7 +4,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.mailnaxx2.entity.Documents;
 import com.mailnaxx2.form.DocumentsForm;
@@ -73,6 +71,10 @@ public class DocumentController {
 
         // 登録
         documentsService.insert(documentsForm, loginUser);
+
+        // 資料一覧取得
+        List<Documents> documentList = documentsService.findAll();
+        model.addAttribute("documentList", documentList);
 
         // Formの初期化
         model.addAttribute("documentsForm", new DocumentsForm());
