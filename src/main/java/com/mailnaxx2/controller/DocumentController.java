@@ -1,6 +1,5 @@
 package com.mailnaxx2.controller;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -120,11 +119,12 @@ public class DocumentController {
             // 資料取得
             Documents documentInfo = documentsService.findById(id);
             String fileName = documentInfo.getFileName();
-            try (FileOutputStream fos = new FileOutputStream(fileName)) {
+            try {
                 String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8.name());
                 response.setContentType("application/octet-stream");
                 response.setHeader("Content-Disposition", "attachment; filename=" + encodedFileName);
-                fos.write(documentInfo.getFileData());
+                response.getOutputStream().write(documentInfo.getFileData());
+                response.getOutputStream().flush();
             } catch (IOException e) {
                 e.printStackTrace();
             }
