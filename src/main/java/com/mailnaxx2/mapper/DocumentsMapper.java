@@ -24,5 +24,6 @@ public interface DocumentsMapper {
     // 1件取得
     public Documents findById(int documentId);
 
-    // ダウンロード
+    // 表示順最大値取得
+    public int getMaxDisplayOrder();
 }

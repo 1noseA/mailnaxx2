@@ -55,7 +55,9 @@ public class DocumentsService {
 
         // 表示順
         if (StringUtils.isEmpty(documentsForm.getDisplayOrder())) {
-            document.setDisplayOrder(CommonConstants.MAX_DISPLAY_ORDER);
+            // 入力がない場合、表示順最大値を設定する
+            int maxDisplayOrder = documentsMapper.getMaxDisplayOrder();
+            document.setDisplayOrder(maxDisplayOrder+1);
         } else {
             document.setDisplayOrder(Integer.parseInt(documentsForm.getDisplayOrder()));
         }
@@ -105,7 +107,4 @@ public class DocumentsService {
         Documents documentInfo = documentsMapper.findById(id);
         return documentInfo;
     }
-
-    // ダウンロード処理
-
 }

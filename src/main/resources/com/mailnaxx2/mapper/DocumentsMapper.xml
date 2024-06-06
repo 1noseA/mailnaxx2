@@ -82,6 +82,15 @@
         AND document_id = #{documentId}
     </select>
 
+    <!-- 表示順最大値取得 -->
+    <select id="getMaxDisplayOrder">
+        SELECT
+            MAX(display_order)
+        FROM documents
+        WHERE
+            deleted_flg = '0'
+    </select>
+
     <!-- マッピング -->
     <resultMap id="documentMap" type="com.mailnaxx2.entity.Documents">
         <result property="documentId" column="document_id" />
