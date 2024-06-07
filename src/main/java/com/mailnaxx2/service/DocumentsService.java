@@ -59,7 +59,15 @@ public class DocumentsService {
             int maxDisplayOrder = documentsMapper.getMaxDisplayOrder();
             document.setDisplayOrder(maxDisplayOrder+1);
         } else {
-            document.setDisplayOrder(Integer.parseInt(documentsForm.getDisplayOrder()));
+            // 同じ表示順があるか確認
+            int result = documentsMapper.getSameDisplayOrder(Integer.parseInt(documentsForm.getDisplayOrder()));
+            if (result == 0) {
+                // 同じ表示順がなかったらそのまま設定
+                document.setDisplayOrder(Integer.parseInt(documentsForm.getDisplayOrder()));
+            } else {
+                // 同じ表示順がなかったら以降の表示順を+1する
+                document.setDisplayOrder(Integer.parseInt(documentsForm.getDisplayOrder()));
+            }
         }
 
         return document;

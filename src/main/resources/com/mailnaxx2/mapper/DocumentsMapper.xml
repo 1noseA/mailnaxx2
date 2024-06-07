@@ -91,6 +91,16 @@
             deleted_flg = '0'
     </select>
 
+    <!-- 表示順取得 -->
+    <select id="getSameDisplayOrder">
+        SELECT
+            COUNT(*)
+        FROM documents
+        WHERE
+            deleted_flg = '0'
+        AND display_order = #{displayOrder}
+    </select>
+
     <!-- マッピング -->
     <resultMap id="documentMap" type="com.mailnaxx2.entity.Documents">
         <result property="documentId" column="document_id" />

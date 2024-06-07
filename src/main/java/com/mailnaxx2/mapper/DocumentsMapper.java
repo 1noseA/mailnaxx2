@@ -26,4 +26,7 @@ public interface DocumentsMapper {
 
     // 表示順最大値取得
     public int getMaxDisplayOrder();
+
+    // 表示順取得
+    public int getSameDisplayOrder(int displayOrder);
 }
