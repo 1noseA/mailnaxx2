@@ -101,6 +101,17 @@
         AND display_order = #{displayOrder}
     </select>
 
+    <!-- 表示順更新 -->
+    <update id="updateDisplayOrder">
+        UPDATE documents SET
+            display_order = display_order + 1,
+            updated_by = #{updatedBy},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE
+            deleted_flg = '0'
+        AND display_order >= #{displayOrder}
+    </update>
+
     <!-- マッピング -->
     <resultMap id="documentMap" type="com.mailnaxx2.entity.Documents">
         <result property="documentId" column="document_id" />

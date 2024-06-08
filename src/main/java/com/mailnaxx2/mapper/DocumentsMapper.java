@@ -10,7 +10,7 @@ import com.mailnaxx2.entity.Documents;
 public interface DocumentsMapper {
 
     // 登録
-    public int insert(Documents document);
+    public void insert(Documents document);
 
     // 論理削除
     public void delete(List<Documents> documentList);
@@ -29,4 +29,7 @@ public interface DocumentsMapper {
 
     // 表示順取得
     public int getSameDisplayOrder(int displayOrder);
+
+    // 表示順更新
+    public void updateDisplayOrder(Documents document);
 }

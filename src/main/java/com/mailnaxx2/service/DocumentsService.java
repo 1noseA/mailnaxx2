@@ -30,6 +30,16 @@ public class DocumentsService {
         // エンティティにセットする
         Documents document = setEntity(new Documents(), documentsForm);
 
+        // 同じ表示順があるか確認
+        int result = documentsMapper.getSameDisplayOrder(document.getDisplayOrder());
+        if (result > 0) {
+            // 同じ表示順があったら以降の表示順を+1する
+            Documents updateDocument = new Documents();
+            updateDocument.setDisplayOrder(document.getDisplayOrder());
+            updateDocument.setUpdatedBy(loginUser.getLoginUser().getUserNumber());
+            documentsMapper.updateDisplayOrder(updateDocument);
+        }
+
         // 作成者はセッションの社員番号
         document.setCreatedBy(loginUser.getLoginUser().getUserNumber());
 
@@ -57,17 +67,9 @@ public class DocumentsService {
         if (StringUtils.isEmpty(documentsForm.getDisplayOrder())) {
             // 入力がない場合、表示順最大値を設定する
             int maxDisplayOrder = documentsMapper.getMaxDisplayOrder();
-            document.setDisplayOrder(maxDisplayOrder+1);
+            document.setDisplayOrder(maxDisplayOrder + 1);
         } else {
-            // 同じ表示順があるか確認
-            int result = documentsMapper.getSameDisplayOrder(Integer.parseInt(documentsForm.getDisplayOrder()));
-            if (result == 0) {
-                // 同じ表示順がなかったらそのまま設定
-                document.setDisplayOrder(Integer.parseInt(documentsForm.getDisplayOrder()));
-            } else {
-                // 同じ表示順がなかったら以降の表示順を+1する
-                document.setDisplayOrder(Integer.parseInt(documentsForm.getDisplayOrder()));
-            }
+            document.setDisplayOrder(Integer.parseInt(documentsForm.getDisplayOrder()));
         }
 
         return document;
