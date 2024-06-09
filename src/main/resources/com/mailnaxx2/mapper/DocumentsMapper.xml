@@ -69,6 +69,49 @@
         ORDER BY display_order, document_id
     </select>
 
+    <!-- 1件取得 -->
+    <select id="findById" resultMap="documentMap">
+        SELECT
+            document_id,
+            file_name,
+            display_name,
+            file_data
+        FROM documents
+        WHERE
+            deleted_flg = '0'
+        AND document_id = #{documentId}
+    </select>
+
+    <!-- 表示順最大値取得 -->
+    <select id="getMaxDisplayOrder">
+        SELECT
+            MAX(display_order)
+        FROM documents
+        WHERE
+            deleted_flg = '0'
+    </select>
+
+    <!-- 表示順取得 -->
+    <select id="getSameDisplayOrder">
+        SELECT
+            COUNT(*)
+        FROM documents
+        WHERE
+            deleted_flg = '0'
+        AND display_order = #{displayOrder}
+    </select>
+
+    <!-- 表示順更新 -->
+    <update id="updateDisplayOrder">
+        UPDATE documents SET
+            display_order = display_order + 1,
+            updated_by = #{updatedBy},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE
+            deleted_flg = '0'
+        AND display_order >= #{displayOrder}
+    </update>
+
     <!-- マッピング -->
     <resultMap id="documentMap" type="com.mailnaxx2.entity.Documents">
         <result property="documentId" column="document_id" />

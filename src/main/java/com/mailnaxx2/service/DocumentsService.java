@@ -30,6 +30,16 @@ public class DocumentsService {
         // エンティティにセットする
         Documents document = setEntity(new Documents(), documentsForm);
 
+        // 同じ表示順があるか確認
+        int result = documentsMapper.getSameDisplayOrder(document.getDisplayOrder());
+        if (result > 0) {
+            // 同じ表示順があったら以降の表示順を+1する
+            Documents updateDocument = new Documents();
+            updateDocument.setDisplayOrder(document.getDisplayOrder());
+            updateDocument.setUpdatedBy(loginUser.getLoginUser().getUserNumber());
+            documentsMapper.updateDisplayOrder(updateDocument);
+        }
+
         // 作成者はセッションの社員番号
         document.setCreatedBy(loginUser.getLoginUser().getUserNumber());
 
@@ -55,9 +65,11 @@ public class DocumentsService {
 
         // 表示順
         if (StringUtils.isEmpty(documentsForm.getDisplayOrder())) {
-            document.setDisplayOrder(Integer.parseInt(documentsForm.getDisplayOrder()));
+            // 入力がない場合、表示順最大値を設定する
+            int maxDisplayOrder = documentsMapper.getMaxDisplayOrder();
+            document.setDisplayOrder(maxDisplayOrder + 1);
         } else {
-            document.setDisplayOrder(CommonConstants.MAX_DISPLAY_ORDER);
+            document.setDisplayOrder(Integer.parseInt(documentsForm.getDisplayOrder()));
         }
 
         return document;
@@ -94,11 +106,15 @@ public class DocumentsService {
         documentsMapper.delete(documentList);
     }
 
-    // ダウンロード処理
-
     // 一覧取得処理
     public List<Documents> findAll() {
         List<Documents> documentList = documentsMapper.findAll();
         return documentList;
+    }
+
+    // 1件取得処理
+    public Documents findById(int id) {
+        Documents documentInfo = documentsMapper.findById(id);
+        return documentInfo;
     }
 }

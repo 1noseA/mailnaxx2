@@ -10,7 +10,7 @@ import com.mailnaxx2.entity.Documents;
 public interface DocumentsMapper {
 
     // 登録
-    public int insert(Documents document);
+    public void insert(Documents document);
 
     // 論理削除
     public void delete(List<Documents> documentList);
@@ -18,8 +18,18 @@ public interface DocumentsMapper {
     // 複数件排他ロック
     public List<Documents> forLockByIdList(List<Integer> idList);
 
-    // ダウンロード
-
     // 一覧取得
     public List<Documents> findAll();
+
+    // 1件取得
+    public Documents findById(int documentId);
+
+    // 表示順最大値取得
+    public int getMaxDisplayOrder();
+
+    // 表示順取得
+    public int getSameDisplayOrder(int displayOrder);
+
+    // 表示順更新
+    public void updateDisplayOrder(Documents document);
 }
