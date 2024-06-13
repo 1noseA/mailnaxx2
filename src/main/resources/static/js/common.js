@@ -41,3 +41,12 @@ function createDayList() {
         $('#dayList').append($('<option>').val(i).text(i));
     }
 }
+
+/**
+ * 二重送信防止
+ */
+$(function () {
+  $('form').submit(function () {
+    $(this).find('input[type="submit"], button[type="submit"]').prop('disabled', 'true');
+  });
+});
