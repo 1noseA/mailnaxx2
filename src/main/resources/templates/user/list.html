@@ -3,7 +3,6 @@
 <head th:replace="common :: meta_header('社員一覧',~{::link},~{::script})">
 <link rel="stylesheet" th:href="@{/css/user/list.css}" />
 <script th:src="@{/js/user.js}"></script>
-<script th:src="@{/js/auto-complete.js}"></script>
 </head>
 <body>
     <div th:replace="common :: header"></div>
@@ -24,7 +23,7 @@
                         </div>
 
                         <div class="col-md-6">
-                            <input type="text" class="form-control userName" placeholder="" name="userName" id="userName" th:value="*{userName}" th:field="*{userName}" />
+                            <input type="text" class="form-control" placeholder="" name="userName" id="userName" th:value="*{userName}" th:field="*{userName}" />
                         </div>
                         <div class="col-md-4 d-flex justify-content-start align-items-start flex-md-column flex-lg-row">
                             <div class="form-check ms-3">

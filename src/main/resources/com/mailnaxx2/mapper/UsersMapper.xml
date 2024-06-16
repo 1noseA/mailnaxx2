@@ -144,16 +144,6 @@
             user_id = #{userId}
     </select>
 
-    <!-- 社員名取得 -->
-    <select id="findAllName" resultMap="userMap">
-        SELECT
-            user_name
-        FROM users
-        WHERE
-            deleted_flg = '0'
-        ORDER BY user_number
-    </select>
-
     <!-- 1件排他ロック（ID） -->
     <select id="forLockById" resultMap="userMap">
         SELECT

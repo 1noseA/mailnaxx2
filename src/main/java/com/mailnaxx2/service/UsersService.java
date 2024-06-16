@@ -57,12 +57,6 @@ public class UsersService {
         return userName;
     }
 
-    // 社員名取得
-    public List<String> findAllName() {
-        List<String> nameList = usersMapper.findAllName();
-        return nameList;
-    }
-
     // 登録処理
     @Transactional
     public void insert(UsersForm usersForm, @AuthenticationPrincipal LoginUserDetails loginUser) {
