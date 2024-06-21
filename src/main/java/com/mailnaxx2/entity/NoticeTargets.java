@@ -1,36 +1,26 @@
 package com.mailnaxx2.entity;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import lombok.Data;
 
 /**
- * お知らせ
+ * お知らせ表示対象
  */
 @Data
-public class Notices {
+public class NoticeTargets {
+
+    // お知らせ表示対象ID
+    private int noticeTargetId;
 
     // お知らせID
     private int noticeId;
 
-    // 掲載開始日
-    private LocalDate startDate;
+    // 社員ID
+    private int userId;
 
-    // 掲載終了日
-    private LocalDate endDate;
-
-    // 表示範囲
+    // 既読フラグ
     private String displayRange;
-
-    // カテゴリーID
-    private int categoryId;
-
-    // 内容
-    private String content;
-
-    // リンク
-    private String link;
 
     // レコード登録者
     private String createdBy;
