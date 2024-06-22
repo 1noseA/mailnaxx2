@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common :: meta_header('お知らせフォーム',~{::link},~{::script})">
+<link rel="stylesheet" th:href="@{/css/user/create.css}" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script th:src="@{/js/user-create.js}"></script>
+</head>
+<body>
+    <div th:replace="common :: header"></div>
+
+    <div class="contents">
+        <div class="container">
+            <div class="title text-center mt-5 p-3" th:text="お知らせ登録"></div>
+            <div class="formArea mx-auto mb-5">
+
+                <form method="POST" th:action="@{/notices/create}" th:object="${noticesForm}" id="form">
+                    <div class="row mb-3">
+                        <div class="col-12 col-md-3 text-md-end">
+                            <label for="startDate" class="col-form-label">掲載開始日</label>
+                        </div>
+
+                        <div class="col-12 col-md-8 d-flex align-items-center">
+                            <select class="form-select" th:errorclass="is-invalid" name="startYear" id="yearList">
+                                <option th:value="${noticesForm.startYear}">
+                            </select>
+                            <span class="p-2">年</span>
+
+                            <div class="input-group has-validation">
+                                <select class="form-select w20 monthList" th:errorclass="is-invalid" name="startMonth" id="monthList">
+                                    <option th:value="${noticesForm.startMonth}">
+                                </select>
+                                <span class="invalid-feedback" th:if="${#fields.hasErrors('startMonth')}" th:errors="*{startMonth}"></span>
+                            </div>
+                            <span class="p-2">月</span>
+
+                            <div class="input-group has-validation">
+                                <select class="form-select w20" th:errorclass="is-invalid" name="startDay" id="dayList">
+                                    <option th:value="${noticesForm.startDay}">
+                                </select>
+                                <span class="invalid-feedback" th:if="${#fields.hasErrors('startDay')}" th:errors="*{starthDay}"></span>
+                            </div>
+                            <span class="p-2">日</span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-12 col-md-3 text-md-end">
+                            <label for="endDate" class="col-form-label">掲載終了日</label>
+                        </div>
+
+                        <div class="col-12 col-md-8 d-flex align-items-center">
+                            <select class="form-select" th:errorclass="is-invalid" name="endYear" id="yearList">
+                                <option th:value="${noticesForm.endYear}">
+                            </select>
+                            <span class="p-2">年</span>
+
+                            <div class="input-group has-validation">
+                                <select class="form-select w20 monthList" th:errorclass="is-invalid" name="endMonth" id="monthList">
+                                    <option th:value="${noticesForm.endMonth}">
+                                </select>
+                                <span class="invalid-feedback" th:if="${#fields.hasErrors('endMonth')}" th:errors="*{endMonth}"></span>
+                            </div>
+                            <span class="p-2">月</span>
+
+                            <div class="input-group has-validation">
+                                <select class="form-select w20" th:errorclass="is-invalid" name="endDay" id="dayList">
+                                    <option th:value="${noticesForm.endDay}">
+                                </select>
+                                <span class="invalid-feedback" th:if="${#fields.hasErrors('endDay')}" th:errors="*{endDay}"></span>
+                            </div>
+                            <span class="p-2">日</span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-12 col-md-3 text-md-end">
+                            <label for="displayRange" class="col-form-label">表示範囲</label>
+                        </div>
+                        <div class="col-12 col-md-8">
+                            <div class="input-group has-validation">
+                                <input type="text" class="form-control" th:errorclass="is-invalid" th:field="*{displayRange}" />
+                                <span class="invalid-feedback" th:if="${#fields.hasErrors('displayRange')}" th:errors="*{displayRange}"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- カテゴリー -->
+
+                    <div class="row mb-3">
+                        <div class="col-12 col-md-3 text-md-end">
+                            <label for="content" class="col-form-label">内容
+                                <span class="badge bg-secondary ms-1">必須</span>
+                            </label>
+                        </div>
+                        <div class="col-12 col-md-8">
+                            <div class="input-group has-validation">
+                                <input type="text" class="form-control" th:errorclass="is-invalid" th:field="*{content}" />
+                                <span class="invalid-feedback" th:if="${#fields.hasErrors('content')}" th:errors="*{content}"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-12 col-md-3 text-md-end">
+                            <label for="link" class="col-form-label">リンク</label>
+                        </div>
+                        <div class="col-12 col-md-8">
+                            <div class="input-group has-validation">
+                                <input type="text" class="form-control" th:errorclass="is-invalid" th:field="*{link}" />
+                                <span class="invalid-feedback" th:if="${#fields.hasErrors('link')}" th:errors="*{link}"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center m-5">
+                        <button type="submit" class="btn btnMain">登録</button>
+                    </div>
+                </form>
+            </div>
+            <div class="row mb-5">
+                <div class="col-auto">
+                    <button type="button" class="btn btnBack" th:onclick="location.href='/admin/menu'">戻る</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="common :: footer"></div>
+</body>
+</html>
