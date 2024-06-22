@@ -43,7 +43,7 @@ function createMonthList2(id) {
     $(id).empty();
     $(id).append($('<option>').val('').text(''));
     for (let i = 1; i <= 12; i++) {
-        $('.monthList').append($('<option>').val(i).text(i));
+        $(id).append($('<option>').val(i).text(i));
     }
 }
 

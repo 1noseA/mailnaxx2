@@ -3,7 +3,7 @@
 <head th:replace="common :: meta_header('お知らせフォーム',~{::link},~{::script})">
 <link rel="stylesheet" th:href="@{/css/user/create.css}" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-<script th:src="@{/js/user-create.js}"></script>
+<script th:src="@{/js/manual-create.js}"></script>
 </head>
 <body>
     <div th:replace="common :: header"></div>
@@ -16,17 +16,17 @@
                 <form method="POST" th:action="@{/notices/create}" th:object="${noticesForm}" id="form">
                     <div class="row mb-3">
                         <div class="col-12 col-md-3 text-md-end">
-                            <label for="startDate" class="col-form-label">掲載開始日</label>
+                            <label class="col-form-label">掲載開始日</label>
                         </div>
 
                         <div class="col-12 col-md-8 d-flex align-items-center">
-                            <select class="form-select" th:errorclass="is-invalid" name="startYear" id="yearList">
+                            <select class="form-select" th:errorclass="is-invalid" name="startYear" id="startYearList">
                                 <option th:value="${noticesForm.startYear}">
                             </select>
                             <span class="p-2">年</span>
 
                             <div class="input-group has-validation">
-                                <select class="form-select w20 monthList" th:errorclass="is-invalid" name="startMonth" id="monthList">
+                                <select class="form-select w20" th:errorclass="is-invalid" name="startMonth" id="startMonthList">
                                     <option th:value="${noticesForm.startMonth}">
                                 </select>
                                 <span class="invalid-feedback" th:if="${#fields.hasErrors('startMonth')}" th:errors="*{startMonth}"></span>
@@ -34,10 +34,10 @@
                             <span class="p-2">月</span>
 
                             <div class="input-group has-validation">
-                                <select class="form-select w20" th:errorclass="is-invalid" name="startDay" id="dayList">
+                                <select class="form-select w20" th:errorclass="is-invalid" name="startDay" id="startDayList">
                                     <option th:value="${noticesForm.startDay}">
                                 </select>
-                                <span class="invalid-feedback" th:if="${#fields.hasErrors('startDay')}" th:errors="*{starthDay}"></span>
+                                <span class="invalid-feedback" th:if="${#fields.hasErrors('startDay')}" th:errors="*{startDay}"></span>
                             </div>
                             <span class="p-2">日</span>
                         </div>
@@ -45,17 +45,17 @@
 
                     <div class="row mb-3">
                         <div class="col-12 col-md-3 text-md-end">
-                            <label for="endDate" class="col-form-label">掲載終了日</label>
+                            <label class="col-form-label">掲載終了日</label>
                         </div>
 
                         <div class="col-12 col-md-8 d-flex align-items-center">
-                            <select class="form-select" th:errorclass="is-invalid" name="endYear" id="yearList">
+                            <select class="form-select" th:errorclass="is-invalid" name="endYear" id="endYearList">
                                 <option th:value="${noticesForm.endYear}">
                             </select>
                             <span class="p-2">年</span>
 
                             <div class="input-group has-validation">
-                                <select class="form-select w20 monthList" th:errorclass="is-invalid" name="endMonth" id="monthList">
+                                <select class="form-select w20" th:errorclass="is-invalid" name="endMonth" id="endMonthList">
                                     <option th:value="${noticesForm.endMonth}">
                                 </select>
                                 <span class="invalid-feedback" th:if="${#fields.hasErrors('endMonth')}" th:errors="*{endMonth}"></span>
@@ -63,7 +63,7 @@
                             <span class="p-2">月</span>
 
                             <div class="input-group has-validation">
-                                <select class="form-select w20" th:errorclass="is-invalid" name="endDay" id="dayList">
+                                <select class="form-select w20" th:errorclass="is-invalid" name="endDay" id="endDayList">
                                     <option th:value="${noticesForm.endDay}">
                                 </select>
                                 <span class="invalid-feedback" th:if="${#fields.hasErrors('endDay')}" th:errors="*{endDay}"></span>

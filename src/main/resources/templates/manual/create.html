@@ -53,7 +53,7 @@
                             <span class="p-2">年</span>
 
                             <div class="input-group has-validation">
-                                <select class="form-select w20 monthList" th:errorclass="is-invalid" name="startMonth" id="startMonthList">
+                                <select class="form-select w20" th:errorclass="is-invalid" name="startMonth" id="startMonthList">
                                     <option th:value="${manualsForm.startMonth}">
                                 </select>
                                 <span class="invalid-feedback" th:if="${#fields.hasErrors('startMonth')}" th:errors="*{startMonth}"></span>
@@ -82,7 +82,7 @@
                             <span class="p-2">年</span>
 
                             <div class="input-group has-validation">
-                                <select class="form-select w20 monthList" th:errorclass="is-invalid" name="endMonth" id="endMonthList">
+                                <select class="form-select w20" th:errorclass="is-invalid" name="endMonth" id="endMonthList">
                                     <option th:value="${manualsForm.endMonth}">
                                 </select>
                                 <span class="invalid-feedback" th:if="${#fields.hasErrors('endMonth')}" th:errors="*{endMonth}"></span>
