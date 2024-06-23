@@ -9,18 +9,19 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.mailnaxx2.entity.Notices;
-import com.mailnaxx2.mapper.NoticesMapper;
 import com.mailnaxx2.security.LoginUserDetails;
+import com.mailnaxx2.service.NoticesService;
 
 @Controller
 public class TopController {
 
     @Autowired
-    NoticesMapper noticesMapper;
+    NoticesService noticesService;
 
     @RequestMapping("/top")
-    public String index(Model model, @AuthenticationPrincipal LoginUserDetails loginUser) {
-        List<Notices> noticeList = noticesMapper.findAll();
+    public String index(Model model,
+                        @AuthenticationPrincipal LoginUserDetails loginUser) {
+        List<Notices> noticeList = noticesService.findAll();
         model.addAttribute("noticeList", noticeList);
         model.addAttribute("loginUserInfo", loginUser.getLoginUser());
         return "top/top";
