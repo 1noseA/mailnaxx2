@@ -14,8 +14,8 @@
                 <div class="overflow-auto">
                     <table class="table table-bordered table-hover border border-dark">
                         <tr th:each="notice : ${noticeList}">
-                            <td th:text="${#temporals.format(notice.start_date, 'yyyy/MM/dd')}" class="w-25" />
-                            <td th:text="${notice.notice_message}" />
+                            <td th:text="${#temporals.format(notice.startDate, 'yyyy/MM/dd')}" class="w-25" />
+                            <td th:text="${notice.content}" />
                         </tr>
                     </table>
                 </div>

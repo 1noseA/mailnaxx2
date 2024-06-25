@@ -4,11 +4,13 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.mailnaxx2.constants.CommonConstants;
 import com.mailnaxx2.entity.Notices;
 import com.mailnaxx2.form.NoticesForm;
 import com.mailnaxx2.mapper.NoticesMapper;
@@ -67,7 +69,11 @@ public class NoticesService {
         }
 
         // 表示範囲
-        notice.setDisplayRange(noticesForm.getDisplayRange());
+        if (StringUtils.isEmpty(noticesForm.getDisplayRange())) {
+            notice.setDisplayRange(CommonConstants.DISPLAY_RANGE_ALL);
+        } else {
+            notice.setDisplayRange(noticesForm.getDisplayRange());
+        }
 
         // 内容
         notice.setContent(noticesForm.getContent());

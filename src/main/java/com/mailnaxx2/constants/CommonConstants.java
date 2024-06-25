@@ -49,4 +49,7 @@ public class CommonConstants {
 
     // 資料表示順最大値
     public static final int MAX_DISPLAY_ORDER = 999;
+
+    // お知らせ表示範囲（全体）
+    public static final String DISPLAY_RANGE_ALL = "1";
 }
