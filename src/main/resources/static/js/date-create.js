@@ -20,7 +20,9 @@ $(function() {
     });
 });
 
-// 掲載日_年プルダウン設定
+/**
+ * 掲載日_年プルダウン設定
+ */
 function setYearList(id, val) {
     // 現在
     const nowYear = new Date().getFullYear();
@@ -30,7 +32,9 @@ function setYearList(id, val) {
     }
 }
 
-// 掲載日_月プルダウン設定
+/**
+ * 掲載日_月プルダウン設定
+ */
 function setMonthList(id, val) {
     createMonthList2(id);
     if (val != '') {
@@ -38,7 +42,9 @@ function setMonthList(id, val) {
     }
 }
 
-// 掲載日_月プルダウン作成
+/**
+ * 掲載日_月プルダウン作成
+ */
 function createMonthList2(id) {
     $(id).empty();
     $(id).append($('<option>').val('').text(''));
@@ -47,7 +53,9 @@ function createMonthList2(id) {
     }
 }
 
-// 掲載日_日プルダウン設定
+/**
+ * 掲載日_日プルダウン設定
+ */
 function setDayList(id, val) {
     if (id.indexOf('start') !== -1) {
         createDayList2('#startYearList', '#startMonthList', '#startDayList');
@@ -76,23 +84,4 @@ function createDayList2(yearId, monthId, dayId) {
     for (let i = 1; i <= daysInMonth; i++) {
         $(dayId).append($('<option>').val(i).text(i));
     }
-}
-
-function submitForm(id) {
-    if ($('#startYearList').val() === '' || $('#startMonthList').val() === '' || $('#startDayList').val() === '') {
-        if (!confirm('掲載開始日は本日日付になりますが、よろしいでしょうか')) {
-            return false;
-        }
-    }
-    let form = $('#form');
-    $('<input>').attr({
-        type: 'hidden',
-        name: 'manualId',
-        value: id
-    }).appendTo(form);
-    // 更新の場合
-    if (id !== '0') {
-        form.attr('action', '/manual/update');
-    }
-    form.submit();
 }

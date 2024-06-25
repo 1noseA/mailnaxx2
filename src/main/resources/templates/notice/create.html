@@ -3,7 +3,8 @@
 <head th:replace="common :: meta_header('お知らせフォーム',~{::link},~{::script})">
 <link rel="stylesheet" th:href="@{/css/user/create.css}" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-<script th:src="@{/js/manual-create.js}"></script>
+<script th:src="@{/js/date-create.js}"></script>
+<script th:src="@{/js/notice.js}"></script>
 </head>
 <body>
     <div th:replace="common :: header"></div>
@@ -113,7 +114,7 @@
                     </div>
 
                     <div class="text-center m-5">
-                        <button type="submit" class="btn btnMain">登録</button>
+                        <button type="button" class="btn btnMain" th:onclick="|submitForm()|">登録</button>
                     </div>
                 </form>
             </div>
