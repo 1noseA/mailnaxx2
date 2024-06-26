@@ -24,7 +24,7 @@ public class Notices {
     private String displayRange;
 
     // カテゴリーID
-    private int categoryId;
+    private Categories category;
 
     // 内容
     private String content;

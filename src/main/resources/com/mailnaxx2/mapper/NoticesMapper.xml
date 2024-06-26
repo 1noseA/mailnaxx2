@@ -5,14 +5,43 @@
 <mapper namespace="com.mailnaxx2.mapper.NoticesMapper">
 
     <!-- 全件取得 -->
-    <select id="findAll" resultType="com.mailnaxx2.entity.Notices">
-        SELECT * FROM notices
-        WHERE start_date &lt;= CURRENT_DATE
-        AND (
-                end_date IS NULL
-                OR end_date &gt;= CURRENT_DATE
-            )
+    <select id="findAll" resultMap="noticeMap">
+        SELECT
+            notice_id,
+            start_date,
+            content
+        FROM
+            notices
+        WHERE
+            start_date &lt;= CURRENT_DATE
+        AND
+        (
+            end_date IS NULL
+            OR end_date &gt;= CURRENT_DATE
+        )
+        ORDER BY notice_id DESC
     </select>
+
+    <!-- マッピング -->
+    <resultMap id="noticeMap" type="com.mailnaxx2.entity.Notices">
+        <result property="noticeId" column="notice_id" />
+        <result property="startDate" column="start_date" />
+        <result property="endDate" column="end_date" />
+        <result property="displayRange" column="display_range" />
+        <result property="content" column="content" />
+        <result property="link" column="link" />
+        <result property="createdBy" column="created_by" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedBy" column="updated_by" />
+        <result property="updatedAt" column="updated_at" />
+        <association property="category" resultMap="categoryResult"/>
+    </resultMap>
+
+    <resultMap id="categoryResult" type="com.mailnaxx2.entity.Categories">
+        <result property="categoryId" column="category_id" />
+        <result property="categoryName" column="category_name" />
+        <result property="color" column="color" />
+    </resultMap>
 
     <!-- 登録 -->
     <insert id="insert" useGeneratedKeys="true" keyProperty="noticeId">
