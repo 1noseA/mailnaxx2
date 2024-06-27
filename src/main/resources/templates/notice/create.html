@@ -73,13 +73,13 @@
                         </div>
                     </div>
 
-                    <div class="row mb-3">
+                    <div class="row mb-3 align-items-center">
                         <div class="col-12 col-md-3 text-md-end">
                             <label for="displayRange" class="col-form-label">表示範囲</label>
                         </div>
                         <div class="col-12 col-md-8">
-                            <div class="input-group has-validation">
-                                <input type="text" class="form-control" th:errorclass="is-invalid" th:field="*{displayRange}" />
+                            <div th:each="item : ${radioDisplayRange}" class="form-check-inline">
+                                <input type="radio" class="form-check-input" name="displayRange" th:text="${item.value}" th:value="${item.key}" th:checked="${item.key == '1'}" th:errorclass="is-invalid" id="displayRange">
                                 <span class="invalid-feedback" th:if="${#fields.hasErrors('displayRange')}" th:errors="*{displayRange}"></span>
                             </div>
                         </div>

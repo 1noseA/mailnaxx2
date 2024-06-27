@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import com.mailnaxx2.constants.NoticeConstants;
 import com.mailnaxx2.form.NoticesForm;
 import com.mailnaxx2.security.LoginUserDetails;
 import com.mailnaxx2.service.NoticesService;
@@ -27,6 +28,9 @@ public class NoticesController {
     public String create(@ModelAttribute NoticesForm noticesForm,
                          Model model,
                          @AuthenticationPrincipal LoginUserDetails loginUser) {
+
+        // ラジオボタン
+        model.addAttribute("radioDisplayRange", NoticeConstants.RADIO);
 
         model.addAttribute("loginUserInfo", loginUser.getLoginUser());
         return "notice/create";

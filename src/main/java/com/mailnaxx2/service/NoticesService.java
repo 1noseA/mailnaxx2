@@ -10,7 +10,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.mailnaxx2.constants.CommonConstants;
+import com.mailnaxx2.constants.NoticeConstants;
 import com.mailnaxx2.entity.Notices;
 import com.mailnaxx2.form.NoticesForm;
 import com.mailnaxx2.mapper.NoticesMapper;
@@ -38,7 +38,7 @@ public class NoticesService {
         // 作成者はセッションの社員番号
         notice.setCreatedBy(loginUser.getLoginUser().getUserNumber());
 
-        // 登録
+        // お知らせ登録
         noticesMapper.insert(notice);
     }
 
@@ -70,7 +70,7 @@ public class NoticesService {
 
         // 表示範囲
         if (StringUtils.isEmpty(noticesForm.getDisplayRange())) {
-            notice.setDisplayRange(CommonConstants.DISPLAY_RANGE_ALL);
+            notice.setDisplayRange(NoticeConstants.DISPLAY_RANGE_ALL);
         } else {
             notice.setDisplayRange(noticesForm.getDisplayRange());
         }
