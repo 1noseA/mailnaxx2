@@ -1,5 +1,7 @@
 package com.mailnaxx2.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -12,9 +14,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import com.mailnaxx2.constants.NoticeConstants;
+import com.mailnaxx2.entity.Users;
 import com.mailnaxx2.form.NoticesForm;
 import com.mailnaxx2.security.LoginUserDetails;
 import com.mailnaxx2.service.NoticesService;
+import com.mailnaxx2.service.UsersService;
 import com.mailnaxx2.validation.All;
 
 @Controller
@@ -22,6 +26,9 @@ public class NoticesController {
 
     @Autowired
     NoticesService noticesService;
+
+    @Autowired
+    UsersService usersService;
 
     // 登録画面初期表示
     @GetMapping("/admin/notice/create")
@@ -31,6 +38,10 @@ public class NoticesController {
 
         // ラジオボタン
         model.addAttribute("radioDisplayRange", NoticeConstants.RADIO);
+
+        // 社員名プルダウン
+        List<Users> userList = usersService.findAll();
+        model.addAttribute("userList", userList);
 
         model.addAttribute("loginUserInfo", loginUser.getLoginUser());
         return "notice/create";

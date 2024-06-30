@@ -2,6 +2,8 @@ package com.mailnaxx2.form;
 
 import jakarta.validation.constraints.NotBlank;
 
+import java.util.List;
+
 import com.mailnaxx2.validation.ValidGroup1;
 
 import lombok.Data;
@@ -32,6 +34,9 @@ public class NoticesForm {
 
     // 表示範囲
     private String displayRange;
+
+    // 社員ID（表示範囲：個人）
+    private List<Integer> userId;
 
     // 内容
     @NotBlank(groups = ValidGroup1.class, message = "入力してください")

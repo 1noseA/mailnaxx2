@@ -85,6 +85,23 @@
                         </div>
                     </div>
 
+                    <div class="row mb-3 align-items-center" id="userNameForm" style="display: none;">
+                        <div class="col-12 col-md-3 text-md-end">
+                            <label for="userId" class="col-form-label">社員名</label>
+                        </div>
+                        <div class="col-12 col-md-8">
+                            <select id="userNameList">
+                                <option th:each="user : ${userList}"
+                                        th:value="${user.userId}"
+                                        th:text="${user.userName}">
+                                </option>
+                            </select>
+                            <select id="addList" style="display: none;"></select>
+                            <button type="button" id="add">+</button>
+                            <button type="button" id="remove">-</button>
+                        </div>
+                    </div>
+
                     <!-- カテゴリー -->
 
                     <div class="row mb-3">
