@@ -90,15 +90,20 @@
                             <label for="userId" class="col-form-label">社員名</label>
                         </div>
                         <div class="col-12 col-md-8">
-                            <select id="userNameList">
-                                <option th:each="user : ${userList}"
-                                        th:value="${user.userId}"
-                                        th:text="${user.userName}">
-                                </option>
-                            </select>
-                            <select id="addList" style="display: none;"></select>
-                            <button type="button" id="add">+</button>
-                            <button type="button" id="remove">-</button>
+                            <table>
+                                <tr>
+                                    <td>
+                                       <select class="form-select" name="userId">
+                                            <option th:each="user : ${userList}"
+                                                    th:value="${user.userId}"
+                                                    th:text="${user.userName}">
+                                            </option>
+                                        </select>
+                                    </td>
+                                    <td><button type="button" class="add">+</button></td>
+                                    <td><button type="button" class="remove">-</button></td>
+                                </tr>
+                            </table>
                         </div>
                     </div>
 

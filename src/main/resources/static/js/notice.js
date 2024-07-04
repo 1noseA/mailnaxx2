@@ -11,14 +11,16 @@ $(document).ready(function() {
     });
 
     // 「+」ボタンで選択肢を追加
-    $("#add").on("click", function() {
-        var input = $("#userNameList").val();
-        $("#addList").append(`<option value="${input}">${input}</option>`);
+    $('.add').click(function() {
+        let row = $(this).closest("tr");
+        let newRow = row.clone(true);
+        newRow.insertAfter(row);
     });
 
     // 「-」ボタンで選択肢を削除
-    $("#remove").on("click", function() {
-        $("#test option:selected").remove();
+    $('.remove').click(function() {
+        let row = $(this).closest("tr").remove();
+        row.remove();
     });
 });
 
