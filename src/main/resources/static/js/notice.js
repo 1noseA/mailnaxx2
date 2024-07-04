@@ -2,25 +2,29 @@
 $(document).ready(function() {
 
     // ラジオボタンの選択でプルダウンの表示・非表示を切り替え
-    $("input[name='displayRange']").change(function() {
-        if ($(this).val() === "2") {
-            $("#userNameForm").show();
+    $('input[name="displayRange"]').change(function() {
+        if ($(this).val() === '2') {
+            $('#userNameForm').show();
+            $('select[name="userId"]').prop('disabled', false);
         } else {
-            $("#userNameForm").hide();
+            $('#userNameForm').hide();
+            $('select[name="userId"]').prop('disabled', true);
         }
     });
 
     // 「+」ボタンで選択肢を追加
     $('.add').click(function() {
-        let row = $(this).closest("tr");
+        let row = $(this).closest('tr');
         let newRow = row.clone(true);
         newRow.insertAfter(row);
     });
 
     // 「-」ボタンで選択肢を削除
     $('.remove').click(function() {
-        let row = $(this).closest("tr").remove();
-        row.remove();
+        let row = $(this).closest('tr');
+        if ($('tr').length > 1) {
+            row.remove();
+        }
     });
 });
 
