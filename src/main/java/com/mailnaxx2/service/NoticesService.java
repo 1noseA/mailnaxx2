@@ -2,6 +2,7 @@ package com.mailnaxx2.service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -12,7 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.mailnaxx2.constants.NoticeConstants;
 import com.mailnaxx2.entity.Notices;
+import com.mailnaxx2.entity.Users;
 import com.mailnaxx2.form.NoticesForm;
+import com.mailnaxx2.mapper.NoticeTargetsMapper;
 import com.mailnaxx2.mapper.NoticesMapper;
 import com.mailnaxx2.security.LoginUserDetails;
 
@@ -21,6 +24,9 @@ public class NoticesService {
 
     @Autowired
     NoticesMapper noticesMapper;
+
+    @Autowired
+    NoticeTargetsMapper noticeTargetsMapper;
 
     // 全件取得
     public List<Notices> findAll() {
@@ -40,6 +46,21 @@ public class NoticesService {
 
         // お知らせ登録
         noticesMapper.insert(notice);
+
+        // 表示範囲が個人だったらお知らせ表示対象テーブルに登録する
+        if (noticesForm.getDisplayRange().equals(NoticeConstants.DISPLAY_RANGE_INDIVIDUAL)) {
+            int noticeId = notice.getNoticeId();
+            List<Users> userList = new ArrayList<>();
+            for (int i = 0; i <  noticesForm.getUserId().size(); i++) {
+                int userId = noticesForm.getUserId().get(i);
+                Users user = new Users();
+                user.setUserId(userId);
+                user.setCreatedBy(loginUser.getLoginUser().getUserNumber());
+                userList.add(user);
+            }
+            // お知らせ表示対象登録
+            noticeTargetsMapper.insert(noticeId, userList);
+        }
     }
 
     // エンティティにセットする

@@ -17,10 +17,10 @@ public class NoticeTargets {
     private int noticeId;
 
     // 社員ID
-    private int userId;
+    private Users user;
 
     // 既読フラグ
-    private String displayRange;
+    private String readedFlg;
 
     // レコード登録者
     private String createdBy;
