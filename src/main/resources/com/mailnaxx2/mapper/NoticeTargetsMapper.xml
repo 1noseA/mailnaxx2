@@ -23,7 +23,7 @@
     </resultMap>
 
     <!-- 登録 -->
-    <insert id="insert">
+    <insert id="insert" parameterType="java.util.List">
         INSERT INTO notice_targets
         (
             notice_id,
@@ -33,7 +33,7 @@
             created_at
         )
         VALUES
-        <foreach collection="noticeTargetList" item="nt" separator=";">
+        <foreach collection="noticeTargetList" item="nt" separator=",">
         (
             #{nt.noticeId},
             #{nt.user.userId},
