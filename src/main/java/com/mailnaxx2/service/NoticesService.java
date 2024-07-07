@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.mailnaxx2.constants.NoticeConstants;
+import com.mailnaxx2.entity.NoticeTargets;
 import com.mailnaxx2.entity.Notices;
 import com.mailnaxx2.entity.Users;
 import com.mailnaxx2.form.NoticesForm;
@@ -49,17 +50,18 @@ public class NoticesService {
 
         // 表示範囲が個人だったらお知らせ表示対象テーブルに登録する
         if (noticesForm.getDisplayRange().equals(NoticeConstants.DISPLAY_RANGE_INDIVIDUAL)) {
-            int noticeId = notice.getNoticeId();
-            List<Users> userList = new ArrayList<>();
+            List<NoticeTargets> noticeTargetList = new ArrayList<>();
             for (int i = 0; i <  noticesForm.getUserId().size(); i++) {
-                int userId = noticesForm.getUserId().get(i);
+                NoticeTargets noticeTarget = new NoticeTargets();
                 Users user = new Users();
-                user.setUserId(userId);
-                user.setCreatedBy(loginUser.getLoginUser().getUserNumber());
-                userList.add(user);
+                user.setUserId(noticesForm.getUserId().get(i));
+                noticeTarget.setUser(user);
+                noticeTarget.setNoticeId(notice.getNoticeId());
+                noticeTarget.setCreatedBy(loginUser.getLoginUser().getUserNumber());
+                noticeTargetList.add(noticeTarget);
             }
             // お知らせ表示対象登録
-            noticeTargetsMapper.insert(noticeId, userList);
+            noticeTargetsMapper.insert(noticeTargetList);
         }
     }
 

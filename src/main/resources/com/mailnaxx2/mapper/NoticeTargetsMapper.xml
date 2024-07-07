@@ -33,12 +33,12 @@
             created_at
         )
         VALUES
-        <foreach collection="userList" item="u" separator=";">
+        <foreach collection="noticeTargetList" item="nt" separator=";">
         (
-            #{noticeId},
-            #{u.userId},
+            #{nt.noticeId},
+            #{nt.user.userId},
             '0',
-            #{u.createdBy},
+            #{nt.createdBy},
             CURRENT_TIMESTAMP
         )
         </foreach>
