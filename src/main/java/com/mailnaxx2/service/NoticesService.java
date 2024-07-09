@@ -51,10 +51,10 @@ public class NoticesService {
         // 表示範囲が個人だったらお知らせ表示対象テーブルに登録する
         if (noticesForm.getDisplayRange().equals(NoticeConstants.DISPLAY_RANGE_INDIVIDUAL)) {
             List<NoticeTargets> noticeTargetList = new ArrayList<>();
-            for (int i = 0; i <  noticesForm.getUserId().size(); i++) {
+            for (int userId : noticesForm.getUserId()) {
                 NoticeTargets noticeTarget = new NoticeTargets();
                 Users user = new Users();
-                user.setUserId(noticesForm.getUserId().get(i));
+                user.setUserId(userId);
                 noticeTarget.setUser(user);
                 noticeTarget.setNoticeId(notice.getNoticeId());
                 noticeTarget.setCreatedBy(loginUser.getLoginUser().getUserNumber());

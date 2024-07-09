@@ -2,7 +2,7 @@ package com.mailnaxx2.form;
 
 import jakarta.validation.constraints.NotBlank;
 
-import java.util.List;
+import java.util.HashSet;
 
 import com.mailnaxx2.validation.ValidGroup1;
 
@@ -36,7 +36,7 @@ public class NoticesForm {
     private String displayRange;
 
     // 社員ID（表示範囲：個人）
-    private List<Integer> userId;
+    private HashSet<Integer> userId;
 
     // 内容
     @NotBlank(groups = ValidGroup1.class, message = "入力してください")
