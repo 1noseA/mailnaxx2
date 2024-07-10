@@ -2,12 +2,12 @@ package com.mailnaxx2.entity;
 
 import java.time.LocalDateTime;
 
-import lombok.Getter;
+import lombok.Data;
 
 /**
- * お知らせ
+ * カテゴリー
  */
-@Getter
+@Data
 public class Categories {
 
     // カテゴリーID

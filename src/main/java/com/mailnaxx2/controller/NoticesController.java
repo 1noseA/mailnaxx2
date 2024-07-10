@@ -14,9 +14,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import com.mailnaxx2.constants.NoticeConstants;
+import com.mailnaxx2.entity.Categories;
 import com.mailnaxx2.entity.Users;
 import com.mailnaxx2.form.NoticesForm;
 import com.mailnaxx2.security.LoginUserDetails;
+import com.mailnaxx2.service.CategoriesService;
 import com.mailnaxx2.service.NoticesService;
 import com.mailnaxx2.service.UsersService;
 import com.mailnaxx2.validation.All;
@@ -30,6 +32,9 @@ public class NoticesController {
     @Autowired
     UsersService usersService;
 
+    @Autowired
+    CategoriesService categoriesService;
+
     // 登録画面初期表示
     @GetMapping("/admin/notice/create")
     public String create(@ModelAttribute NoticesForm noticesForm,
@@ -42,6 +47,15 @@ public class NoticesController {
         // 社員名プルダウン
         List<Users> userList = usersService.findAll();
         model.addAttribute("userList", userList);
+
+        // カテゴリープルダウン
+        List<Categories> categoryList = categoriesService.findAll();
+        Categories category = new Categories();
+        category.setCategoryId(0);
+        category.setCategoryName("");
+        category.setColor("");
+        categoryList.add(0, category);
+        model.addAttribute("categoryList", categoryList);
 
         model.addAttribute("loginUserInfo", loginUser.getLoginUser());
         return "notice/create";

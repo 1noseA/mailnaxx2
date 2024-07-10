@@ -38,6 +38,9 @@ public class NoticesForm {
     // 社員ID（表示範囲：個人）
     private HashSet<Integer> userId;
 
+    // カテゴリー
+    private int categoryId;
+
     // 内容
     @NotBlank(groups = ValidGroup1.class, message = "入力してください")
     private String content;
