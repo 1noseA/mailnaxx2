@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import com.mailnaxx2.constants.NoticeConstants;
 import com.mailnaxx2.entity.Categories;
 import com.mailnaxx2.entity.Users;
+import com.mailnaxx2.form.CategoriesForm;
 import com.mailnaxx2.form.NoticesForm;
 import com.mailnaxx2.security.LoginUserDetails;
 import com.mailnaxx2.service.CategoriesService;
@@ -38,6 +39,7 @@ public class NoticesController {
     // 登録画面初期表示
     @GetMapping("/admin/notice/create")
     public String create(@ModelAttribute NoticesForm noticesForm,
+                         @ModelAttribute CategoriesForm categoriesForm,
                          Model model,
                          @AuthenticationPrincipal LoginUserDetails loginUser) {
 
@@ -65,12 +67,13 @@ public class NoticesController {
     @Transactional
     @PostMapping("/notice/create")
     public String create(@ModelAttribute @Validated(All.class) NoticesForm noticesForm,
-                        BindingResult result,
-                        Model model,
-                        @AuthenticationPrincipal LoginUserDetails loginUser) {
+                         @ModelAttribute CategoriesForm categoriesForm,
+                         BindingResult result,
+                         Model model,
+                         @AuthenticationPrincipal LoginUserDetails loginUser) {
         // 入力エラーチェック
         if (result.hasErrors()) {
-            return create(noticesForm, model, loginUser);
+            return create(noticesForm, categoriesForm, model, loginUser);
         }
 
         // 登録

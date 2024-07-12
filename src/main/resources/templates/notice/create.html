@@ -112,14 +112,16 @@
                         <div class="col-12 col-md-3 text-md-end">
                             <label class="col-form-label">カテゴリー</label>
                         </div>
-
-                        <div class="col-12 col-md-8 d-flex align-items-center">
+                        <div class="col-10 col-md-5 d-flex align-items-center">
                             <select class="form-select" name="categoryId">
                                 <option th:each="category : ${categoryList}"
                                         th:value="${category.categoryId}"
                                         th:text="${category.categoryName}">
                                 </option>
                             </select>
+                        </div>
+                        <div class="col-2 col-md-3 d-flex align-items-center">
+                            <button type="button" class="btn btnSub my-3 w-100" data-bs-toggle="modal" data-bs-target="#categoryModal">追加</button>
                         </div>
                     </div>
 
@@ -161,6 +163,42 @@
             </div>
         </div>
     </div>
+
+    <!-- モーダルここから -->
+    <form method="POST" th:action="@{/notice/createCategory}" th:object="${categoriesForm}" id="categoriesForm">
+        <div class="modal fade" id="categoryModal" tabindex="-1" aria-labelledby="categoryModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">カテゴリー追加</h5>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <div class="row mb-3">
+                                <div class="col-12">
+                                    <label for="categoryName" class="col-form-label">カテゴリー名
+                                        <span class="badge bg-secondary ms-1">必須</span>
+                                    </label>
+                                    <input type="text" class="form-control" name="categoryName" id="categoryName" th:field="${categoriesForm.categoryName}" />
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-12">
+                                    <label for="color" class="col-form-label">色</label>
+                                    <input type="text" class="form-control" name="color" id="color" th:field="${categoriesForm.color}" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="createCategory">追加</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <!-- モーダルここまで -->
 
     <div th:replace="common :: footer"></div>
 </body>
