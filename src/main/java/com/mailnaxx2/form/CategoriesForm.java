@@ -18,4 +18,7 @@ public class CategoriesForm {
 
     // 色
     private String color;
+
+    // エラーメッセージ
+    private String errorMessage;
 }

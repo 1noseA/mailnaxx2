@@ -8,10 +8,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.mailnaxx2.constants.NoticeConstants;
 import com.mailnaxx2.entity.Categories;
@@ -63,7 +65,28 @@ public class NoticesController {
         return "notice/create";
     }
 
-    // 登録処理
+    // カテゴリー登録処理
+    @Transactional
+    @PostMapping("/notice/createCategory")
+    @ResponseBody
+    public CategoriesForm createCategory(@ModelAttribute @Validated(All.class) CategoriesForm categoriesForm,
+                                         BindingResult result,
+                                         @AuthenticationPrincipal LoginUserDetails loginUser) {
+        // 入力エラーチェック
+        if (result.hasErrors()) {
+            for (ObjectError error : result.getAllErrors()) {
+                categoriesForm.setErrorMessage(error.getDefaultMessage());
+            }
+            return categoriesForm;
+        }
+
+        // 登録
+        //noticesService.insert(noticesForm, loginUser);
+
+        return categoriesForm;
+    }
+
+    // お知らせ登録処理
     @Transactional
     @PostMapping("/notice/create")
     public String create(@ModelAttribute @Validated(All.class) NoticesForm noticesForm,

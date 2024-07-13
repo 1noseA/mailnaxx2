@@ -29,7 +29,41 @@ $(document).ready(function() {
 });
 
 /**
- * 登録処理
+ * カテゴリー登録処理
+ */
+$(function() {
+    $('#createCategory').click(function(){
+        const categoriesForm = {
+            categoryName: $('#categoryName').val(),
+            color: $('#color').val(),
+            _csrf: $('*[name=_csrf]').val()
+        };
+
+        $.ajax({
+            url: '/notice/createCategory',
+            type: 'POST',
+            data : categoriesForm,
+            dataType: 'json',
+        })
+        .done(function(data) {
+            if (data.errorMessage) {
+                alert('カテゴリー名を' + data.errorMessage);
+            } else {
+                /*$('#categoryId').val(data.categoryId);*/
+                alert('登録完了しました');
+            }
+        })
+        .fail(function(jqXHR, textStatus, errorThrown) {
+            alert('送信に失敗しました');
+            console.log("jqXHR          : " + jqXHR.status); // HTTPステータスが取得
+            console.log("textStatus     : " + textStatus);    // タイムアウト、パースエラー
+            console.log("errorThrown    : " + errorThrown.message); // 例外情報
+        })
+    });
+});
+
+/**
+ * お知らせ登録処理
  */
 function submitForm() {
     if ($('#startYearList').val() === '' || $('#startMonthList').val() === '' || $('#startDayList').val() === '') {
