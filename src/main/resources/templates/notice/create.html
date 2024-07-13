@@ -112,7 +112,7 @@
                         <div class="col-12 col-md-3 text-md-end">
                             <label class="col-form-label">カテゴリー</label>
                         </div>
-                        <div class="col-10 col-md-5 d-flex align-items-center">
+                        <div class="col-9 col-md-6 d-flex align-items-center">
                             <select class="form-select" name="categoryId">
                                 <option th:each="category : ${categoryList}"
                                         th:value="${category.categoryId}"
@@ -120,8 +120,8 @@
                                 </option>
                             </select>
                         </div>
-                        <div class="col-2 col-md-3 d-flex align-items-center">
-                            <button type="button" class="btn btnSub my-3 w-100" data-bs-toggle="modal" data-bs-target="#categoryModal">追加</button>
+                        <div class="col-3 col-md-2 d-flex align-items-center">
+                            <button type="button" class="btn btnDark" data-bs-toggle="modal" data-bs-target="#categoryModal">その他</button>
                         </div>
                     </div>
 
@@ -167,7 +167,7 @@
     <!-- モーダルここから -->
     <form method="POST" th:action="@{/notice/createCategory}" th:object="${categoriesForm}" id="categoriesForm">
         <div class="modal fade" id="categoryModal" tabindex="-1" aria-labelledby="categoryModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">カテゴリー追加</h5>
@@ -191,8 +191,8 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" id="createCategory">追加</button>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
+                        <button type="button" class="btn btnMain" id="createCategory">追加</button>
+                        <button type="button" class="btn btnBack" data-bs-dismiss="modal">閉じる</button>
                     </div>
                 </div>
             </div>
