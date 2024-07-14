@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
@@ -66,7 +65,6 @@ public class NoticesController {
     }
 
     // カテゴリー登録処理
-    @Transactional
     @PostMapping("/notice/createCategory")
     @ResponseBody
     public CategoriesForm createCategory(@ModelAttribute @Validated(All.class) CategoriesForm categoriesForm,
@@ -81,13 +79,12 @@ public class NoticesController {
         }
 
         // 登録
-        //noticesService.insert(noticesForm, loginUser);
+        categoriesService.insert(categoriesForm, loginUser);
 
         return categoriesForm;
     }
 
     // お知らせ登録処理
-    @Transactional
     @PostMapping("/notice/create")
     public String create(@ModelAttribute @Validated(All.class) NoticesForm noticesForm,
                          @ModelAttribute CategoriesForm categoriesForm,

@@ -11,4 +11,7 @@ public interface CategoriesMapper {
 
     // 全件取得
     public List<Categories> findAll();
+
+    // 登録
+    public int insert(Categories category);
 }

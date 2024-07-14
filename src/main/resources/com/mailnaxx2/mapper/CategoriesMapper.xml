@@ -25,4 +25,22 @@
         <result property="updatedBy" column="updated_by" />
         <result property="updatedAt" column="updated_at" />
     </resultMap>
+
+    <!-- 登録 -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="categoryId">
+        INSERT INTO categories
+        (
+            category_name,
+            color,
+            created_by,
+            created_at
+        )
+        VALUES
+        (
+            #{categoryName},
+            #{color},
+            #{createdBy},
+            CURRENT_TIMESTAMP
+        )
+    </insert>
 </mapper>
