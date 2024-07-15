@@ -12,6 +12,9 @@ import lombok.Data;
 @Data
 public class CategoriesForm {
 
+    // カテゴリーID
+    private int categoryId;
+
     // カテゴリー名
     @NotBlank(groups = ValidGroup1.class, message = "入力してください")
     private String categoryName;

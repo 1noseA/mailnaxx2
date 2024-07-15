@@ -37,6 +37,8 @@ public class CategoriesService {
 
         // 登録
         categoriesMapper.insert(category);
+
+        categoriesForm.setCategoryId(category.getCategoryId());
     }
 
     // エンティティにセットする
