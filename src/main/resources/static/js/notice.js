@@ -54,7 +54,10 @@ $(function() {
                 $('#color').val('');
                 // プルダウンに登録した値を追加する
                 $('#categoryId').append($('<option>').val(data.categoryId).text(data.categoryName));
+
                 alert('登録完了しました');
+                // モーダルを閉じる
+                $("#categoryModal").modal("hide");
             }
         })
         .fail(function(jqXHR, textStatus, errorThrown) {
