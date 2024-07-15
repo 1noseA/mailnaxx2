@@ -50,8 +50,8 @@ $(function() {
                 alert('カテゴリー名を' + data.errorMessage);
             } else {
                 // 入力をクリアする
-                $("#categoryName").val("");
-                $("#color").val("");
+                $('#categoryName').val('');
+                $('#color').val('');
                 // プルダウンに登録した値を追加する
                 $('#categoryId').append($('<option>').val(data.categoryId).text(data.categoryName));
                 alert('登録完了しました');
@@ -59,9 +59,9 @@ $(function() {
         })
         .fail(function(jqXHR, textStatus, errorThrown) {
             alert('送信に失敗しました');
-            console.log("jqXHR          : " + jqXHR.status); // HTTPステータス
-            console.log("textStatus     : " + textStatus);    // タイムアウト、パースエラー
-            console.log("errorThrown    : " + errorThrown.message); // 例外情報
+            console.log('jqXHR          : ' + jqXHR.status); // HTTPステータス
+            console.log('textStatus     : ' + textStatus);    // タイムアウト、パースエラー
+            console.log('errorThrown    : ' + errorThrown.message); // 例外情報
         })
     });
 });
