@@ -7,11 +7,16 @@
     <!-- 全件取得 -->
     <select id="findAll" resultMap="noticeMap">
         SELECT
-            notice_id,
-            start_date,
-            content
+            n.notice_id,
+            n.start_date,
+            c.category_id,
+            c.category_name,
+            c.color,
+            n.content
         FROM
-            notices
+            notices n
+        LEFT JOIN categories c
+            ON n.category_id = c.category_id
         WHERE
             start_date &lt;= CURRENT_DATE
         AND

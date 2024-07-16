@@ -8,6 +8,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.mailnaxx2.constants.NoticeConstants;
 import com.mailnaxx2.entity.Categories;
 import com.mailnaxx2.form.CategoriesForm;
 import com.mailnaxx2.mapper.CategoriesMapper;
@@ -47,7 +48,10 @@ public class CategoriesService {
         category.setCategoryName(categoriesForm.getCategoryName());
 
         // 色
-        if (!StringUtils.isEmpty(categoriesForm.getColor())) {
+        if (StringUtils.isEmpty(categoriesForm.getColor()) ||
+            categoriesForm.getColor().equals("#000000")) {
+            category.setColor(NoticeConstants.DEFAULT_COLOR);
+        } else {
             category.setColor(categoriesForm.getColor());
         }
 

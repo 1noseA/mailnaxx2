@@ -15,7 +15,12 @@
                     <table class="table table-bordered table-hover border border-dark">
                         <tr th:each="notice : ${noticeList}">
                             <td th:text="${#temporals.format(notice.startDate, 'yyyy/MM/dd')}" class="w-25" />
-                            <td th:text="${notice.content}" />
+                            <td>
+                                <span class="badge"
+                                      th:style="|background-color: ${notice.category == null ? 'transparent' : notice.category.color}|"
+                                      th:text="${notice.category == null ? '' : notice.category.categoryName}"></span>
+                                <span class="align-middle" th:text="${notice.content}"></span>
+                           </td>
                         </tr>
                     </table>
                 </div>

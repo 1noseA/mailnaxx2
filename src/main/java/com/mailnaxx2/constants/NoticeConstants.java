@@ -17,4 +17,7 @@ public class NoticeConstants {
         put("1", "全体");
         put("2", "個人");
     }};
+
+    // カテゴリーデフォルトカラー
+    public static final String DEFAULT_COLOR = "#6c757d";
 }
