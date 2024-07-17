@@ -1,7 +1,11 @@
 .noticeArea {
-    width: 80%;
-    max-width: 800px;
+    max-width: 900px;
     margin: 40px auto;
+}
+
+.overflow-auto {
+    height: 190px;
+    width: 100%;
 }
 
 .table {
