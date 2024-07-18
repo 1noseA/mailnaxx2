@@ -98,6 +98,9 @@ public class NoticesService {
             notice.setDisplayRange(noticesForm.getDisplayRange());
         }
 
+        // タイトル
+        notice.setTitle(noticesForm.getTitle());
+
         // 内容
         notice.setContent(noticesForm.getContent());
 

@@ -41,6 +41,10 @@ public class NoticesForm {
     // カテゴリー
     private int categoryId;
 
+    // タイトル
+    @NotBlank(groups = ValidGroup1.class, message = "入力してください")
+    private String title;
+
     // 内容
     @NotBlank(groups = ValidGroup1.class, message = "入力してください")
     private String content;

@@ -12,6 +12,7 @@
             c.category_id,
             c.category_name,
             c.color,
+            n.title,
             n.content
         FROM
             notices n
@@ -33,6 +34,7 @@
         <result property="startDate" column="start_date" />
         <result property="endDate" column="end_date" />
         <result property="displayRange" column="display_range" />
+        <result property="title" column="title" />
         <result property="content" column="content" />
         <result property="link" column="link" />
         <result property="createdBy" column="created_by" />
@@ -55,6 +57,7 @@
             start_date,
             end_date,
             display_range,
+            title,
             content,
             link,
             created_by,
@@ -65,6 +68,7 @@
             #{startDate},
             #{endDate},
             #{displayRange},
+            #{title},
             #{content},
             #{link},
             #{createdBy},

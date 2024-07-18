@@ -26,6 +26,9 @@ public class Notices {
     // カテゴリーID
     private Categories category;
 
+    // タイトル
+    private String title;
+
     // 内容
     private String content;
 
