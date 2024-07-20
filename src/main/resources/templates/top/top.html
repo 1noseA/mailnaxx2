@@ -11,19 +11,24 @@
         <div class="container my-5">
             <div class="noticeArea">
                 <h5 class="ps-3">お知らせ</h5>
-                <div class="overflow-auto">
-                    <table class="table table-bordered table-hover border border-dark">
-                        <tr th:each="notice : ${noticeList}">
-                            <td th:text="${#temporals.format(notice.startDate, 'yyyy/MM/dd')}" class="w-25" />
-                            <td>
-                                <span class="badge"
-                                      th:style="|background-color: ${notice.category == null ? 'transparent' : notice.category.color}|"
-                                      th:text="${notice.category == null ? '' : notice.category.categoryName}"></span>
-                                <span class="align-middle" th:text="${notice.content}"></span>
-                           </td>
-                        </tr>
-                    </table>
-                </div>
+                <th:block th:unless="${noticeList.size() > 0}">
+                    <span class="ms-3">お知らせはありません</span>
+                </th:block>
+                <th:block th:if="${noticeList.size() > 0}">
+                    <div class="overflow-auto">
+                        <table class="table table-bordered table-hover border border-dark">
+                            <tr th:each="notice : ${noticeList}">
+                                <td th:text="${#temporals.format(notice.startDate, 'yyyy/MM/dd')}" class="w-25" />
+                                <td>
+                                    <span class="badge"
+                                          th:style="|background-color: ${notice.category == null ? 'transparent' : notice.category.color}|"
+                                          th:text="${notice.category == null ? '' : notice.category.categoryName}"></span>
+                                    <span class="align-middle" th:text="${notice.content}"></span>
+                               </td>
+                            </tr>
+                        </table>
+                    </div>
+                </th:block>
             </div>
 
             <div class="menuArea">
