@@ -23,7 +23,7 @@
                                     <span class="badge"
                                           th:style="|background-color: ${notice.category == null ? 'transparent' : notice.category.color}|"
                                           th:text="${notice.category == null ? '' : notice.category.categoryName}"></span>
-                                    <span class="align-middle" th:text="${notice.content}"></span>
+                                    <span class="align-middle" th:text="${notice.title}"></span>
                                </td>
                             </tr>
                         </table>

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.mailnaxx2.constants.NoticeConstants;
+import com.mailnaxx2.entity.Categories;
 import com.mailnaxx2.entity.NoticeTargets;
 import com.mailnaxx2.entity.Notices;
 import com.mailnaxx2.entity.Users;
@@ -96,6 +97,13 @@ public class NoticesService {
             notice.setDisplayRange(NoticeConstants.DISPLAY_RANGE_ALL);
         } else {
             notice.setDisplayRange(noticesForm.getDisplayRange());
+        }
+
+        // カテゴリー
+        if (noticesForm.getCategoryId() != 0) {
+            Categories category = new Categories();
+            category.setCategoryId(noticesForm.getCategoryId());
+            notice.setCategory(category);
         }
 
         // タイトル
