@@ -87,8 +87,8 @@ public class NoticesController {
     // お知らせ登録処理
     @PostMapping("/notice/create")
     public String create(@ModelAttribute @Validated(All.class) NoticesForm noticesForm,
-                         @ModelAttribute CategoriesForm categoriesForm,
                          BindingResult result,
+                         @ModelAttribute CategoriesForm categoriesForm,
                          Model model,
                          @AuthenticationPrincipal LoginUserDetails loginUser) {
         // 入力エラーチェック
