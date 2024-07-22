@@ -12,6 +12,9 @@ public interface NoticesMapper {
     // 全件取得
     public List<Notices> findAll();
 
+    // 1件取得
+    public Notices findById(int noticeId);
+
     // 登録
     public int insert(Notices notice);
 }

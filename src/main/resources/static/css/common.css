@@ -53,6 +53,10 @@ header button {
     font-size: 14px
 }
 
+.fs-32 {
+    font-size: 32px
+}
+
 body {
     background-color: #CFD8DC; /* 背景カラー(BlueGray100) */
 }

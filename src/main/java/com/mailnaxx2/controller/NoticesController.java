@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.mailnaxx2.constants.NoticeConstants;
 import com.mailnaxx2.entity.Categories;
+import com.mailnaxx2.entity.Notices;
 import com.mailnaxx2.entity.Users;
 import com.mailnaxx2.form.CategoriesForm;
 import com.mailnaxx2.form.NoticesForm;
@@ -36,6 +37,19 @@ public class NoticesController {
 
     @Autowired
     CategoriesService categoriesService;
+
+    // 詳細画面初期表示
+    @PostMapping("/notice/detail")
+    public String detail(int noticeId,
+                         Model model,
+                         @AuthenticationPrincipal LoginUserDetails loginUser) {
+        // 詳細情報を取得
+        Notices noticeInfo = noticesService.findById(noticeId);
+        model.addAttribute("noticeInfo", noticeInfo);
+        model.addAttribute("loginUserInfo", loginUser.getLoginUser());
+        return "notice/detail";
+    }
+
 
     // 登録画面初期表示
     @GetMapping("/admin/notice/create")

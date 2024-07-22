@@ -36,6 +36,12 @@ public class NoticesService {
         return noticeList;
     }
 
+    // 詳細情報取得
+    public Notices findById(int noticeId) {
+        Notices noticeInfo = noticesMapper.findById(noticeId);
+        return noticeInfo;
+    }
+
     // 登録処理
     @Transactional
     public void insert(NoticesForm noticesForm,

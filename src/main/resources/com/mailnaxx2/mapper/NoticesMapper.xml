@@ -9,11 +9,9 @@
         SELECT
             n.notice_id,
             n.start_date,
-            c.category_id,
             c.category_name,
             c.color,
-            n.title,
-            n.content
+            n.title
         FROM
             notices n
         LEFT JOIN categories c
@@ -26,6 +24,24 @@
             OR end_date &gt;= CURRENT_DATE
         )
         ORDER BY notice_id DESC
+    </select>
+
+     <!-- 1件取得 -->
+    <select id="findById" resultMap="noticeMap">
+        SELECT
+            n.notice_id,
+            n.start_date,
+            n.end_date,
+            c.category_name,
+            c.color,
+            n.title,
+            n.content,
+            n.link
+        FROM notices n
+        LEFT JOIN categories c
+            ON n.category_id = c.category_id
+        WHERE
+            notice_id = #{noticeId}
     </select>
 
     <!-- マッピング -->
@@ -48,6 +64,23 @@
         <result property="categoryId" column="category_id" />
         <result property="categoryName" column="category_name" />
         <result property="color" column="color" />
+    </resultMap>
+
+    <resultMap id="noticeTargetMap" type="com.mailnaxx2.entity.NoticeTargets">
+        <result property="noticeTargetId" column="notice_target_id" />
+        <result property="noticeId" column="notice_id" />
+        <result property="readedFlg" column="readed_flg" />
+        <result property="createdBy" column="created_by" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedBy" column="updated_by" />
+        <result property="updatedAt" column="updated_at" />
+        <association property="user" resultMap="userResult"/>
+    </resultMap>
+
+    <resultMap id="userResult" type="com.mailnaxx2.entity.Users">
+        <result property="userId" column="user_id" />
+        <result property="userNumber" column="user_number" />
+        <result property="userName" column="user_name" />
     </resultMap>
 
     <!-- 登録 -->
