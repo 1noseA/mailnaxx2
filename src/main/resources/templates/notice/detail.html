@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common :: meta_header('お知らせ詳細',~{::link},~{::script})">
+<link rel="stylesheet" th:href="@{/css/notice/notice.css}" />
+</head>
+<body>
+    <div th:replace="common :: header"></div>
+
+    <div class="contents">
+        <div class="container">
+            <div class="noticeInfoArea my-5 p-5">
+                <div th:object="${noticeInfo}">
+                    <div class="row">
+                        <div class="col-12 d-flex align-items-center">
+                            <span th:text="*{#strings.replace(startDate, '-', '/')}"></span>
+                            <span th:text="〜"></span>
+                            <span th:text="*{#strings.replace(endDate, '-', '/')}"></span>
+                            <span class="badge ms-3"
+                                  th:style="|background-color: *{category == null ? 'transparent' : category.color}|"
+                                  th:text="*{category == null ? '' : category.categoryName}"></span>
+                        </div>
+                        <div class="col-12 mt-4">
+                            <span th:text="*{title}" class="fs-32"></span>
+                            <hr>
+                        </div>
+                        <div class="col-12">
+                            <span th:text="*{content}"></span>
+                        </div>
+                        <div class="col-12">
+                            <span th:text="*{link}"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="btn-toolbar justify-content-between mt-4 mb-5" role="toolbar">
+                <!-- <div>
+                    <button type="button" class="btn btnMain m-1" th:onclick="|edit('${userInfo.userId}')|">編集する</button>
+                    <button type="button" class="btn btnAccent m-1">報告を見る</button>
+                </div> -->
+                <div>
+                    <button type="button" class="btn btnBack m-1" th:onclick="location.href='/top'">戻る</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="common :: footer"></div>
+</body>
+</html>

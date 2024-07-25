@@ -187,7 +187,7 @@
                             <button type="submit" class="btn btnLight">一時保存</button>
                         </th:block>
                         <th:block th:unless="${weeklyReportId == 0}">
-                               <button type="submit" class="btn btnMain" th:formaction="@{/weekly-report/update}">更新</button>
+                            <button type="submit" class="btn btnMain" th:formaction="@{/weekly-report/update}">更新</button>
                         </th:block>
                         <button type="submit" class="btn btnMain" th:formaction="@{/weekly-report/send}">提出</button>
                     </div>
@@ -197,7 +197,7 @@
                 <div class="col-auto">
                     <th:block th:if="${weeklyReportId == 0}">
                         <button type="button" class="btn btnBack"  onclick="location.href='/weekly-report/list'">戻る</button>
-                       </th:block>
+                    </th:block>
                     <th:block th:unless="${weeklyReportId == 0}">
                         <form method="POST" th:action="@{/weekly-report/detail}" th:object="${weeklyReportForm}">
                             <button type="submit" class="btn btnBack" th:value="${weeklyReportId}" name="weeklyReportId">戻る</button>
@@ -211,7 +211,7 @@
     <!-- モーダルここから -->
     <form method="POST" th:action="@{/weekly-report/saveColleague}" th:object="${colleagueForm}" id="colleagueForm">
         <div class="modal fade" id="colleagueModal" tabindex="-1" aria-labelledby="ecolleagueModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">現場社員の状況</h5>
@@ -260,8 +260,8 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" id="saveColleague">保存</button>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
+                        <button type="button" class="btn btnMain" id="saveColleague">保存</button>
+                        <button type="button" class="btn btnBack" data-bs-dismiss="modal">閉じる</button>
                     </div>
                 </div>
             </div>

@@ -3,12 +3,12 @@ package com.mailnaxx2.entity;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import lombok.Getter;
+import lombok.Data;
 
 /**
  * お知らせ
  */
-@Getter
+@Data
 public class Notices {
 
     // お知らせID
@@ -23,14 +23,17 @@ public class Notices {
     // 表示範囲
     private String displayRange;
 
-    // ユーザID
-    private int userId;
+    // カテゴリーID
+    private Categories category;
+
+    // タイトル
+    private String title;
 
     // 内容
-    private String noticeMessage;
+    private String content;
 
     // リンク
-    private String referenceLink;
+    private String link;
 
     // レコード登録者
     private String createdBy;
