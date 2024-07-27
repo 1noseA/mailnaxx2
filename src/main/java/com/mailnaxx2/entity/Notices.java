@@ -2,6 +2,7 @@ package com.mailnaxx2.entity;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import lombok.Data;
 
@@ -22,6 +23,9 @@ public class Notices {
 
     // 表示範囲
     private String displayRange;
+
+    // お知らせ表示対象
+    List<NoticeTargets> noticeTarget;
 
     // カテゴリーID
     private Categories category;

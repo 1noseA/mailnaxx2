@@ -9,6 +9,7 @@
         SELECT
             n.notice_id,
             n.start_date,
+            n.display_range,
             c.category_name,
             c.color,
             n.title
@@ -23,7 +24,39 @@
             end_date IS NULL
             OR end_date &gt;= CURRENT_DATE
         )
-        ORDER BY notice_id DESC
+        ORDER BY
+            notice_id DESC
+    </select>
+
+    <!-- ログインユーザのお知らせ取得 -->
+    <select id="findByLoginUser" resultMap="noticeMap">
+        SELECT
+            n.notice_id,
+            n.start_date,
+            n.display_range,
+            c.category_name,
+            c.color,
+            n.title
+        FROM
+            notices n
+        LEFT JOIN categories c
+            ON n.category_id = c.category_id
+        LEFT JOIN notice_targets nt
+            ON n.notice_id = nt.notice_id
+        WHERE
+            start_date &lt;= CURRENT_DATE
+        AND
+        (
+            end_date IS NULL
+            OR end_date &gt;= CURRENT_DATE
+        )
+        AND
+        (
+            n.display_range = '1'
+            OR nt.user_id = #{userId}
+        )
+        ORDER BY
+            notice_id DESC
     </select>
 
      <!-- 1件取得 -->
@@ -46,7 +79,7 @@
 
     <!-- マッピング -->
     <resultMap id="noticeMap" type="com.mailnaxx2.entity.Notices">
-        <result property="noticeId" column="notice_id" />
+        <id property="noticeId" column="notice_id" />
         <result property="startDate" column="start_date" />
         <result property="endDate" column="end_date" />
         <result property="displayRange" column="display_range" />
@@ -57,30 +90,20 @@
         <result property="createdAt" column="created_at" />
         <result property="updatedBy" column="updated_by" />
         <result property="updatedAt" column="updated_at" />
-        <association property="category" resultMap="categoryResult"/>
-    </resultMap>
-
-    <resultMap id="categoryResult" type="com.mailnaxx2.entity.Categories">
-        <result property="categoryId" column="category_id" />
-        <result property="categoryName" column="category_name" />
-        <result property="color" column="color" />
-    </resultMap>
-
-    <resultMap id="noticeTargetMap" type="com.mailnaxx2.entity.NoticeTargets">
-        <result property="noticeTargetId" column="notice_target_id" />
-        <result property="noticeId" column="notice_id" />
-        <result property="readedFlg" column="readed_flg" />
-        <result property="createdBy" column="created_by" />
-        <result property="createdAt" column="created_at" />
-        <result property="updatedBy" column="updated_by" />
-        <result property="updatedAt" column="updated_at" />
-        <association property="user" resultMap="userResult"/>
-    </resultMap>
-
-    <resultMap id="userResult" type="com.mailnaxx2.entity.Users">
-        <result property="userId" column="user_id" />
-        <result property="userNumber" column="user_number" />
-        <result property="userName" column="user_name" />
+        <association property="category" javaType="com.mailnaxx2.entity.Categories">
+            <id property="categoryId" column="category_id" />
+            <result property="categoryName" column="category_name" />
+            <result property="color" column="color" />
+        </association>
+        <collection property="noticeTarget" ofType="com.mailnaxx2.entity.NoticeTargets">
+            <result property="noticeTargetId" column="notice_target_id" />
+            <result property="readedFlg" column="readed_flg" />
+            <association property="user" javaType="com.mailnaxx2.entity.Users">
+                <id property="userId" column="user_id" />
+                <result property="userNumber" column="user_number" />
+                <result property="userName" column="user_name" />
+            </association>
+        </collection>
     </resultMap>
 
     <!-- 登録 -->

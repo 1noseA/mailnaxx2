@@ -36,6 +36,12 @@ public class NoticesService {
         return noticeList;
     }
 
+    // ログインユーザのお知らせ取得
+    public List<Notices> findByLoginUser(int userId) {
+        List<Notices> noticeList  = noticesMapper.findByLoginUser(userId);
+        return noticeList;
+    }
+
     // 詳細情報取得
     public Notices findById(int noticeId) {
         Notices noticeInfo = noticesMapper.findById(noticeId);

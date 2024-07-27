@@ -21,7 +21,8 @@ public class TopController {
     @RequestMapping("/top")
     public String index(Model model,
                         @AuthenticationPrincipal LoginUserDetails loginUser) {
-        List<Notices> noticeList = noticesService.findAll();
+        // ログインユーザのお知らせ取得
+        List<Notices> noticeList = noticesService.findByLoginUser(loginUser.getLoginUser().getUserId());
         model.addAttribute("noticeList", noticeList);
         model.addAttribute("loginUserInfo", loginUser.getLoginUser());
         return "top/top";
