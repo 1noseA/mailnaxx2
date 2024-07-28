@@ -36,7 +36,8 @@
             n.display_range,
             c.category_name,
             c.color,
-            n.title
+            n.title,
+            nt.readed_flg
         FROM
             notices n
         LEFT JOIN categories c
