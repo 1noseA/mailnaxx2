@@ -20,4 +20,10 @@ public class NoticeConstants {
 
     // カテゴリーデフォルトカラー
     public static final String DEFAULT_COLOR = "#6c757d";
+
+    // 既読フラグ（未読）
+    public static final String UNREAD = "0";
+
+    // 既読フラグ（既読）
+    public static final String READED = "1";
 }

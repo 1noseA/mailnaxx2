@@ -70,12 +70,16 @@
             c.color,
             n.title,
             n.content,
-            n.link
+            n.link,
+            nt.notice_target_id,
+            nt.readed_flg
         FROM notices n
         LEFT JOIN categories c
             ON n.category_id = c.category_id
+        LEFT JOIN notice_targets nt
+            ON n.notice_id = nt.notice_id
         WHERE
-            notice_id = #{noticeId}
+            n.notice_id = #{noticeId}
     </select>
 
     <!-- マッピング -->

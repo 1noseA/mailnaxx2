@@ -78,6 +78,19 @@ public class NoticesService {
         }
     }
 
+    // 既読フラグ更新処理
+    @Transactional
+    public void updateReadedFlg(int noticeTargetId,
+                                @AuthenticationPrincipal LoginUserDetails loginUser) {
+        NoticeTargets noticeTarget = new NoticeTargets();
+        noticeTarget.setNoticeTargetId(noticeTargetId);
+        noticeTarget.setReadedFlg(NoticeConstants.READED);
+        noticeTarget.setUpdatedBy(loginUser.getLoginUser().getUserNumber());
+
+        // お知らせ表示対象 既読フラグ更新
+        noticeTargetsMapper.updateReadedFlg(noticeTarget);
+    }
+
     // エンティティにセットする
     private Notices setEntity(Notices notice, NoticesForm noticesForm) {
         // 掲載開始日
