@@ -37,6 +37,7 @@
             c.category_name,
             c.color,
             n.title,
+            nt.user_id,
             nt.readed_flg
         FROM
             notices n
@@ -72,6 +73,7 @@
             n.content,
             n.link,
             nt.notice_target_id,
+            nt.user_id,
             nt.readed_flg
         FROM notices n
         LEFT JOIN categories c
@@ -79,7 +81,8 @@
         LEFT JOIN notice_targets nt
             ON n.notice_id = nt.notice_id
         WHERE
-            n.notice_id = #{noticeId}
+            nt.notice_id = #{noticeId}
+        AND nt.user_id = #{userId}
     </select>
 
     <!-- マッピング -->

@@ -43,8 +43,8 @@ public class NoticesService {
     }
 
     // 詳細情報取得
-    public Notices findById(int noticeId) {
-        Notices noticeInfo = noticesMapper.findById(noticeId);
+    public Notices findById(int noticeId, int userId) {
+        Notices noticeInfo = noticesMapper.findById(noticeId, userId);
         return noticeInfo;
     }
 

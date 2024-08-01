@@ -16,7 +16,7 @@ public interface NoticesMapper {
     public List<Notices> findByLoginUser(int userId);
 
     // 1件取得
-    public Notices findById(int noticeId);
+    public Notices findById(int noticeId, int userId);
 
     // 登録
     public int insert(Notices notice);

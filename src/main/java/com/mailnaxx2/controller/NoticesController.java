@@ -44,7 +44,7 @@ public class NoticesController {
                          Model model,
                          @AuthenticationPrincipal LoginUserDetails loginUser) {
         // 詳細情報を取得
-        Notices noticeInfo = noticesService.findById(noticeId);
+        Notices noticeInfo = noticesService.findById(noticeId, loginUser.getLoginUser().getUserId());
 
         // 既読フラグが'0'（未読）の場合、既読に更新する
         if (noticeInfo.getNoticeTarget().size() > 0 &&
