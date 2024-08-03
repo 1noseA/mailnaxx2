@@ -43,4 +43,13 @@
         )
         </foreach>
     </insert>
+
+    <!-- 既読フラグ更新 -->
+    <update id="updateReadedFlg">
+        UPDATE notice_targets SET
+            readed_flg = #{readedFlg},
+            updated_by = #{updatedBy},
+            updated_at = CURRENT_TIMESTAMP
+        WHERE notice_target_id = #{noticeTargetId}
+    </update>
 </mapper>

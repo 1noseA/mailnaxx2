@@ -44,12 +44,19 @@ public class NoticesController {
                          Model model,
                          @AuthenticationPrincipal LoginUserDetails loginUser) {
         // 詳細情報を取得
-        Notices noticeInfo = noticesService.findById(noticeId);
+        Notices noticeInfo = noticesService.findById(noticeId, loginUser.getLoginUser().getUserId());
+
+        // 既読フラグが'0'（未読）の場合、既読に更新する
+        if (noticeInfo.getNoticeTarget().size() > 0 &&
+           (noticeInfo.getNoticeTarget().get(0).getReadedFlg()).equals(NoticeConstants.UNREAD)) {
+            // 既読フラグ更新処理
+            noticesService.updateReadedFlg(noticeInfo.getNoticeTarget().get(0).getNoticeTargetId(), loginUser);
+        }
+
         model.addAttribute("noticeInfo", noticeInfo);
         model.addAttribute("loginUserInfo", loginUser.getLoginUser());
         return "notice/detail";
     }
-
 
     // 登録画面初期表示
     @GetMapping("/admin/notice/create")

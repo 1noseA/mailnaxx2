@@ -36,9 +36,15 @@ public class NoticesService {
         return noticeList;
     }
 
+    // ログインユーザのお知らせ取得
+    public List<Notices> findByLoginUser(int userId) {
+        List<Notices> noticeList  = noticesMapper.findByLoginUser(userId);
+        return noticeList;
+    }
+
     // 詳細情報取得
-    public Notices findById(int noticeId) {
-        Notices noticeInfo = noticesMapper.findById(noticeId);
+    public Notices findById(int noticeId, int userId) {
+        Notices noticeInfo = noticesMapper.findById(noticeId, userId);
         return noticeInfo;
     }
 
@@ -70,6 +76,19 @@ public class NoticesService {
             // お知らせ表示対象登録
             noticeTargetsMapper.insert(noticeTargetList);
         }
+    }
+
+    // 既読フラグ更新処理
+    @Transactional
+    public void updateReadedFlg(int noticeTargetId,
+                                @AuthenticationPrincipal LoginUserDetails loginUser) {
+        NoticeTargets noticeTarget = new NoticeTargets();
+        noticeTarget.setNoticeTargetId(noticeTargetId);
+        noticeTarget.setReadedFlg(NoticeConstants.READED);
+        noticeTarget.setUpdatedBy(loginUser.getLoginUser().getUserNumber());
+
+        // お知らせ表示対象 既読フラグ更新
+        noticeTargetsMapper.updateReadedFlg(noticeTarget);
     }
 
     // エンティティにセットする

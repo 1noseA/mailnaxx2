@@ -11,4 +11,7 @@ public interface NoticeTargetsMapper {
 
     // 登録
     public int insert(List<NoticeTargets> noticeTargetList);
+
+    // 既読フラグ更新
+    public int updateReadedFlg(NoticeTargets noticeTarget);
 }

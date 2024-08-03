@@ -20,7 +20,7 @@
                             <tr th:each="notice : ${noticeList}">
                                 <td class="w10">
                                     <a href="javascript:void(0);" th:onclick="|showDetail('${notice.noticeId}')|">
-                                        <span th:text="${#temporals.format(notice.startDate, 'yyyy/MM/dd')}" class="w10"></span>
+                                        <span th:text="${#temporals.format(notice.startDate, 'yyyy/MM/dd')}"></span>
                                     </a>
                                 </td>
                                 <td class="w10 px-0">
@@ -34,6 +34,14 @@
                                     <a href="javascript:void(0);" th:onclick="|showDetail('${notice.noticeId}')|">
                                         <span class="align-middle" th:text="${notice.title}"></span>
                                     </a>
+                               </td>
+                               <td class="ps-0">
+                                    <th:block th:if="${notice.noticeTarget.size() > 0}">
+                                        <a href="javascript:void(0);" th:onclick="|showDetail('${notice.noticeId}')|">
+                                            <!-- 未読表示（暫定） -->
+                                            <span class="align-middle" th:text="${notice.noticeTarget.get(0).readedFlg.equals('0')} ? '*' : ''"></span>
+                                        </a>
+                                   </th:block>
                                </td>
                             </tr>
                         </table>
