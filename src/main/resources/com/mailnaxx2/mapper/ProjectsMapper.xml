@@ -10,7 +10,8 @@
             p.project_name,
             u.user_id,
             u.user_name
-        FROM projects p
+        FROM
+            projects p
         INNER JOIN users u
             ON p.sales_user_id = u.user_id
         WHERE

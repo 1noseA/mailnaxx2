@@ -13,42 +13,46 @@
             u.user_id AS my_user_id,
             u.user_number AS my_user_number,
             u.user_name AS my_user_name
-        FROM weekly_reports w
+        FROM
+            weekly_reports w
         INNER JOIN users u
             ON w.user_id = u.user_id
         INNER JOIN projects p
             ON w.project_id = p.project_id
         WHERE
             p.deleted_flg = '0'
-		AND w.status != '1'
-        ORDER BY u.user_number, w.weekly_report_id, w.report_date DESC
+        AND w.status != '1'
+        ORDER BY
+            u.user_number, w.weekly_report_id, w.report_date DESC
     </select>
 
-	<!-- 所属メンバーの週報取得 -->
+    <!-- 所属メンバーの週報取得 -->
     <select id="findMyAffiliation" resultMap="weeklyReportMap">
         SELECT
             w.weekly_report_id,
             w.report_date,
             w.status,
-			w.readed_flg,
+            w.readed_flg,
             u.user_id AS my_user_id,
             u.user_number AS my_user_number,
             u.user_name AS my_user_name
-        FROM weekly_reports w
+        FROM
+            weekly_reports w
         INNER JOIN users u
             ON w.user_id = u.user_id
-		INNER JOIN affiliations a
+        INNER JOIN affiliations a
             ON u.affiliation_id = a.affiliation_id
         INNER JOIN projects p
             ON w.project_id = p.project_id
         WHERE
             p.deleted_flg = '0'
-		AND w.status != '1'
-		AND u.affiliation_id = #{affiliationId}
-        ORDER BY u.user_number, w.weekly_report_id, w.report_date DESC
+        AND w.status != '1'
+        AND u.affiliation_id = #{affiliationId}
+        ORDER BY
+            u.user_number, w.weekly_report_id, w.report_date DESC
     </select>
 
-	<!-- 自分の週報取得 -->
+    <!-- 自分の週報取得 -->
     <select id="findMine" resultMap="weeklyReportMap">
         SELECT
             w.weekly_report_id,
@@ -57,15 +61,17 @@
             u.user_id AS my_user_id,
             u.user_number AS my_user_number,
             u.user_name AS my_user_name
-        FROM weekly_reports w
+        FROM
+            weekly_reports w
         INNER JOIN users u
             ON w.user_id = u.user_id
         INNER JOIN projects p
             ON w.project_id = p.project_id
         WHERE
             p.deleted_flg = '0'
-		AND w.user_id = #{userId}
-        ORDER BY u.user_number, w.weekly_report_id, w.report_date DESC
+        AND w.user_id = #{userId}
+        ORDER BY
+            u.user_number, w.weekly_report_id, w.report_date DESC
     </select>
 
     <!-- 検索 -->
@@ -74,11 +80,12 @@
             w.weekly_report_id,
             w.report_date,
             w.status,
-			w.readed_flg,
+            w.readed_flg,
             u1.user_id AS my_user_id,
             u1.user_number AS my_user_number,
             u1.user_name AS my_user_name
-        FROM weekly_reports w
+        FROM
+            weekly_reports w
         INNER JOIN users u1
             ON w.user_id = u1.user_id
         INNER JOIN projects p
@@ -105,21 +112,23 @@
         <if test='status == "1"'>
             AND w.status != '3'
         </if>
-		AND w.status != '1'
-        ORDER BY u1.user_number, w.weekly_report_id
+        AND w.status != '1'
+        ORDER BY
+            u1.user_number, w.weekly_report_id
     </select>
 
-	<!-- 検索 （一般権限）-->
+    <!-- 検索 （一般権限）-->
     <select id="findByMemberSearchForm" resultMap="weeklyReportMap">
         SELECT
             w.weekly_report_id,
             w.report_date,
             w.status,
-			w.readed_flg,
+            w.readed_flg,
             u1.user_id AS my_user_id,
             u1.user_number AS my_user_number,
             u1.user_name AS my_user_name
-        FROM weekly_reports w
+        FROM
+            weekly_reports w
         INNER JOIN users u1
             ON w.user_id = u1.user_id
         INNER JOIN projects p
@@ -128,7 +137,7 @@
             ON p.sales_user_id = u2.user_id
         WHERE
             p.deleted_flg = '0'
-		AND u1.user_name = #{userName}
+        AND u1.user_name = #{userName}
         <if test='salesUserId != 0'>
             AND u2.user_id = #{salesUserId}
         </if>
@@ -144,19 +153,20 @@
         <if test='status == "1"'>
             AND w.status != '3'
         </if>
-        ORDER BY u1.user_number, w.weekly_report_id
+        ORDER BY
+            u1.user_number, w.weekly_report_id
     </select>
 
     <!-- 1件取得 -->
     <select id="findById" resultMap="weeklyReportMap">
         SELECT
             w.weekly_report_id,
-			u1.user_id AS my_user_id,
+            u1.user_id AS my_user_id,
             u1.user_number AS my_user_number,
             u1.user_name AS my_user_name,
-			u2.user_id AS sales_user_id,
+            u2.user_id AS sales_user_id,
             u2.user_name AS sales_user_name,
-			p.project_id,
+            p.project_id,
             p.project_name,
             w.report_date,
             w.ave_overtime_hours,
@@ -174,9 +184,10 @@
             w.remarks,
             w.status,
             w.comment,
-			w.readed_flg,
+            w.readed_flg,
             w.shared_flg
-        FROM weekly_reports w
+        FROM
+            weekly_reports w
         INNER JOIN users u1
             ON w.user_id = u1.user_id
         INNER JOIN projects p
@@ -188,16 +199,16 @@
         AND p.deleted_flg = '0'
     </select>
 
-	<!-- 先週分取得 -->
+    <!-- 先週分取得 -->
     <select id="findByLastWeek" resultMap="weeklyReportMap">
         SELECT
             w.weekly_report_id,
-			u1.user_id AS my_user_id,
+            u1.user_id AS my_user_id,
             u1.user_number AS my_user_number,
             u1.user_name AS my_user_name,
-			u2.user_id AS sales_user_id,
+            u2.user_id AS sales_user_id,
             u2.user_name AS sales_user_name,
-			p.project_id,
+            p.project_id,
             p.project_name,
             w.report_date,
             w.ave_overtime_hours,
@@ -215,9 +226,10 @@
             w.remarks,
             w.status,
             w.comment,
-			w.readed_flg,
+            w.readed_flg,
             w.shared_flg
-        FROM weekly_reports w
+        FROM
+            weekly_reports w
         INNER JOIN users u1
             ON w.user_id = u1.user_id
         INNER JOIN projects p
@@ -226,7 +238,7 @@
             ON p.sales_user_id = u2.user_id
         WHERE
             w.user_id = #{userId}
-		AND w.report_date = #{lastReportDate}
+        AND w.report_date = #{lastReportDate}
         AND p.deleted_flg = '0'
     </select>
 
@@ -234,7 +246,7 @@
     <select id="forLockById" resultMap="weeklyReportMap">
         SELECT
             w.weekly_report_id,
-			u1.user_id AS my_user_id,
+            u1.user_id AS my_user_id,
             u1.user_number AS my_user_number,
             u1.user_name AS my_user_name,
             u2.user_name AS sales_user_name,
@@ -255,9 +267,10 @@
             w.remarks,
             w.status,
             w.comment,
-			w.readed_flg,
+            w.readed_flg,
             w.shared_flg
-        FROM weekly_reports w
+        FROM
+            weekly_reports w
         INNER JOIN users u1
             ON w.user_id = u1.user_id
         INNER JOIN projects p
@@ -274,7 +287,7 @@
     <select id="forLockByIdList" resultMap="weeklyReportMap">
         SELECT
             w.weekly_report_id,
-			u1.user_id AS my_user_id,
+            u1.user_id AS my_user_id,
             u1.user_number AS my_user_number,
             u1.user_name AS my_user_name,
             u2.user_name AS sales_user_name,
@@ -295,9 +308,10 @@
             w.remarks,
             w.status,
             w.comment,
-			w.readed_flg,
+            w.readed_flg,
             w.shared_flg
-        FROM weekly_reports w
+        FROM
+            weekly_reports w
         INNER JOIN users u1
             ON w.user_id = u1.user_id
         INNER JOIN projects p
@@ -333,7 +347,7 @@
         <result property="remarks" column="remarks" />
         <result property="status" column="status" />
         <result property="comment" column="comment" />
-		<result property="readedFlg" column="readed_flg" />
+        <result property="readedFlg" column="readed_flg" />
         <result property="sharedFlg" column="shared_flg" />
         <result property="createdBy" column="created_by" />
         <result property="createdAt" column="created_at" />
@@ -353,10 +367,10 @@
         <result property="userId" column="user_id" />
         <result property="userNumber" column="user_number" />
         <result property="userName" column="user_name" />
-		<association property="affiliation" resultMap="affiliationResult"/>
+        <association property="affiliation" resultMap="affiliationResult"/>
     </resultMap>
 
-	<resultMap id="affiliationResult" type="com.mailnaxx2.entity.Affiliations">
+    <resultMap id="affiliationResult" type="com.mailnaxx2.entity.Affiliations">
         <result property="affiliationId" column="affiliation_id" />
         <result property="affiliationName" column="affiliation_name" />
     </resultMap>
@@ -367,7 +381,7 @@
         <result property="userName" column="user_name" />
     </resultMap>
 
-	<!-- 一括確認 -->
+    <!-- 一括確認 -->
     <update id="bulkConfirm">
         <foreach collection="weeklyReportList" item="w" separator=";">
             UPDATE weekly_reports SET
@@ -379,7 +393,7 @@
         </foreach>
     </update>
 
-	<!-- 確認 -->
+    <!-- 確認 -->
     <update id="confirm">
         UPDATE weekly_reports SET
             status = '3',
@@ -389,7 +403,7 @@
             weekly_report_id = #{weeklyReportId}
     </update>
 
-	<!-- コメント -->
+    <!-- コメント -->
     <update id="comment">
         UPDATE weekly_reports SET
             comment = #{comment},
@@ -399,7 +413,7 @@
             weekly_report_id = #{weeklyReportId}
     </update>
 
-	<!-- 共有 -->
+    <!-- 共有 -->
     <update id="share">
         UPDATE weekly_reports SET
             shared_flg = '1',
@@ -409,7 +423,7 @@
             weekly_report_id = #{weeklyReportId}
     </update>
 
-	<!-- 既読 -->
+    <!-- 既読 -->
     <update id="readed">
         UPDATE weekly_reports SET
             readed_flg = '1',
@@ -419,11 +433,11 @@
             weekly_report_id = #{weeklyReportId}
     </update>
 
-	<!-- 登録 -->
+    <!-- 登録 -->
     <insert id="insert" useGeneratedKeys="true" keyProperty="weeklyReportId">
         INSERT INTO weekly_reports
         (
-           	user_id,
+            user_id,
             project_id,
             report_date,
             ave_overtime_hours,
@@ -436,10 +450,10 @@
             schedule,
             result,
             impression,
-			improvements,
+            improvements,
             next_plan,
             remarks,
-			status,
+            status,
             comment,
             created_by,
             created_at
@@ -458,18 +472,18 @@
             #{difficulty},
             #{schedule},
             #{result},
-			#{impression},
+            #{impression},
             #{improvements},
             #{nextPlan},
             #{remarks},
-			#{status},
+            #{status},
             #{comment},
             #{createdBy},
             CURRENT_TIMESTAMP
         )
     </insert>
 
-	<!-- 更新 -->
+    <!-- 更新 -->
     <update id="update">
         UPDATE weekly_reports SET
             user_id = #{user.userId},
@@ -485,27 +499,27 @@
             schedule = #{schedule},
             result = #{result},
             impression = #{impression},
-			improvements = #{improvements},
+            improvements = #{improvements},
             next_plan = #{nextPlan},
             remarks = #{remarks},
-			status = #{status},
+            status = #{status},
             comment = #{comment},
             updated_by = #{updatedBy},
             updated_at = CURRENT_TIMESTAMP
         WHERE weekly_report_id = #{weeklyReportId}
     </update>
 
-	<!-- 一括物理削除 -->
-	<delete id="bulkDelete">
-		<foreach collection="weeklyReportList" item="w" separator=";">
+    <!-- 一括物理削除 -->
+    <delete id="bulkDelete">
+        <foreach collection="weeklyReportList" item="w" separator=";">
             DELETE FROM weekly_reports
             WHERE
                 weekly_report_id = #{w.weeklyReportId}
         </foreach>
     </delete>
 
-	<!-- 物理削除 -->
-	<delete id="delete">
+    <!-- 物理削除 -->
+    <delete id="delete">
         DELETE FROM weekly_reports
         WHERE
             weekly_report_id = #{weeklyReportId}

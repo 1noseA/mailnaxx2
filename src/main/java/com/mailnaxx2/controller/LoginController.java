@@ -22,7 +22,7 @@ import jakarta.servlet.http.HttpSession;
 @Controller
 public class LoginController {
 
-	@Autowired
+    @Autowired
     HttpSession session;
 
     @Autowired
@@ -56,14 +56,14 @@ public class LoginController {
 
     @GetMapping("/logout")
     public String logout() {
-    	session.removeAttribute("session_isAdmin");
-    	session.removeAttribute("session_isSales");
-    	session.removeAttribute("session_isBoss");
-    	session.removeAttribute("session_isMember");
-    	session.removeAttribute("session_affiliationList");
-    	session.removeAttribute("session_salesList");
-    	session.removeAttribute("session_reportDateList");
-    	session.removeAttribute("session_projectList");
+        session.removeAttribute("session_isAdmin");
+        session.removeAttribute("session_isSales");
+        session.removeAttribute("session_isBoss");
+        session.removeAttribute("session_isMember");
+        session.removeAttribute("session_affiliationList");
+        session.removeAttribute("session_salesList");
+        session.removeAttribute("session_reportDateList");
+        session.removeAttribute("session_projectList");
         return "/";
     }
 }

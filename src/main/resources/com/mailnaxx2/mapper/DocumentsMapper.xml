@@ -35,7 +35,8 @@
             file_data,
             display_order,
             deleted_flg
-        FROM documents
+        FROM
+            documents
         WHERE
             document_id IN
             <foreach item="item" index="index" collection="idList"
@@ -63,10 +64,12 @@
             document_id,
             display_name,
             display_order
-        FROM documents
+        FROM
+            documents
         WHERE
             deleted_flg = '0'
-        ORDER BY display_order, document_id
+        ORDER BY
+            display_order, document_id
     </select>
 
     <!-- 1件取得 -->
@@ -76,7 +79,8 @@
             file_name,
             display_name,
             file_data
-        FROM documents
+        FROM
+            documents
         WHERE
             deleted_flg = '0'
         AND document_id = #{documentId}
@@ -86,7 +90,8 @@
     <select id="getMaxDisplayOrder">
         SELECT
             MAX(display_order)
-        FROM documents
+        FROM
+            documents
         WHERE
             deleted_flg = '0'
     </select>
@@ -95,7 +100,8 @@
     <select id="getSameDisplayOrder">
         SELECT
             COUNT(*)
-        FROM documents
+        FROM
+            documents
         WHERE
             deleted_flg = '0'
         AND display_order = #{displayOrder}
