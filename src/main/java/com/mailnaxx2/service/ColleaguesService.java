@@ -40,19 +40,19 @@ public class ColleaguesService {
 
     // 入力値をセットする
     private Colleagues setColleagueForm(Colleagues colleague, ColleagueForm colleagueForm) {
-    	// 現場社員ID
-    	Users user = new Users();
-    	user.setUserId(colleagueForm.getColleagueUserId());
-    	colleague.setUser(user);
+        // 現場社員ID
+        Users user = new Users();
+        user.setUserId(colleagueForm.getColleagueUserId());
+        colleague.setUser(user);
 
-    	// 難易度
-    	colleague.setDifficulty(colleagueForm.getColleagueDifficulty());
+        // 難易度
+        colleague.setDifficulty(colleagueForm.getColleagueDifficulty());
 
-    	// スケジュール感
-    	colleague.setSchedule(colleagueForm.getColleagueSchedule());
+        // スケジュール感
+        colleague.setSchedule(colleagueForm.getColleagueSchedule());
 
-    	// 所感
-    	colleague.setImpression(colleagueForm.getColleagueImpression());
+        // 所感
+        colleague.setImpression(colleagueForm.getColleagueImpression());
 
         return colleague;
     }

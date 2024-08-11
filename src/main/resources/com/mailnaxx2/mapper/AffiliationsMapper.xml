@@ -11,7 +11,8 @@
             affiliation_name
         FROM
             affiliations
-        WHERE deleted_flg = '0'
+        WHERE
+            deleted_flg = '0'
     </select>
 
     <!-- IDを基に所属名取得 -->
@@ -20,7 +21,8 @@
             affiliation_name
         FROM
             affiliations
-        WHERE deleted_flg = '0'
+        WHERE
+            deleted_flg = '0'
         AND affiliation_id = #{affiliationId}
     </select>
 

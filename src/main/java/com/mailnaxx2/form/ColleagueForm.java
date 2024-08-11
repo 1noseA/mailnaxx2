@@ -16,14 +16,14 @@ import lombok.Data;
 @Data
 public class ColleagueForm {
 
-	// 現場社員ID
-	private int colleagueId;
+    // 現場社員ID
+    private int colleagueId;
 
-	// 週報ID
+    // 週報ID
     private int weeklyReportId;
 
-	// 現場社員ID
-	@Positive(groups = ValidGroup1.class, message = "選択してください")
+    // 現場社員ID
+    @Positive(groups = ValidGroup1.class, message = "選択してください")
     private Integer colleagueUserId;
 
     // 難易度

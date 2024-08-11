@@ -75,7 +75,8 @@
             nt.notice_target_id,
             nt.user_id,
             nt.readed_flg
-        FROM notices n
+        FROM
+            notices n
         LEFT JOIN categories c
             ON n.category_id = c.category_id
         LEFT JOIN notice_targets nt
