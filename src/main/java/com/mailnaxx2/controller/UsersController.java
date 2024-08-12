@@ -105,8 +105,8 @@ public class UsersController {
     // 検索処理
     @PostMapping("/user/search")
     public String search(SearchUsersForm searchUsersForm,
-                        Model model,
-                        @AuthenticationPrincipal LoginUserDetails loginUser) {
+                         Model model,
+                         @AuthenticationPrincipal LoginUserDetails loginUser) {
         // 社員一覧を取得
         userList = usersService.findBySearchForm(searchUsersForm);
         session.setAttribute("session_userList", userList);
@@ -180,8 +180,8 @@ public class UsersController {
     // 登録画面初期表示
     @GetMapping("/user/create")
     public String create(@ModelAttribute UsersForm usersForm,
-                        Model model,
-                        @AuthenticationPrincipal LoginUserDetails loginUser) {
+                         Model model,
+                         @AuthenticationPrincipal LoginUserDetails loginUser) {
         model.addAttribute("userId", 0);
 
         // 所属プルダウン
@@ -199,9 +199,9 @@ public class UsersController {
     // 登録処理
     @PostMapping("/user/create")
     public String create(@ModelAttribute @Validated(All.class) UsersForm usersForm,
-                        BindingResult result,
-                        Model model,
-                        @AuthenticationPrincipal LoginUserDetails loginUser) {
+                         BindingResult result,
+                         Model model,
+                         @AuthenticationPrincipal LoginUserDetails loginUser) {
         // 入力エラーチェック
         if (result.hasErrors()) {
             // リダイレクトだと入力エラーの値が引き継がれない
@@ -265,9 +265,9 @@ public class UsersController {
     // 論理削除処理
     @PostMapping("/user/delete")
     public String delete(@ModelAttribute SelectForm selectForm,
-                        SearchUsersForm searchUsersForm,
-                        Model model,
-                        @AuthenticationPrincipal LoginUserDetails loginUser) {
+                         SearchUsersForm searchUsersForm,
+                         Model model,
+                         @AuthenticationPrincipal LoginUserDetails loginUser) {
         // 入力チェック
         if (selectForm.getSelectUserId() == null) {
             // エラーメッセージを表示
@@ -296,8 +296,8 @@ public class UsersController {
     // 詳細画面初期表示
     @PostMapping("/user/detail")
     public String detail(int userId,
-                        Model model,
-                        @AuthenticationPrincipal LoginUserDetails loginUser) {
+                         Model model,
+                         @AuthenticationPrincipal LoginUserDetails loginUser) {
         // 詳細情報を取得
         userInfo = usersService.findById(userId);
         model.addAttribute("userInfo", userInfo);
@@ -309,9 +309,9 @@ public class UsersController {
     // 編集画面初期表示
     @PostMapping("/user/edit")
     public String edit(int userId,
-                        @ModelAttribute UsersForm usersForm,
-                        Model model,
-                        @AuthenticationPrincipal LoginUserDetails loginUser) {
+                       @ModelAttribute UsersForm usersForm,
+                       Model model,
+                       @AuthenticationPrincipal LoginUserDetails loginUser) {
         // 詳細情報を取得
         userInfo = usersService.findById(userId);
         // 入力フォームに設定
@@ -335,10 +335,10 @@ public class UsersController {
     @Transactional
     @PostMapping("/user/update")
     public String update(int userId,
-                        @ModelAttribute @Validated(GroupOrder.class) UsersForm usersForm,
-                        BindingResult result,
-                        Model model,
-                        @AuthenticationPrincipal LoginUserDetails loginUser) {
+                         @ModelAttribute @Validated(GroupOrder.class) UsersForm usersForm,
+                         BindingResult result,
+                         Model model,
+                         @AuthenticationPrincipal LoginUserDetails loginUser) {
         // 入力エラーチェック
         if (result.hasErrors()) {
             return edit(userId, usersForm, model, loginUser);
