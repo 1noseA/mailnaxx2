@@ -233,7 +233,8 @@
                             <button type="submit" class="btn btnMain">登録</button>
                         </th:block>
                         <th:block th:unless="${userId == 0}">
-                            <button type="submit" class="btn btnMain" th:formaction="@{/user/update}" th:value="${userId}" name="userId">更新</button>
+                            <input type="hidden" th:value="${userId}" name="userId"/>
+                            <button type="submit" class="btn btnMain" th:formaction="@{/user/update}">更新</button>
                         </th:block>
                     </div>
                 </form>
