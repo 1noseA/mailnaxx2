@@ -74,6 +74,23 @@ public class UsersService {
         usersMapper.insert(user);
     }
 
+    // テスト登録
+    @Transactional
+    public void testInsert(UsersForm usersForm) {
+     // エンティティにセットする
+        Users user = setEntity(new Users(), usersForm);
+
+        // パスワードはハッシュにする
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        user.setPassword(passwordEncoder.encode(usersForm.getPassword()));
+
+        // 作成者
+        user.setCreatedBy("TEST");
+
+        // 登録
+        usersMapper.insert(user);
+    }
+
     // 更新処理
     @Transactional
     public void update(Users user, UsersForm usersForm, @AuthenticationPrincipal LoginUserDetails loginUser) {
