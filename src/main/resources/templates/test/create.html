@@ -74,7 +74,7 @@
                                 <option th:each="affiliation : ${affiliationList}"
                                         th:value="${affiliation.affiliationId}"
                                         th:text="${affiliation.affiliationName}"
-                                        th:selected="${affiliation.affiliation_id.equals(notAffiliation)}">
+                                        th:selected="${(affiliation.affiliationId).toString().equals(usersForm.affiliationId)}">
                                 </option>
                             </select>
                             <span class="invalid-feedback" th:if="${#fields.hasErrors('affiliationId')}" th:errors="*{affiliationId}"></span>
