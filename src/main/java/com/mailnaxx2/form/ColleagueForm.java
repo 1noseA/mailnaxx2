@@ -17,10 +17,10 @@ import lombok.Data;
 public class ColleagueForm {
 
     // 現場社員ID
-    private int colleagueId;
+    private Integer colleagueId;
 
     // 週報ID
-    private int weeklyReportId;
+    private Integer weeklyReportId;
 
     // 現場社員ID
     @Positive(groups = ValidGroup1.class, message = "選択してください")

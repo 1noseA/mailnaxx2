@@ -2,28 +2,9 @@
  * 現場社員取得
  */
 $(function() {
+    getColleague();
     $('#projectId').change(function(){
-        $.ajax({
-            url: '/weekly-report/getColleague',
-            type: 'POST',
-            data: {
-                userNumber: $('#loginUserNumber').text(),
-                projectId: $('#projectId').val(),
-                _csrf: $('*[name=_csrf]').val()
-            },
-            dataType: 'json'
-        })
-        .done(function(data) {
-            // 現場社員プルダウン作成
-            $('#colleagueUserId').empty();
-            $('#colleagueUserId').append($('<option>').val(0).text('選択してください'));
-            for (let i = 0; i < data.length; i++) {
-                $('#colleagueUserId').append($('<option>').val(data[i].userId).text(data[i].userName));
-            }
-        })
-        .fail(function() {
-            alert('送信に失敗しました');
-        })
+        getColleague();
     });
 });
 
@@ -58,3 +39,39 @@ $(function() {
     });
 });
 
+
+function getColleague() {
+    $.ajax({
+        url: '/weekly-report/getColleague',
+        type: 'POST',
+        data: {
+            userNumber: $('#loginUserNumber').text(),
+            projectId: $('#projectId').val(),
+            _csrf: $('*[name=_csrf]').val()
+        },
+        dataType: 'json'
+    })
+    .done(function(data) {
+        // 現在選択されている値を取得
+        let selectedValue = $('#colleagueUserId').val();
+
+        // 現場社員プルダウン作成
+        $('#colleagueUserId').empty();
+
+        // 選択されている値がない場合のみ「選択してください」を追加
+        if (!selectedValue) {
+            $('#colleagueUserId').append($('<option>').val(0).text('選択してください'));
+        }
+
+        for (let i = 0; i < data.length; i++) {
+            let option = $('<option>').val(data[i].userId).text(data[i].userName);
+            if (data[i].userId == selectedValue) {
+                option.attr('selected', 'selected');
+            }
+            $('#colleagueUserId').append(option);
+        }
+    })
+    .fail(function() {
+        alert('送信に失敗しました');
+    })
+}

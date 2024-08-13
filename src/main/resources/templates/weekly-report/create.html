@@ -224,11 +224,10 @@
                                         <span class="badge bg-secondary ms-1">必須</span>
                                     </label>
                                     <select class="form-select" name="colleagueUserId" id="colleagueUserId" th:errorclass="is-invalid" th:field="${colleagueForm.colleagueUserId}">
-                                        <option value=0>選択してください</option>
-                                        <option th:each="colleague : ${colleagueList}"
-                                                th:value="${colleague.userId}"
-                                                th:text="${colleague.userName}"
-                                                th:selected="${colleague.userId == colleagueForm.colleagueUserId}">
+                                        <option th:each="colleague : ${colleagueInfo}"
+                                                th:value="${colleague.user.userId}"
+                                                th:text="${colleague.user.userName}"
+                                                th:selected="${colleague.user.userId == colleagueForm.colleagueUserId}">
                                         </option>
                                     </select>
                                 </div>

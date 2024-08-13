@@ -22,7 +22,13 @@ public class ColleaguesService {
     List<WeeklyReports> weeklyReportList;
 
     // 週報詳細
-    WeeklyReports weeklyReportInfo;
+    Colleagues colleagueInfo;
+
+    // 週報IDを基に現場社員情報取得
+    public Colleagues findById(int weeklyReportId) {
+        colleagueInfo = colleaguesMapper.findById(weeklyReportId);
+        return colleagueInfo;
+    }
 
     // 登録処理
     @Transactional
