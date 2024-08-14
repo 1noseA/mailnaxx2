@@ -200,7 +200,8 @@
                     </th:block>
                     <th:block th:unless="${weeklyReportId == 0}">
                         <form method="POST" th:action="@{/weekly-report/detail}" th:object="${weeklyReportForm}">
-                            <button type="submit" class="btn btnBack" th:value="${weeklyReportId}" name="weeklyReportId">戻る</button>
+                            <input type="hidden" th:value="${weeklyReportId}" name="weeklyReportId"/>
+                            <button type="submit" class="btn btnBack">戻る</button>
                         </form>
                     </th:block>
                 </div>
