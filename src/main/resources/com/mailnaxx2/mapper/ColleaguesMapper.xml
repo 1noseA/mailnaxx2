@@ -4,15 +4,45 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.mailnaxx2.mapper.ColleaguesMapper">
 
-    <!-- 全件取得 -->
-    <select id="findAll" resultType="com.mailnaxx2.entity.Colleagues">
+    <!-- 週報IDを基に現場社員情報取得 -->
+    <select id="findById" resultMap="colleaguesMap">
         SELECT
-            *
+            colleague_id,
+            weekly_report_id,
+            user_id,
+            difficulty,
+            schedule,
+            impression
         FROM
             colleagues
         WHERE
             weekly_report_id = #{weeklyReportId}
     </select>
+
+    <!-- マッピング -->
+    <resultMap id="colleaguesMap" type="com.mailnaxx2.entity.Colleagues">
+        <result property="colleagueId" column="colleague_id" />
+        <result property="difficulty" column="difficulty" />
+        <result property="schedule" column="schedule" />
+        <result property="impression" column="impression" />
+        <result property="createdBy" column="created_by" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedBy" column="updated_by" />
+        <result property="updatedAt" column="updated_at" />
+        <collection property="weeklyReport" resultMap="weeklyReportResult" />
+        <collection property="user" resultMap="userResult" />
+    </resultMap>
+
+    <resultMap id="weeklyReportResult" type="com.mailnaxx2.entity.WeeklyReports">
+        <result property="weeklyReportId" column="weekly_report_id" />
+    </resultMap>
+
+    <resultMap id="userResult" type="com.mailnaxx2.entity.Users">
+        <result property="userId" column="user_id" />
+        <result property="userNumber" column="user_number" />
+        <result property="userName" column="user_name" />
+    </resultMap>
+
 
     <!-- 登録 -->
     <insert id="insert" useGeneratedKeys="true" keyProperty="colleagueId">

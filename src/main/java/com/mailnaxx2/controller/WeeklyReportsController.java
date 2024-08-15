@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.mailnaxx2.constants.WeeklyReportConstants;
 import com.mailnaxx2.entity.Affiliations;
+import com.mailnaxx2.entity.Colleagues;
 import com.mailnaxx2.entity.Projects;
 import com.mailnaxx2.entity.Users;
 import com.mailnaxx2.entity.WeeklyReports;
@@ -81,6 +82,9 @@ public class WeeklyReportsController {
 
     // 週報一覧
     List<WeeklyReports> weeklyReportList;
+
+    // 現場社員情報
+    Colleagues colleagueInfo;
 
     // 所属プルダウン
     List<Affiliations> affiliationList;
@@ -402,10 +406,6 @@ public class WeeklyReportsController {
             weeklyReportForm.setPlan(lastWeekReportInfo.getNextPlan());
         }
 
-        // 現場社員プルダウン
-        userList = usersService.findAll();
-        model.addAttribute("userList", userList);
-
         model.addAttribute("weeklyReportId", 0);
         model.addAttribute("loginUserInfo", loginUser.getLoginUser());
         return "weekly-report/create";
@@ -440,8 +440,8 @@ public class WeeklyReportsController {
     // 一時保存処理
     @PostMapping("/weekly-report/save")
     public String save(@ModelAttribute @Validated(GroupOrder.class) WeeklyReportForm weeklyReportForm,
-                       @ModelAttribute ColleagueForm colleagueForm,
                        BindingResult result,
+                       @ModelAttribute ColleagueForm colleagueForm,
                        Model model,
                        @AuthenticationPrincipal LoginUserDetails loginUser) {
         // 入力エラーチェック
@@ -462,12 +462,20 @@ public class WeeklyReportsController {
     @PostMapping("/weekly-report/edit")
     public String edit(int weeklyReportId,
                        @ModelAttribute WeeklyReportForm weeklyReportForm,
+                       @ModelAttribute ColleagueForm colleagueForm,
                        Model model,
                        @AuthenticationPrincipal LoginUserDetails loginUser) {
         // 詳細情報を取得
         weeklyReportInfo = weeklyReportsService.findById(weeklyReportId);
         // 入力フォームに設定
         setInputForm(weeklyReportInfo, weeklyReportForm);
+
+        // 現場社員を取得
+        colleagueInfo = colleaguesService.findById(weeklyReportId);
+        // 入力フォームに設定
+        if (colleagueInfo != null) {
+            setInputForm(colleagueInfo, colleagueForm);
+        }
 
         // 担当営業プルダウン
         salesList = (Set<Users>) session.getAttribute("session_salesList");
@@ -482,11 +490,8 @@ public class WeeklyReportsController {
         model.addAttribute("radioCondition", WeeklyReportConstants.RADIO);
         model.addAttribute("radioRelationship", WeeklyReportConstants.RADIO);
 
-        // 現場社員プルダウン
-        List<Users> userList = usersService.findAll();
-        model.addAttribute("userList", userList);
-
         model.addAttribute("weeklyReportId", weeklyReportId);
+        model.addAttribute("colleagueInfo", colleagueInfo);
         model.addAttribute("loginUserInfo", loginUser.getLoginUser());
         return "weekly-report/create";
     }
@@ -496,12 +501,13 @@ public class WeeklyReportsController {
     @PostMapping("/weekly-report/update")
     public String update(@ModelAttribute @Validated(GroupOrder.class) WeeklyReportForm weeklyReportForm,
                          BindingResult result,
+                         @ModelAttribute ColleagueForm colleagueForm,
                          Model model,
                          @AuthenticationPrincipal LoginUserDetails loginUser) {
         int weeklyReportId = weeklyReportForm.getWeeklyReportId();
         // 入力エラーチェック
         if (result.hasErrors()) {
-            return edit(weeklyReportId, weeklyReportForm, model, loginUser);
+            return edit(weeklyReportId, weeklyReportForm, colleagueForm, model, loginUser);
         }
 
         // 更新
@@ -513,8 +519,8 @@ public class WeeklyReportsController {
     // 提出処理（メール送信）
     @PostMapping("/weekly-report/send")
     public String send(@ModelAttribute @Validated(GroupOrder.class) WeeklyReportForm weeklyReportForm,
-                       @ModelAttribute ColleagueForm colleagueForm,
                        BindingResult result,
+                       @ModelAttribute ColleagueForm colleagueForm,
                        Model model,
                        @AuthenticationPrincipal LoginUserDetails loginUser) {
         // 入力エラーチェック
@@ -585,7 +591,7 @@ public class WeeklyReportsController {
         return WeeklyReportConstants.STATUS.getOrDefault(status, "");
     }
 
-    // 入力フォームに設定
+    // 入力フォームに設定（週報）
     private void setInputForm(WeeklyReports weeklyReportInfo, WeeklyReportForm weeklyReportForm) {
         weeklyReportForm.setWeeklyReportId(weeklyReportInfo.getWeeklyReportId());
         weeklyReportForm.setStatus(weeklyReportInfo.getStatus());
@@ -605,5 +611,15 @@ public class WeeklyReportsController {
         weeklyReportForm.setImprovements(weeklyReportInfo.getImprovements());
         weeklyReportForm.setNextPlan(weeklyReportInfo.getNextPlan());
         weeklyReportForm.setRemarks(weeklyReportInfo.getRemarks());
+    }
+
+    // 入力フォームに設定（現場社員）
+    private void setInputForm(Colleagues colleagueInfo, ColleagueForm colleagueForm) {
+        colleagueForm.setColleagueId(colleagueInfo.getColleagueId());
+        colleagueForm.setWeeklyReportId(colleagueInfo.getWeeklyReport().getWeeklyReportId());
+        colleagueForm.setColleagueUserId(colleagueInfo.getUser().getUserId());
+        colleagueForm.setColleagueDifficulty(colleagueInfo.getDifficulty());
+        colleagueForm.setColleagueSchedule(colleagueInfo.getSchedule());
+        colleagueForm.setColleagueImpression(colleagueInfo.getImpression());
     }
 }

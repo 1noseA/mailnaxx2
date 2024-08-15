@@ -36,7 +36,7 @@ public class LoginController {
     // テストログイン
     @PostMapping("/testLogin")
     public String testLogin() {
-        String userNumber = "20230805";
+        String userNumber = "20231001";
         // 最終ログイン日時の更新とログイン失敗回数初期化
         usersMapper.loginSuccess(userNumber);
         Optional<Users> user = usersMapper.findLoginUser(userNumber);
@@ -44,9 +44,9 @@ public class LoginController {
                 .orElseThrow(() -> new UsernameNotFoundException("ログインに失敗しました。"));
 
         // セキュリティコンテキストの内容を更新
-        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, null);
+        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        return "redirect:/top";
+        return "forward:/top";
     }
 
     @GetMapping("/reset")
